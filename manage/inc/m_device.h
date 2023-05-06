@@ -83,6 +83,7 @@ typedef struct TagDeviceObjectDef
     char m_deviceId[DEVICE_LENGTH];
     SdUInt8 m_deviceType;
     SdUInt8 m_deviceStatus; //0:stop work,1:start work
+    SdUInt8 m_mqttStatus; // 0:offline ,1:online,2:connected
     SdUInt8 m_pressValue_param;
     SdUInt16 m_check_acupointId;
 

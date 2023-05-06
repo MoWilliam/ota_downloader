@@ -44,6 +44,7 @@ void manage_device_init(void)
         memset(pstDeviceObject->m_deviceId,0,DEVICE_LENGTH);
         strcpy(pstDeviceObject->m_deviceId,uid);
         pstDeviceObject->m_deviceStatus = 0;
+        pstDeviceObject->m_mqttStatus =0;
         pstDeviceObject->m_check_acupointId = 0;
         pstDeviceObject->m_pressValue_param = 0;
     }

@@ -49,6 +49,7 @@ void manage_sensor_start(void)
     LPManageObjectDef pstManageObject = manage_ctrl_object_get();
     if(SD_NULL != pstManageObject)
     {
+        /*
         if ( pstManageObject->brun_data == SD_FALSE)
         {
             pstManageObject->brun_data = SD_TRUE;
@@ -58,7 +59,7 @@ void manage_sensor_start(void)
                             UT_THREAD_TICK_DEFAULT,
                             manage_thread_sensor_recv,pstManageObject);
         }
-
+        */
 
     }
 }

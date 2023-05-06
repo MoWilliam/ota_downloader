@@ -71,19 +71,19 @@ static void mq_new_sub_callback(MQTTClient *client, MessageData *msg_data)
 static void mq_connect_callback(MQTTClient *c)
 {
     LOG_D("inter mqtt_connect_callback!");
-    comm_mqtt_connect(emMqttConnectOk);
+    comm_mqtt_status(emMqttConnectOk);
 }
 
 static void mq_online_callback(MQTTClient *c)
 {
     LOG_D("inter mqtt_online_callback!");
-    comm_mqtt_connect(emMqttConnectOnline);
+    comm_mqtt_status(emMqttConnectOnline);
 }
 
 static void mq_offline_callback(MQTTClient *c)
 {
     LOG_D("inter mqtt_offline_callback!");
-    comm_mqtt_connect(emMqttConnectOffline);
+    comm_mqtt_status(emMqttConnectOffline);
 }
 
 int mq_start(void)
@@ -160,6 +160,7 @@ int mq_stop(void)
 
 int mq_publish(char *topic ,char *message)
 {
+    return 1;
     int ret =0;
     if (mq_is_started == 0)
     {

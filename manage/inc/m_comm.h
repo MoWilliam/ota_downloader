@@ -47,7 +47,7 @@ void manage_comm_stop(void);
 
 SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent);
 SdInt comm_mqtt_subMsg(char* topic ,char * message);
-SdInt comm_mqtt_connect(int connectStatus);
+SdInt comm_mqtt_status(int connectStatus);
 
 
 

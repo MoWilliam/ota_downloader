@@ -302,8 +302,12 @@ SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
 		case emMqttMsgBioData:
             if ( pstDeviceObject)
             {
-                if (pstDeviceObject->m_deviceStatus == 1){
-                    comm_mqtt_msg(pMsg,pContent);
+                if ( pstDeviceObject->m_mqttStatus == 1)
+                {
+                // if (pstDeviceObject->m_deviceStatus == 1)
+                    {
+                        comm_mqtt_msg(pMsg,pContent);
+                    }
                 }
             }
 			break;
