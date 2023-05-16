@@ -39,12 +39,17 @@ static int mq_is_started = 0;
 
 static void mq_sub_callback(MQTTClient *c, MessageData *msg_data)
 {
+    char strTopic[256];
+    rt_memset( strTopic,0,sizeof(strTopic));
+    rt_strncpy( strTopic,(char *)msg_data->topicName->lenstring.data,msg_data->topicName->lenstring.len);
     *((char *)msg_data->message->payload + msg_data->message->payloadlen) = '\0';
+    /*
     LOG_D("mqtt sub callback: %.*s %.*s",
                msg_data->topicName->lenstring.len,
                msg_data->topicName->lenstring.data,
                msg_data->message->payloadlen,
-               (char *)msg_data->message->payload);
+               (char *)msg_data->message->payload);*/
+    comm_mqtt_subMsg(strTopic,(char *)msg_data->message->payload);
 }
 
 static void mq_sub_default_callback(MQTTClient *c, MessageData *msg_data)
@@ -65,7 +70,6 @@ static void mq_new_sub_callback(MQTTClient *client, MessageData *msg_data)
                msg_data->topicName->lenstring.data,
                msg_data->message->payloadlen,
                (char *)msg_data->message->payload);
-    comm_mqtt_subMsg((char *)msg_data->topicName->lenstring.data,(char *)msg_data->message->payload);
 }
 
 static void mq_connect_callback(MQTTClient *c)
@@ -84,6 +88,11 @@ static void mq_offline_callback(MQTTClient *c)
 {
     LOG_D("inter mqtt_offline_callback!");
     comm_mqtt_status(emMqttConnectOffline);
+}
+
+static void mq_pipe_callback(MQTTClient *c)
+{
+    //LOG_D("inter mqtt_pipe_callback!");
 }
 
 int mq_start(void)
@@ -134,6 +143,7 @@ int mq_start(void)
         mq_client.connect_callback = mq_connect_callback;
         mq_client.online_callback = mq_online_callback;
         mq_client.offline_callback = mq_offline_callback;
+        mq_client.pipe_callback = mq_pipe_callback;
 
         /* set subscribe table and event callback */
         mq_client.messageHandlers[0].topicFilter = rt_strdup(MQ_CONTROL_TOPIC);
@@ -160,7 +170,7 @@ int mq_stop(void)
 
 int mq_publish(char *topic ,char *message)
 {
-    return 1;
+    //return 1;
     int ret =0;
     if (mq_is_started == 0)
     {

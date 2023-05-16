@@ -13,14 +13,17 @@
 #define MQ_CONTROL_TOPIC            "/medical/control"
 #define MQ_DATA_TOPIC               "/medical/data"
 
+//命令类型定义0：心跳命令；1：启动测量；2：结束测量；3：参数设置；4：数据上传；5：开始充气；6：停止充气
 typedef enum TagMqttCmdDef
 {
-    emMqttCmdUnknown,
+    emMqttCmdUnknown = -1,
     emMqttCmdHeartBeat,
     emMqttCmdStart,
     emMqttCmdStop,
     emMqttCmdSetting,
-    emMqttCmdData
+    emMqttCmdData,
+    emMqttCmdStartPress,
+    emMqttCmdStopPress
 
 }enMqttCmdDef;
 

@@ -13,7 +13,8 @@
 #include "ut_type.h"
 
 
-#define UT_MQUEUE_MAXMSG_COUNT  (10) //队列最大的消息数量
+#define UT_MQUEUE_MINMSG_COUNT  (10) //队列最大的消息数量
+#define UT_MQUEUE_MAXMSG_COUNT  (100)
 #define UT_MQUEUE_MSGMAX_SIZE  (512)  //队列消息最大长度，单位字节
 
 

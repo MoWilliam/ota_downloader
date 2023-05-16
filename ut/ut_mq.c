@@ -110,7 +110,7 @@ SdInt ut_msg_send(UtMqueue *iMqueue, SdUShort usSrcModule,SdUShort usDstModule,S
     }
     if (RT_EOK == rt_ret)
     {
-        rt_kprintf("[UTMsg %d,%d]send msg %d successful\n",usSrcModule,usDstModule,usMsgID);
+       // rt_kprintf("[UTMsg %d,%d]send msg %d successful\n",usSrcModule,usDstModule,usMsgID);
     }
 
     rt_free((void*)buffer);
@@ -124,7 +124,7 @@ SdInt ut_msg_recv(UtMqueue *iMqueue)
     void *pContent = SD_NULL;
     SdChar* msg = SD_NULL;
     msg = rt_malloc(UT_MQUEUE_MSGMAX_SIZE);
-    rt_kprintf("[UTMsg] Start Recv Data !\n");
+   // rt_kprintf("[UTMsg] Start Recv Data !\n");
     rt_err_t rt_ret = rt_mq_recv(iMqueue,msg,UT_MQUEUE_MSGMAX_SIZE,RT_WAITING_FOREVER);
     if (-RT_ETIMEOUT == rt_ret)
     {
@@ -136,7 +136,7 @@ SdInt ut_msg_recv(UtMqueue *iMqueue)
     }
     if (RT_EOK == rt_ret )
     {
-        rt_kprintf("[UTMsg] queue revc successful: %s\n",msg);
+       // rt_kprintf("[UTMsg] queue revc successful: %s\n",msg);
         rt_memcpy(&stMsg, msg, MsgLen);
         if (stMsg.ulContentLength > 0)
         {

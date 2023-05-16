@@ -343,14 +343,14 @@ void bsp_afe4300_get(BioFrameDef* dmf)
     delay_ms(50);
     afe4300Data_new = spiRead(0);
     I_ADC_Value = afe4300Data_new * 0.051889; // AD值转化为电压
-    rt_kprintf("VSENSEM_R0 AD I:%d  %f \r\n",afe4300Data_new, I_ADC_Value);
+   // rt_kprintf("VSENSEM_R0 AD I:%d  %f \n",afe4300Data_new, I_ADC_Value);
 
     // ADC信号的来源 ，参考电压选择
     spiWrite(0x10, 0x0065); // Q通道
     delay_ms(50);
     afe4300Data_new = spiRead(0);
     Q_ADC_Value = afe4300Data_new * 0.051889; // AD值转化为电压
-    rt_kprintf("VSENSEM_R0 AD Q:%d  %f \r\n",afe4300Data_new,Q_ADC_Value);
+   // rt_kprintf("VSENSEM_R0 AD Q:%d  %f \n",afe4300Data_new,Q_ADC_Value);
 
     // 计算Z和角度θ
     //angle = 57.3 * atan(Q_ADC_Value / I_ADC_Value);
@@ -362,7 +362,7 @@ void bsp_afe4300_get(BioFrameDef* dmf)
     //z = kalman_filter(&kalman_z, z) - z_offset; //;//卡尔曼滤波结果再减去偏置
     //rt_kprintf("%f  %f\r\n",angle,z); //θ转为角度了
     //z = 4.8128 * z + 18.0136;
-    rt_kprintf("zzzzzzzzzzzzzzzzzzz%f\r\n", z);
-    rt_kprintf("******test over******\r\n");
+    //rt_kprintf("zzzzzzzzzzzzzzzzzzz%f\r\n", z);
+    //rt_kprintf("******test over******\r\n");
     dmf->m_bio_value = z;
 }

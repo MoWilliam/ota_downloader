@@ -24,10 +24,10 @@ void task_thread_max30205_recv(void *ptr)
             dmf.m_atemp = 0;
             dmf.m_btemp = 0;
             bsp_max30205_get(&dmf);
-            rt_kprintf("max3025 %d %d\n",dmf.m_atemp,dmf.m_btemp);
-            ut_msg_send(pstMqueueObject->MMqueue_msg,0,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
+            rt_kprintf("max3025 %d %d",dmf.m_atemp,dmf.m_btemp);
+            ut_msg_send(pstMqueueObject->MMqueue_msg,1,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
 
-            rt_kprintf("[Task Module]->task temp thread run\n");
+           // rt_kprintf("[Task Module]->task temp thread run\n");
             rt_thread_mdelay(1000);
         }
         rt_kprintf("[Task Module] temp thread exit\n");
@@ -45,11 +45,11 @@ void task_thread_jfh141_recv(void *ptr)
         while (pstTaskObject->brun_spo2)
         {
             Spo2FrameDef dmf;
-            dmf.m_spo2 = 0;
-            bsp_jfh141_get(&dmf);
-            rt_kprintf("jfh141 %d\n",dmf.m_spo2);
-            ut_msg_send(pstMqueueObject->MMqueue_msg,0,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
-            rt_kprintf("[Task Module] ->task JFH141 thread run\n");
+            dmf.m_spo2 = 98;
+            //bsp_jfh141_get(&dmf);
+            rt_kprintf("jfh141 %d",dmf.m_spo2);
+            ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
+           // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
             rt_thread_mdelay(1000);
         }
         rt_kprintf("[Task Module] spo2 thread exit\n");

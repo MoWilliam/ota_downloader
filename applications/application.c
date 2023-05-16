@@ -65,11 +65,11 @@ void mq_ctrl_init(void)
         
         pstMqueueObject->MMqueue_sensor = ut_mqueue_create("MQUEUE_SENSOR",
                         sizeof(DataFrameDef),
-                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+                        UT_MQUEUE_MINMSG_COUNT,RT_IPC_FLAG_FIFO);
                         
         pstMqueueObject->MMqueue_bio = ut_mqueue_create("MQUEUE_BIO",
                         sizeof(BioFrameDef),
-                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+                        UT_MQUEUE_MINMSG_COUNT,RT_IPC_FLAG_FIFO);
 
         pstMqueueObject->MMqueue_msg = ut_mqueue_create("MQUEUE_MSG",
                         UT_MQUEUE_MSGMAX_SIZE,
@@ -236,8 +236,8 @@ void app_thread_msg_recv(void *ptr)
         while (pstAppObject->brun)
         {
             ut_msg_recv(pstMqueueObject->MMqueue_msg);
-            rt_kprintf("[App Module]-> msg thread run\n");
-            rt_thread_mdelay(10);
+           // rt_kprintf("[App Module]-> msg thread run\n");
+            rt_thread_mdelay(100);
         }
         rt_kprintf("[App Module] thread exit\n");
         ut_thread_exit(pstAppObject->Appthread_msg);
@@ -293,7 +293,7 @@ void appStop(void)
 
 SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
 {
-    rt_kprintf("[App Msg Handle] usMsgId %d\n",pMsg->usMsgID);
+    //rt_kprintf("[App Msg Handle] usMsgId %d\n",pMsg->usMsgID);
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
 	switch(pMsg->usMsgID)
 	{	
@@ -304,7 +304,7 @@ SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
             {
                 if ( pstDeviceObject->m_mqttStatus == 1)
                 {
-                // if (pstDeviceObject->m_deviceStatus == 1)
+                 if (pstDeviceObject->m_deviceStatus == 1)
                     {
                         comm_mqtt_msg(pMsg,pContent);
                     }

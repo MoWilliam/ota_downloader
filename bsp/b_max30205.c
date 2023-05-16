@@ -82,8 +82,8 @@ static void read_temp_humi(DataFrameDef* dmf)
 //    write_reg(i2c_bus, MAX30205_GET_TEMP, 0);      /* 送命令 */
     read_regs(i2c_bus, MAX30205_GET_TEMP, 2, temp);                /* 获取传感器数据 */
 
-    rt_kprintf("temp[0] = %d\r\n",temp[0]);
-    rt_kprintf("temp[1] = %d\r\n",temp[1]);
+//    rt_kprintf("temp[0] = %d\r\n",temp[0]);
+//    rt_kprintf("temp[1] = %d\r\n",temp[1]);
 
     dmf->m_atemp = temp[0];
     dmf->m_btemp = temp[1];
@@ -112,9 +112,9 @@ static void max30205_init(const char *name)
 //        rt_thread_mdelay(400);
         read_regs(i2c_bus, MAX30205_GET_TEMP, 2, temp);                /* 获取传感器数据 */
 
-           rt_kprintf("*******temp[0] = %d\r\n",temp[0]);
-           rt_kprintf("*******temp[1] = %d\r\n",temp[1]);
-           rt_thread_mdelay(400);
+        rt_kprintf("*******temp[0] = %d\r\n",temp[0]);
+        rt_kprintf("*******temp[1] = %d\r\n",temp[1]);
+        rt_thread_mdelay(400);
         initialized = RT_TRUE;
     }
 }

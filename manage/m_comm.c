@@ -104,24 +104,53 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
     cJSON *root = NULL,*data = NULL;
     cJSON *msgType = NULL, *deviceId = NULL, *deviceType = NULL,*cmdType = NULL;
     cJSON *acupointId = NULL,*pressure = NULL;
-    root = cJSON_Parse(message);
-    if(root)
+
+    if ( rt_strcmp( topic,MQ_CONTROL_TOPIC) == 0)
     {
-        msgType = cJSON_GetObjectItem(root, "msgType");
-        deviceId = cJSON_GetObjectItem(root, "deviceId");
-        deviceType = cJSON_GetObjectItem(root, "deviceType");
-        cmdType = cJSON_GetObjectItem(root, "cmdType");
-        data = cJSON_GetObjectItem(root, "data");
-        LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
-        if ( msgType && deviceId && deviceType && cmdType)
+        root = cJSON_Parse(message);
+        if(root)
         {
-            if ( msgType->valueint == emMqttMsgTypeDown)
+            msgType = cJSON_GetObjectItem(root, "msgType");
+            deviceId = cJSON_GetObjectItem(root, "deviceId");
+            deviceType = cJSON_GetObjectItem(root, "deviceType");
+            cmdType = cJSON_GetObjectItem(root, "cmdType");
+            data = cJSON_GetObjectItem(root, "data");
+            LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
+            if ( msgType && deviceId && deviceType && cmdType)
             {
-                acupointId = cJSON_GetObjectItem(data, "acupointId");
-                pressure = cJSON_GetObjectItem(data, "pressure");
-                if ( deviceType->valueint == emDeviceCompositeSensor)
+                if ( msgType->valueint == emMqttMsgTypeDown)
                 {
-                    if ( deviceId->valueint == pstDeviceObject->m_deviceId)
+                    acupointId = cJSON_GetObjectItem(data, "acupointId");
+                    pressure = cJSON_GetObjectItem(data, "pressure");
+                    if ( deviceType->valueint == emDeviceCompositeSensor)
+                    {
+                        if ( rt_strcmp(deviceId->valuestring, pstDeviceObject->m_deviceId) == 0)
+                        {
+                            if ( cmdType->valueint == emMqttCmdStart){
+                                pstDeviceObject->m_deviceStatus = 1;
+                            }
+                            else if ( cmdType->valueint == emMqttCmdStop){
+                                pstDeviceObject->m_deviceStatus = 0;
+                            }
+                            if ( acupointId){
+                                pstDeviceObject->m_check_acupointId = atoi(acupointId->valuestring);
+                            }
+                        }
+                    }
+
+                    if ( deviceType->valueint == emDevicePressSensor)
+                    {
+                        if ( acupointId){
+                            pstDeviceObject->m_check_acupointId = atoi(acupointId->valuestring);
+                        }
+
+                        if ( pressure){
+                            pstDeviceObject->m_pressValue_param = atoi(pressure->valuestring);
+                        }
+
+                    }
+
+                    if ( deviceType->valueint == emDevicePressControlSensor)
                     {
                         if ( cmdType->valueint == emMqttCmdStart){
                             pstDeviceObject->m_deviceStatus = 1;
@@ -129,28 +158,13 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
                         else if ( cmdType->valueint == emMqttCmdStop){
                             pstDeviceObject->m_deviceStatus = 0;
                         }
-                        pstDeviceObject->m_check_acupointId = acupointId->valueint;
-                    }
-                }
-
-                if ( deviceType->valueint == emDevicePressSensor)
-                {
-                    pstDeviceObject->m_check_acupointId = acupointId->valueint;
-                    pstDeviceObject->m_pressValue_param = pressure->valueint;
-                }
-
-                if ( deviceType->valueint == emDevicePressControlSensor)
-                {
-                    if ( cmdType->valueint == emMqttCmdStart){
-                        pstDeviceObject->m_deviceStatus = 1;
-                    }
-                    else if ( cmdType->valueint == emMqttCmdStop){
-                        pstDeviceObject->m_deviceStatus = 0;
                     }
                 }
             }
         }
+        cJSON_Delete(root);
     }
+
     return 0;
 }
 
@@ -170,7 +184,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
             LPDataFrameDef pdmf = (LPDataFrameDef)pContent;
             if ( pdmf != NULL)
             {
-                rt_kprintf("[Mqtt Module] handle data %d ,%d\n",pdmf->m_atemp,pdmf->m_btemp);
+                //rt_kprintf("[Mqtt Module] handle data %d ,%d\n",pdmf->m_atemp,pdmf->m_btemp);
 
                 DataFrameDef mqttDmf;
                 mqttDmf.m_atemp = pdmf->m_atemp;
@@ -196,7 +210,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
             LPSpo2FrameDef pdmf = (LPSpo2FrameDef)pContent;
             if ( pdmf != NULL)
             {
-                rt_kprintf("[Mqtt Module] handle data %d\n",pdmf->m_spo2);
+                //rt_kprintf("[Mqtt Module] handle data %d\n",pdmf->m_spo2);
 
                 Spo2FrameDef mqttDmf;
                 mqttDmf.m_spo2 = pdmf->m_spo2;
@@ -221,7 +235,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
             LPBioFrameDef pbmf = (LPBioFrameDef)pContent;
             if ( pbmf != NULL)
             {
-                rt_kprintf("[Mqtt Module] handle data %d ,%d ,%d \n",pbmf->m_bio_ampere,pbmf->m_bio_value,pbmf->m_bio_voltage);
+                //rt_kprintf("[Mqtt Module] handle data %d ,%d ,%d \n",pbmf->m_bio_ampere,pbmf->m_bio_value,pbmf->m_bio_voltage);
 
                 BioFrameDef mqttDmf;
                 mqttDmf.m_bio_ampere = pbmf->m_bio_ampere;
@@ -248,20 +262,32 @@ void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
 {
     char tValue[8];
 	cJSON *data_json = NULL;
+	cJSON *phase_array = NULL;
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
     if (pstDeviceObject)
     {
         cJSON_AddNumberToObject(root_json, "msgId", g_msgId_data++);
         cJSON_AddNumberToObject(root_json, "msgType", emMqttMsgTypeUp);
-        cJSON_AddStringToObject(root_json, "device_id", pstDeviceObject->m_deviceId);
+        cJSON_AddStringToObject(root_json, "deviceId", pstDeviceObject->m_deviceId);
         cJSON_AddNumberToObject(root_json, "deviceType", emDeviceCompositeSensor);
         cJSON_AddNumberToObject(root_json, "cmdType", emMqttCmdData);
         cJSON_AddNumberToObject(root_json, "acupointId", pstDeviceObject->m_check_acupointId);
-        cJSON_AddItemToObject(root_json, "data", data_json = cJSON_CreateObject());
+
+        phase_array = cJSON_CreateArray();
+        data_json = cJSON_CreateObject();
         //cJSON_AddStringToObject(data_json, "timeStamp", "2023-05-05 10:55:05");
         memset(tValue,0,8);
-        sprintf(tValue,"%d.%d",dmf->m_atemp,dmf->m_btemp);
+        sprintf(tValue,"%d",dmf->m_btemp);
+        if ( strlen(tValue) >0){
+            sprintf(tValue,"%d.%c",dmf->m_atemp,tValue[0]);
+        }else{
+            sprintf(tValue,"%d.%d",dmf->m_atemp,0);
+        }
+        
         cJSON_AddStringToObject(data_json, "tempValue", tValue);
+        cJSON_AddItemToArray(phase_array, data_json);
+
+        cJSON_AddItemToObject(root_json, "data", phase_array);
     }
 
 }
@@ -270,20 +296,26 @@ void spo2DataToJSON(Spo2FrameDef *dmf, cJSON *root_json)
 {
     char tValue[8];
     cJSON *data_json = NULL;
+    cJSON *phase_array = NULL;
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
     if (pstDeviceObject)
     {
         cJSON_AddNumberToObject(root_json, "msgId", g_msgId_data++);
         cJSON_AddNumberToObject(root_json, "msgType", emMqttMsgTypeUp);
-        cJSON_AddStringToObject(root_json, "device_id", pstDeviceObject->m_deviceId);
+        cJSON_AddStringToObject(root_json, "deviceId", pstDeviceObject->m_deviceId);
         cJSON_AddNumberToObject(root_json, "deviceType", emDeviceCompositeSensor);
         cJSON_AddNumberToObject(root_json, "cmdType", emMqttCmdData);
         cJSON_AddNumberToObject(root_json, "acupointId", pstDeviceObject->m_check_acupointId);
-        cJSON_AddItemToObject(root_json, "data", data_json = cJSON_CreateObject());
+
+        phase_array = cJSON_CreateArray();
+        data_json = cJSON_CreateObject();
         //cJSON_AddStringToObject(data_json, "timeStamp", "2023-05-05 10:55:05");
         memset(tValue,0,8);
         sprintf(tValue,"%d",dmf->m_spo2);
         cJSON_AddStringToObject(data_json, "spo2Value", tValue);
+        cJSON_AddItemToArray(phase_array, data_json);
+
+        cJSON_AddItemToObject(root_json, "data", phase_array);
     }
 
 }
@@ -292,20 +324,26 @@ void bioDataToJSON(BioFrameDef *bmf, cJSON *root_json)
 {
     char tValue[8];
 	cJSON *data_json = NULL;
+	cJSON *phase_array = NULL;
 	LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
 	if (pstDeviceObject)
 	{
 	   cJSON_AddNumberToObject(root_json, "msgId", g_msgId_data++);
        cJSON_AddNumberToObject(root_json, "msgType", emMqttMsgTypeUp);
-       cJSON_AddStringToObject(root_json, "device_id", pstDeviceObject->m_deviceId);
+       cJSON_AddStringToObject(root_json, "deviceId", pstDeviceObject->m_deviceId);
        cJSON_AddNumberToObject(root_json, "deviceType", emDeviceCompositeSensor);
        cJSON_AddNumberToObject(root_json, "cmdType", emMqttCmdData);
        cJSON_AddNumberToObject(root_json, "acupointId", pstDeviceObject->m_check_acupointId);
-       cJSON_AddItemToObject(root_json, "data", data_json = cJSON_CreateObject());
+
+       phase_array = cJSON_CreateArray();
+       data_json = cJSON_CreateObject();
        //cJSON_AddStringToObject(data_json, "timeStamp", "2023-05-05 10:55:05");
        memset(tValue,0,8);
        sprintf(tValue,"%d",bmf->m_bio_value);
        cJSON_AddStringToObject(data_json, "bioValue",tValue);
+       cJSON_AddItemToArray(phase_array, data_json);
+
+       cJSON_AddItemToObject(root_json, "data", phase_array);
 	}
 }
 
@@ -321,7 +359,7 @@ void heartbeatToJSON()
         root_json = cJSON_CreateObject();
         cJSON_AddNumberToObject(root_json, "msgId", g_msgId_hearBeat++);
         cJSON_AddNumberToObject(root_json, "msgType", emMqttMsgTypeUp);
-        cJSON_AddStringToObject(root_json, "device_id", pstDeviceObject->m_deviceId);
+        cJSON_AddStringToObject(root_json, "deviceId", pstDeviceObject->m_deviceId);
         cJSON_AddNumberToObject(root_json, "deviceType", emDeviceCompositeSensor);
         cJSON_AddNumberToObject(root_json, "cmdType", emMqttCmdHeartBeat);
         out = cJSON_PrintUnformatted(root_json);
