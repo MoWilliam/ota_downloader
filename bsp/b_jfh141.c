@@ -15,7 +15,7 @@
 
  /* 串口设备名称 不能使用UART2 ,需要重新分配*/
 
-#define SAMPLE_UART_NAME       "uart2"
+#define SAMPLE_UART_NAME       "uart3"
 
 /* 用于接收消息的信号量 */
 static struct rt_semaphore rx_sem;

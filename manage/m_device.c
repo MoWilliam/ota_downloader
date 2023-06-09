@@ -39,14 +39,11 @@ void manage_device_init(void)
     if ( pstDeviceObject)
     {
         pstDeviceObject->m_deviceType = emDeviceCompositeSensor;
-        char uid[DEVICE_LENGTH];
-        get_STM32_uid(uid);
-        memset(pstDeviceObject->m_deviceId,0,DEVICE_LENGTH);
-        strcpy(pstDeviceObject->m_deviceId,uid);
         pstDeviceObject->m_deviceStatus = 0;
         pstDeviceObject->m_mqttStatus =0;
         pstDeviceObject->m_check_acupointId = 0;
         pstDeviceObject->m_pressValue_param = 0;
+        pstDeviceObject->m_mqtt_client_isStart = 0;
     }
 }
 
@@ -116,5 +113,28 @@ void get_STM32_uid(char * deviceid)
     {
         memset(deviceid ,0 ,DEVICE_LENGTH);
         strcpy(deviceid ,STM32_DEVICEID);
+    }
+}
+
+void get_esp8266_mac(char *macAddr)
+{
+
+}
+
+void set_esp8266_mac(rt_uint32_t mac0,rt_uint32_t mac1,rt_uint32_t mac2)
+{
+    LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
+    if ( pstDeviceObject)
+    {
+        char uid0[DEVICE_LENGTH] = {0},uid1[DEVICE_LENGTH] = {0},uid2[DEVICE_LENGTH] = {0};
+        char uid[DEVICE_LENGTH] = {0};
+        sprintf(uid0,"%x",mac0);
+        sprintf(uid1,"%x",mac1);
+        sprintf(uid2,"%x",mac2);
+        strcpy(uid,uid0);
+        strcpy(uid + 2,uid1);
+        strcpy(uid + 4,uid2);
+        memset(pstDeviceObject->m_deviceId,0,DEVICE_LENGTH);
+        strcpy(pstDeviceObject->m_deviceId,uid);
     }
 }

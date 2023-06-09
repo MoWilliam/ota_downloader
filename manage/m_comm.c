@@ -29,12 +29,29 @@ void mqtt_thread_heartbeat(void *ptr)
         LPAppObjectDef pstAppObject = (LPAppObjectDef)ptr;
         while (pstAppObject->brun)
         {
-            if ( pstDeviceObject && pstDeviceObject->m_mqttStatus == 1)
+            if ( pstDeviceObject)
             {
-                heartbeatToJSON();
-                rt_kprintf("[MQTT Module]-> heartbeat thread run\n");
+                if( pstDeviceObject->m_mqtt_client_isStart ==0)
+                {
+                    // 启动MQTT
+                    if ( strlen(pstDeviceObject->m_deviceId)>0)
+                    {
+                        mq_start();
+                        pstDeviceObject->m_mqtt_client_isStart = 1;
+                    }
+                    rt_thread_mdelay(1000);
+                }
+                else
+                {
+                    // 维持不同状态下的心跳
+                    if ( pstDeviceObject->m_mqttStatus == 0 || pstDeviceObject->m_deviceStatus == 0)
+                    {
+                        heartbeatToJSON();
+                        rt_kprintf("[MQTT Module]-> heartbeat thread run\n");
+                    }
+                    rt_thread_mdelay(1000*5);
+                }
             }
-            rt_thread_mdelay(1000*10);
         }
         rt_kprintf("[MQTT Module] thread exit\n");
         ut_thread_exit(pstAppObject->MqttThead_heartBeat);
@@ -196,7 +213,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
-                    rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                  //  rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
                 }
                 cJSON_free(out);
             }
@@ -221,7 +238,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
-                    rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                   // rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
                 }
                 cJSON_free(out);
             }
@@ -248,7 +265,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
-                    rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                   // rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
                 }
                 cJSON_free(out);
             }
@@ -386,7 +403,7 @@ void manage_comm_init(void)
 
 void manage_comm_start(void)
 {
-    mq_start();
+    //mq_start();
     comm_mqtt_heartBeat();
 }
 

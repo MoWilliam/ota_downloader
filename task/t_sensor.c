@@ -45,8 +45,8 @@ void task_thread_jfh141_recv(void *ptr)
         while (pstTaskObject->brun_spo2)
         {
             Spo2FrameDef dmf;
-            dmf.m_spo2 = 98;
-            //bsp_jfh141_get(&dmf);
+            dmf.m_spo2 = 0;
+            bsp_jfh141_get(&dmf);
             rt_kprintf("jfh141 %d",dmf.m_spo2);
             ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
            // rt_kprintf("[Task Module] ->task JFH141 thread run\n");

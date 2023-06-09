@@ -111,9 +111,14 @@ int mq_start(void)
         mq_client.isconnected = 0;
         mq_client.uri = MQ_URI;
 
+        LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
         /* generate the random client ID */
-        //rt_snprintf(cid, sizeof(cid), "rtthread%d", rt_tick_get());
-        rt_strcpy(cid, MQ_CLIENT);
+        if ( pstDeviceObject){
+            rt_snprintf(cid, sizeof(cid), "client-%s", pstDeviceObject->m_deviceId);
+        }else{
+            rt_strcpy(cid, MQ_CLIENT);
+        }
+        rt_kprintf("[MQTT Module]-> mqtt client run -> %s\n",cid);
         /* config connect param */
         memcpy(&mq_client.condata, &condata, sizeof(condata));
         mq_client.condata.clientID.cstring = cid;

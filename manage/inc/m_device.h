@@ -86,6 +86,7 @@ typedef struct TagDeviceObjectDef
     SdUInt8 m_mqttStatus; // 0:offline ,1:online,2:connected
     SdUInt8 m_pressValue_param;
     SdUInt16 m_check_acupointId;
+    SdInt8 m_mqtt_client_isStart;
 
 }DeviceObjectDef,*LPDeviceObjectDef;
 
@@ -93,6 +94,8 @@ LPDeviceObjectDef device_ctrl_object_get(void);
 
 /*STM32 uid*/
 void get_STM32_uid(char * deviceid);
+void get_esp8266_mac(char *macAddr);
+void set_esp8266_mac(rt_uint32_t mac0,rt_uint32_t mac1,rt_uint32_t mac2);
 
 void manage_device_init(void);
 void manage_device_start(void);

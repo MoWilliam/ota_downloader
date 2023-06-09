@@ -181,7 +181,7 @@ void manage_module_uninit(void)
  */
 void bsp_module_init(void)
 {
- //   bsp_jfh141_init();
+    bsp_jfh141_init();
     bsp_max30205_init();
     bsp_esp8266_init();
     bsp_afe4300_init();
