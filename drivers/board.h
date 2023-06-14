@@ -77,7 +77,9 @@ extern "C"
 #define BSP_UART2_RX_PIN       "PD6"
 
 // 增加一个串口给JFH141使用
-
+#define BSP_USING_UART3
+#define BSP_UART3_TX_PIN       "PD8"
+#define BSP_UART3_RX_PIN       "PD9"
 
 
 /*-------------------------- UART CONFIG END --------------------------*/

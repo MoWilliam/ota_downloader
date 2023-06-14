@@ -92,7 +92,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
             data[rwflag++] = ch;
             if(rwflag >= 76)
             {
-                vital_signs_analysis();
+                //vital_signs_analysis();
                 dmf->m_spo2 = data[66];
                 rwflag = 0;
                 break;

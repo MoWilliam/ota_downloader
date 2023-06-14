@@ -23,7 +23,7 @@ void task_thread_bio_recv(void *ptr)
             BioFrameDef dmf;
             dmf.m_bio_value = 0;
             bsp_afe4300_get(&dmf);
-            rt_kprintf("afe4300= %d",dmf.m_bio_value);
+            rt_kprintf("afe4300= %d\n",dmf.m_bio_value);
             ut_msg_send(pstMqueueObject->MMqueue_msg,2,0,emMqttMsgBioData,&dmf,sizeof(dmf));
            // rt_kprintf("[Task Module] ->task bio thread run\n");
             rt_thread_mdelay(1000);
