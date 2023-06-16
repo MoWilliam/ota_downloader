@@ -251,10 +251,6 @@ void app_thread_msg_recv(void *ptr)
  */
 void appStart(void)
 {
-    // BSP 驱动初始化
-    bsp_module_init();
-    bsp_module_start();
-
     // mqueue 消息队列初始化
     mq_ctrl_init();
     // message 短消息队列初始化
@@ -263,14 +259,21 @@ void appStart(void)
     app_module_init();
     app_module_start();
 
+    // manage 模块初始化
+    manage_module_init();
+    manage_module_start();
+
+    // BSP 驱动初始化
+    rt_hw_us_delay(1000*100);
+    bsp_module_init();
+    rt_hw_us_delay(1000*100);
+    bsp_module_start();
+
     // task 模块初始化
     task_module_init();
     // task 模块启动
     task_module_start();
 
-    // manage 模块初始化
-    manage_module_init();
-    manage_module_start();
 }
 
 /**
