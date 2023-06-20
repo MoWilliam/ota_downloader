@@ -87,6 +87,7 @@ typedef struct TagDeviceObjectDef
     SdUInt8 m_pressValue_param;
     SdUInt16 m_check_acupointId;
     SdInt8 m_mqtt_client_isStart;
+    SdInt8 m_device_collect;//0:未采集，1:采集（根据血氧数据来判断）
 
 }DeviceObjectDef,*LPDeviceObjectDef;
 

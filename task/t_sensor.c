@@ -40,6 +40,7 @@ void task_thread_jfh141_recv(void *ptr)
     rt_kprintf("task_thread_temp_recv thread run\n");
     if(SD_NULL != ptr)
     {
+        LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
         LPTaskObjectDef pstTaskObject = (LPTaskObjectDef)ptr;
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
         while (pstTaskObject->brun_spo2)
@@ -47,8 +48,15 @@ void task_thread_jfh141_recv(void *ptr)
             Spo2FrameDef dmf;
             dmf.m_spo2 = 0;
             bsp_jfh141_get(&dmf);
+            if ( dmf.m_spo2 >0){
+                pstDeviceObject->m_device_collect = 1;
+            }else{
+                pstDeviceObject->m_device_collect = 0;
+            }
             rt_kprintf("jfh141 %d",dmf.m_spo2);
-            ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
+            if ( pstDeviceObject->m_device_collect == 1){
+                ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
+            }
            // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
             rt_thread_mdelay(1000);
         }
