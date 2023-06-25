@@ -47,6 +47,7 @@ void task_thread_jfh141_recv(void *ptr)
         {
             Spo2FrameDef dmf;
             dmf.m_spo2 = 0;
+            dmf.m_bk = 0;
             bsp_jfh141_get(&dmf);
             if ( dmf.m_spo2 >0){
                 pstDeviceObject->m_device_collect = 1;
