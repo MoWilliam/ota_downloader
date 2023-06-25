@@ -59,6 +59,7 @@ typedef struct TagSpo2FrameDef
     SdUInt8 m_deviceStatus;
     /* data */
     SdUInt16 m_spo2;
+    SdUInt16 m_bk;
 
 }Spo2FrameDef,*LPSpo2FrameDef;
 

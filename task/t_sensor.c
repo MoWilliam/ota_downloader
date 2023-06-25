@@ -53,7 +53,7 @@ void task_thread_jfh141_recv(void *ptr)
             }else{
                 pstDeviceObject->m_device_collect = 0;
             }
-            rt_kprintf("jfh141 %d",dmf.m_spo2);
+            rt_kprintf("jfh141 %d %d",dmf.m_spo2,dmf.m_bk);
             if ( pstDeviceObject->m_device_collect == 1){
                 ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
             }

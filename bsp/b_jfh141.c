@@ -94,6 +94,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
             {
                 //vital_signs_analysis();
                 dmf->m_spo2 = data[66];
+                dmf->m_bk = data[67];
                 rwflag = 0;
                 break;
             }

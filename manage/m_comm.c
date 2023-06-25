@@ -231,7 +231,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
 
                 Spo2FrameDef mqttDmf;
                 mqttDmf.m_spo2 = pdmf->m_spo2;
-
+                mqttDmf.m_bk = pdmf->m_bk;
                 spo2DataToJSON(&mqttDmf,root_json);
                 out = cJSON_PrintUnformatted(root_json);
                 len = strlen(out);
@@ -330,6 +330,11 @@ void spo2DataToJSON(Spo2FrameDef *dmf, cJSON *root_json)
         memset(tValue,0,8);
         sprintf(tValue,"%d",dmf->m_spo2);
         cJSON_AddStringToObject(data_json, "spo2Value", tValue);
+
+        memset(tValue,0,8);
+        sprintf(tValue,"%d",dmf->m_bk);
+        cJSON_AddStringToObject(data_json, "bkValue", tValue);
+
         cJSON_AddItemToArray(phase_array, data_json);
 
         cJSON_AddItemToObject(root_json, "data", phase_array);
