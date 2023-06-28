@@ -95,6 +95,11 @@ static void mq_pipe_callback(MQTTClient *c)
     //LOG_D("inter mqtt_pipe_callback!");
 }
 
+static void mq_disconnect_callback(MQTTClient *c)
+{
+    LOG_D("inter mq_disconnect_callback!");
+}
+
 int mq_start(void)
 {
     /* init condata param by using MQTTPacket_connectData_initializer */
@@ -149,6 +154,7 @@ int mq_start(void)
         mq_client.online_callback = mq_online_callback;
         mq_client.offline_callback = mq_offline_callback;
         mq_client.pipe_callback = mq_pipe_callback;
+        mq_client.disconnect_callback = mq_disconnect_callback;
 
         /* set subscribe table and event callback */
         mq_client.messageHandlers[0].topicFilter = rt_strdup(MQ_CONTROL_TOPIC);
