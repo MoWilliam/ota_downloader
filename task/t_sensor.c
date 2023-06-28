@@ -57,6 +57,10 @@ void task_thread_jfh141_recv(void *ptr)
             rt_kprintf("jfh141 %d %d",dmf.m_spo2,dmf.m_bk);
             if ( pstDeviceObject->m_device_collect == 1){
                 ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
+            }else if (pstDeviceObject->m_device_collect == 0){
+                dmf.m_spo2 = 0;
+                dmf.m_bk = 0;
+                ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
             }
            // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
             rt_thread_mdelay(1000);
