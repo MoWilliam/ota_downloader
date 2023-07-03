@@ -64,11 +64,7 @@ void task_thread_jfh141_recv(void *ptr)
             }
            // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
             rt_thread_mdelay(1000);
-        }else{
-                dmf.m_spo2 = 0;
-                dmf.m_bk = 0;
-                ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
-            }
+        }
         //rt_kprintf("[Task Module] spo2 thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_spo2);
     }
