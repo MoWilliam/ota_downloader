@@ -57,6 +57,27 @@ void manage_device_stop(void)
     
 }
 
+void manage_prectrdevice_init(void)   //气动单元
+{
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_ctrl_object_get();
+    if ( pstPreCtrFrameDef )
+    {
+        pstPreCtrFrameDef->m_deviceType = emDevicePressControlSensor;
+        pstPreCtrFrameDef->m_deviceStatus = 0;
+        //pstPreCtrFrameDef->m_presorID = 0;
+
+    }
+}
+
+void manage_prectrdevice_start(void)
+{
+    
+}
+void manage_prectrdevice_stop(void)
+{
+
+}
+
 void max30205_deviceid(char * deviceid)
 {
     if ( deviceid != SD_NULL)

@@ -22,12 +22,15 @@
 #include "bsp/inc/b_max30205.h"
 #include "bsp/inc/b_esp8266.h"
 #include "bsp/inc/b_afe4300.h"
+#include "bsp/inc/b_prectrgpio.h"
+#include "bsp/inc/b_prectrUART.h"
 
 static AppObjectDef g_AppObject;
 static TaskObjectDef g_TaskObject;
 static ManageObjectDef g_ManageObject;
 static MqueueObjectDef g_MqueueObject;
 static MessageObjectDef g_MessageObject;
+static PressControlObjectDef g_PressControlObject;
 
 void app_thread_msg_recv(void *ptr);
 
@@ -57,12 +60,17 @@ LPMessageObjectDef message_ctrl_object_get(void)
     return &g_MessageObject;
 }
 
+LPPressControlObjectDef pressControl_ctrl_object_get(void)
+{
+    return &g_PressControlObject;
+}
+
 void mq_ctrl_init(void)
 {
     LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
     if (SD_NULL != pstMqueueObject)
     {
-        
+    #if COMPOSITE_CONTROL_FLAG
         pstMqueueObject->MMqueue_sensor = ut_mqueue_create("MQUEUE_SENSOR",
                         sizeof(DataFrameDef),
                         UT_MQUEUE_MINMSG_COUNT,RT_IPC_FLAG_FIFO);
@@ -74,6 +82,13 @@ void mq_ctrl_init(void)
         pstMqueueObject->MMqueue_msg = ut_mqueue_create("MQUEUE_MSG",
                         UT_MQUEUE_MSGMAX_SIZE,
                         UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+    #endif
+
+    #if PRESS_CONTROL_FLAG
+        pstMqueueObject->MMqueue_preheartbeat = ut_mqueue_create("MQUEUE_preUartHeartbeat",
+                        UT_MQUEUE_MSGMAX_SIZE,
+                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+    #endif
     }
 }
 
@@ -82,12 +97,19 @@ void mq_ctrl_unint(void)
     LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
     if (SD_NULL != pstMqueueObject)
     {
+    #if COMPOSITE_CONTROL_FLAG
         ut_mqueue_delete(pstMqueueObject->MMqueue_msg);
         pstMqueueObject->MMqueue_msg = SD_NULL;
         ut_mqueue_delete(pstMqueueObject->MMqueue_bio);
         pstMqueueObject->MMqueue_bio = SD_NULL;
         ut_mqueue_delete(pstMqueueObject->MMqueue_sensor);
         pstMqueueObject->MMqueue_sensor = SD_NULL;
+    #endif
+
+    #if PRESS_CONTROL_FLAG
+        ut_mqueue_delete(pstMqueueObject->MMqueue_preheartbeat);
+        pstMqueueObject->MMqueue_preheartbeat = SD_NULL;
+    #endif
     }
 }
 
@@ -152,26 +174,49 @@ void task_module_uninit(void)
  */
 void manage_module_init(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     manage_comm_init();
     manage_sensor_init();
     manage_device_init();
     manage_platform_init();
+#endif
+
+#if PRESS_CONTROL_FLAG
+    manage_commbyte_init();
+    manage_prectr_init();
+    manage_emerstop_init();
+#endif
 }
 
 void manage_module_start(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     manage_comm_start();
     manage_sensor_start();
     manage_device_start();
     manage_platform_start();
+#endif
+
+#if PRESS_CONTROL_FLAG
+    manage_commbyte_start();  //启动心跳包线程
+    manage_prectr_start();
+    void manage_prectruart_start();
+#endif
 }
 
 void manage_module_uninit(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     manage_comm_stop();
     manage_sensor_stop();
     manage_device_stop();
     manage_platform_stop();
+#endif
+#if PRESS_CONTROL_FLAG
+    manage_commbyte_stop();   //停止心跳包线程，标志位翻转
+    manage_prectr_stop();
+    manage_prectruart_stop();
+#endif
 }
 
 /**
@@ -181,10 +226,16 @@ void manage_module_uninit(void)
  */
 void bsp_module_init(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     bsp_jfh141_init();
     bsp_max30205_init();
     bsp_esp8266_init();
     bsp_afe4300_init();
+#endif
+#if PRESS_CONTROL_FLAG
+    bsp_PreCtr_GPIO_Init();
+    bsp_uart_init();
+#endif
 }
 
 void bsp_module_start(void)

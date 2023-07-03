@@ -52,7 +52,7 @@ void task_thread_jfh141_recv(void *ptr)
             if ( dmf.m_spo2 >0){
                 pstDeviceObject->m_device_collect = 1;
             }else{
-                pstDeviceObject->m_device_collect = 0;
+                pstDeviceObject->m_device_collect = 1; //特殊修改0630，0
             }
             rt_kprintf("jfh141 %d %d",dmf.m_spo2,dmf.m_bk);
             if ( pstDeviceObject->m_device_collect == 1){
@@ -64,8 +64,12 @@ void task_thread_jfh141_recv(void *ptr)
             }
            // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
             rt_thread_mdelay(1000);
-        }
-        rt_kprintf("[Task Module] spo2 thread exit\n");
+        }else{
+                dmf.m_spo2 = 0;
+                dmf.m_bk = 0;
+                ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
+            }
+        //rt_kprintf("[Task Module] spo2 thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_spo2);
     }
 }

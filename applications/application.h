@@ -16,6 +16,9 @@
 #include "ut/inc/ut_thread.h"
 #include "manage/inc/m_device.h"
 
+#define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
+#define PRESS_CONTROL_FLAG 0  // 压力控制器
+
 /** 
  * Application object
  * thread
@@ -62,6 +65,24 @@ typedef struct TagManageObjectDef
 
 }ManageObjectDef,*LPManageObjectDef;
 
+
+/** 
+ * PressControl object
+ * thread
+ * data
+ * 
+ */
+typedef struct TagPressControlObjectDef
+{
+    UtThread*  MqThead_prectrheartBeat;   //心跳包线程以及标志位
+    SdBool    brun_mqprectrheartBeat;
+    UtThread*  Thead_prectrRecv;   //加压和减压以及标志位
+    SdBool    brun_prectrRecv;
+    UtThread*  Thead_prectrUart;   //加压和减压以及标志位
+    SdBool    brun_prectrUart;
+
+}PressControlObjectDef,*LPPressControlObjectDef;
+
 /** 
  * UtMqueue object
  * 
@@ -74,6 +95,8 @@ typedef struct TagMqueueObjectDef
     SdChar *   MMqueue_bio_name;
     UtMqueue*  MMqueue_msg;
     SdChar *   MMqueue_msg_name;
+    UtMqueue*  MMqueue_preheartbeat;
+    SdChar *   MMqueue_preheartbeat_name;
 
 }MqueueObjectDef,*LPMqueueObjectDef;
 
@@ -132,6 +155,12 @@ LPMqueueObjectDef mq_ctrl_object_get(void);
  * 
  */
 LPMessageObjectDef message_ctrl_object_get(void);
+
+/** 
+ * get PressControl module object
+ * 
+ */
+LPPressControlObjectDef pressControl_ctrl_object_get(void);
 
 
 /**

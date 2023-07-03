@@ -92,6 +92,33 @@ typedef struct TagDeviceObjectDef
 
 }DeviceObjectDef,*LPDeviceObjectDef;
 
+typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
+{
+    SdUInt16 msgID;
+    SdUInt8 m_presorID;  //所需要控制加压设备
+    SdUInt8 m_cmdtype;  //加压和泄压命令
+
+}PreCtrmqFrameDef,*LPPreCtrmqFrameDef;
+
+typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
+{
+    SdUInt16 msgID;
+    char m_deviceid[DEVICE_LENGTH];
+    SdUInt8 m_deviceType;
+    SdUInt8 m_deviceStatus;
+
+    //SdUInt8 m_presorID;        设备号码 设置一个组出来z
+    //SdUInt8 m_prectrcmdtype;   0,1状态位
+}PreCtrFrameDef,*LPPreCtrFrameDef;
+
+typedef enum TagPrectrDevList { 
+    PressureSensor1, 
+    PressureSensor2,
+    PressureSensor3, 
+    PressureSensor4, 
+    PressureSensor5
+}prectrDevList;    //设定一个设备id的数组
+
 LPDeviceObjectDef device_ctrl_object_get(void);
 
 /*STM32 uid*/
@@ -109,5 +136,9 @@ void jfh141_deviceid(char * deviceid);
 int jfh141_deviceStatus(void);
 void afe4300_deviceid(char * deviceid);
 int afe4300_deviceStatus(void);
+
+void manage_prectrdevice_init(void);
+void manage_prectrdevice_start(void);
+void manage_prectrdevice_stop(void);
 
 #endif /* MANAGER_M_DEVICE_H_ */
