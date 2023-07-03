@@ -294,9 +294,9 @@ void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
         data_json = cJSON_CreateObject();
         //cJSON_AddStringToObject(data_json, "timeStamp", "2023-05-05 10:55:05");
         memset(tValue,0,8);
-        sprintf(tValue,"%d",dmf->m_btemp);
+        sprintf(tValue,"%d",dmf->m_btemp / 10);
         if ( strlen(tValue) >0){
-            sprintf(tValue,"%d.%c",dmf->m_atemp,tValue[0]);
+            sprintf(tValue,"%d.%s",dmf->m_atemp,tValue);
         }else{
             sprintf(tValue,"%d.%d",dmf->m_atemp,0);
         }
