@@ -139,7 +139,7 @@ void afe4300_init(void)
 
     // Reset AFE4300
     AFE4300_Reset();
-
+/***************************************************
 #if FWR_MODEL
     //FWR
     // 0x01 ADC_CONTROL_REGISTER1 这里很多位都是配置不同功能的
@@ -190,7 +190,7 @@ void afe4300_init(void)
     rt_kprintf("spiData = %x\r\n",spiRead(0x1A));
     spiWrite(0x1A, 0x0030);
 #else
-
+********************************************************/
     spiWrite(0x01, 0x4170);//0x4170); // 860SPS
     rt_kprintf("spiData = %x\r\n",spiRead(0x01));
     spiWrite(0x01, 0x4170);
@@ -241,7 +241,7 @@ void afe4300_init(void)
     spiWrite(0x1A, 0x0030); // 空的寄存器,总是写0x0030
     rt_kprintf("spiData = %x\r\n",spiRead(0x1A));
     spiWrite(0x1A, 0x0030);
-#endif
+//#endif
 
     //kalman_lcw：卡尔曼滤波器结构体
     //init_x：待测量的初始值
