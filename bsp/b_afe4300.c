@@ -190,9 +190,10 @@ void afe4300_init(void)
     rt_kprintf("spiData = %x\r\n",spiRead(0x1A));
     spiWrite(0x1A, 0x0030);
 #else
-    spiWrite(0x01, 0x4130);//0x4170); // 860SPS
+
+    spiWrite(0x01, 0x4170);//0x4170); // 860SPS
     rt_kprintf("spiData = %x\r\n",spiRead(0x01));
-    spiWrite(0x01, 0x4130);
+    spiWrite(0x01, 0x4170);
     // DEVICE_CONTROL1 第0位和第2位 和电源相关
     // 开BMP还是体重
 
@@ -202,22 +203,26 @@ void afe4300_init(void)
     spiWrite(0x03, 0xFFFF); // 空的寄存器
     rt_kprintf("spiData = %x\r\n",spiRead(0x03));
     spiWrite(0x03, 0xFFFF);
-    spiWrite(0x09, 0x0006);//6006);
+    spiWrite(0x09, 0x6006);//6006);
     rt_kprintf("spiData = %x\r\n",spiRead(0x09));
-    spiWrite(0x09, 0x0006);
+    spiWrite(0x09, 0x6006);
     // 设置DAC频率     250k
-    spiWrite(0x0E, 0x0008);//0x00FF);
+    spiWrite(0x0E, 0x0040);//0x00FF);
     rt_kprintf("spiData = %x\r\n",spiRead(0x0E));
-    spiWrite(0x0E, 0x0008);
+    spiWrite(0x0E, 0x0040);
 
     // 开一个电流的通道     0：+ 1：-
-    spiWrite(0x0A, 0x0201);
+    //spiWrite(0x0A, 0x0201);
+    spiWrite(0x0A, 0x0804);   //0X0A地址写电流通道（2：7：电流输入位选择；10：15电流输出选择）
     rt_kprintf("spiData = %x\r\n",spiRead(0x0A));
-    spiWrite(0x0A, 0x0201);
+    //spiWrite(0x0A, 0x0201);
+    spiWrite(0x0A, 0x0804);
     // 开一个电压测量通道     0：+ 1：-
-    spiWrite(0x0B, 0x0201);
+    //spiWrite(0x0B, 0x0201);
+    spiWrite(0x0B, 0x0804); //0X0B地址写电压通道（2：7：电压输入位选择；10：15电压输出选择）
     rt_kprintf("spiData = %x\r\n",spiRead(0x0B));
-    spiWrite(0x0B, 0x0201);
+    //spiWrite(0x0B, 0x0201);
+    spiWrite(0x0B, 0x0804);
     // 分频    IQ_DEMOD_CLK      BCM_DAC_FREQ
     //  1        1M                 250K !
     //  2        500K               125K !
@@ -230,9 +235,9 @@ void afe4300_init(void)
     rt_kprintf("spiData = %x\r\n",spiRead(0x0C));
     spiWrite(0x0C, 0x0800);
     // IQ_DEMOD_CLK_DIV_FAC:1分频
-    spiWrite(0x0F, 0x2800);//0000);
+    spiWrite(0x0F, 0x1000);//0000);
     rt_kprintf("spiData = %x\r\n",spiRead(0x0F));
-    spiWrite(0x0F, 0x2800);
+    spiWrite(0x0F, 0x1000);
     spiWrite(0x1A, 0x0030); // 空的寄存器,总是写0x0030
     rt_kprintf("spiData = %x\r\n",spiRead(0x1A));
     spiWrite(0x1A, 0x0030);
