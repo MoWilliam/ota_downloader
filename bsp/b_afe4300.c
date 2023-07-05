@@ -207,7 +207,8 @@ void afe4300_init(void)
     rt_kprintf("spiData = %x\r\n",spiRead(0x09));
     spiWrite(0x09, 0x6006);
     // 设置DAC频率     250k
-    spiWrite(0x0E, 0x0040);//0x00FF);
+    spiWrite(0x0E, 0x0040);//0x00FF)原始频率
+    //spiWrite(0x0E, 0x0001);    //3.9k
     rt_kprintf("spiData = %x\r\n",spiRead(0x0E));
     spiWrite(0x0E, 0x0040);
 
@@ -340,7 +341,10 @@ void bsp_afe4300_get(BioFrameDef* dmf)
     short afe4300Data_new = 0;
     float I_ADC_Value = 0;
     float Q_ADC_Value = 0;
-    float k = 2.0; // 系数，需要测量确定
+    //float k = 2.0; // 系数，需要测量确定
+    float k = 0.67761;
+    //float k = 1.49799;
+
     float z;
 
     // ADC信号的来源 ，参考电压选择

@@ -213,7 +213,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
-                  //  rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                    //rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
                 }
                 cJSON_free(out);
             }
@@ -238,7 +238,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
-                   // rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                    //rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
                 }
                 cJSON_free(out);
             }
