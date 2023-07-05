@@ -341,9 +341,8 @@ void bsp_afe4300_get(BioFrameDef* dmf)
     short afe4300Data_new = 0;
     float I_ADC_Value = 0;
     float Q_ADC_Value = 0;
-    //float k = 2.0; // 系数，需要测量确定
-    float k = 0.67761;
-    //float k = 1.49799;
+    float k = 0.67761;  // 系数，需要测量确定
+    //float k = 0.6710;  //校正后k参数（针对于低阻抗数值）
 
     float z;
 
@@ -366,7 +365,8 @@ void bsp_afe4300_get(BioFrameDef* dmf)
     //rt_kprintf("angle=%f\r\n",angle);
     //angle = kalman_filter(&kalman_angle,angle) - angle_offset;//;//卡尔曼滤波结果再减去偏置
     //rt_kprintf("angle=%f\r\n",fabs(angle));
-    z = (1 / k) * sqrt(I_ADC_Value * I_ADC_Value + Q_ADC_Value * Q_ADC_Value);
+    z = (1 / k) * sqrt(I_ADC_Value * I_ADC_Value + Q_ADC_Value * Q_ADC_Value) ;
+    z= 1.01 * z + 0.31;   //校正后的
     //rt_kprintf("kalman z=%f\r\n",z);
     //z = kalman_filter(&kalman_z, z) - z_offset; //;//卡尔曼滤波结果再减去偏置
     //rt_kprintf("%f  %f\r\n",angle,z); //θ转为角度了
