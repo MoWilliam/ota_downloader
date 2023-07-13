@@ -57,7 +57,7 @@ void bsp_uart_init(void)   //将压力控制器的uart设备放在其中，uart�
     /* 发送字符串 */
    // rt_device_write(serial, 0, str, 1);
     //创建 serial接收的线程
-
+    //rt_kprintf("  /b_prectrUART.c/uart4 init\n");  //输出打印
     return ret;
 }
 

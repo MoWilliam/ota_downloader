@@ -82,6 +82,13 @@ extern "C"
 #define BSP_UART3_RX_PIN       "PD9"
 
 
+
+// 气动单元uart
+#define BSP_USING_UART4
+#define BSP_UART4_TX_PIN       "PA0"
+#define BSP_UART4_RX_PIN       "PA1"
+
+
 /*-------------------------- UART CONFIG END --------------------------*/
 
 /*-------------------------- I2C CONFIG BEGIN --------------------------*/

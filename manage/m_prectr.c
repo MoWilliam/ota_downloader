@@ -132,6 +132,7 @@ void m_prectruart_thread(void)  //开启线程，UART信号的接收
                                             UT_THREAD_TICK_DEFAULT,
                                             bsp_uart_get,pstPressControlObject);;
             }
+            //rt_kprintf("  /m_prectr.c/ m_prectruart_thread run\n");   //添加输出打印
 
         }
     }
@@ -151,6 +152,7 @@ void m_prectr_thread(void)
                             UT_THREAD_TICK_DEFAULT,
                             prectr_recv_thread_entry,pstPressControlObject);
         }
+        //rt_kprintf("  /m_prectr.c/ m_prectr_thread run\n");   //添加输出打印
 
     }
 }
