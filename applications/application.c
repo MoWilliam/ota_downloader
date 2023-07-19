@@ -215,7 +215,7 @@ void manage_module_uninit(void)
 #if PRESS_CONTROL_FLAG
     manage_commbyte_stop();   //停止心跳包线程，标志位翻转
     manage_prectr_stop();
-    manage_prectruart_stop();
+    manage_prectruart_stop(); 
 #endif
 }
 
