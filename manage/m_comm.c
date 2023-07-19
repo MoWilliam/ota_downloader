@@ -278,6 +278,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
 void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
 {
     char tValue[8];
+    double temp_Value;
 	cJSON *data_json = NULL;
 	cJSON *phase_array = NULL;
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
@@ -294,12 +295,17 @@ void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
         data_json = cJSON_CreateObject();
         //cJSON_AddStringToObject(data_json, "timeStamp", "2023-05-05 10:55:05");
         memset(tValue,0,8);
-        sprintf(tValue,"%d",dmf->m_btemp / 10);
-        if ( strlen(tValue) >0){
-            sprintf(tValue,"%d.%s",dmf->m_atemp,tValue);
-        }else{
-            sprintf(tValue,"%d.%d",dmf->m_atemp,0);
-        }
+        //sprintf(tValue,"%d",dmf->m_btemp);
+        temp_Value =dmf->m_btemp*0.00390625;
+        temp_Value += dmf->m_atemp;
+        rt_kprintf("max3025************** %.2f",temp_Value);
+        sprintf(tValue,"%.2f",temp_Value);
+
+        //if ( strlen(tValue) >0){
+         //   sprintf(tValue,"%d.%s",dmf->m_atemp,tValue);
+        //}else{
+        //    sprintf(tValue,"%d.%d",dmf->m_atemp,0);
+        //}
         
         cJSON_AddStringToObject(data_json, "tempValue", tValue);
         cJSON_AddItemToArray(phase_array, data_json);

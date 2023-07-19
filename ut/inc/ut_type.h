@@ -37,7 +37,7 @@ typedef unsigned int    SdUInt32;
 #define  SD_SUCCESS     (0)
 #define  SD_FAIL        (-1)
 
-typedef struct rt_thread UtThread;
+typedef struct rt_thread  UtThread;
 
 typedef struct rt_messagequeue UtMqueue;
 typedef struct rt_mailbox UtMessage;
