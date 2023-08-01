@@ -19,22 +19,30 @@ static double p_last = 0;
 static double x_last = 0;
 
 //综采设备选择
-#define e2b8d6 0
-#define e1ee32 0
-#define e22bb7 0
-#define e28771 0
-#define e22526 0
-#define e27275 0
+
+//wifi:mFi-14CD4A   浙江设备A
+#define e27275 1
 #define e7aa1b 0
-#define e271fd 0
-#define e2336c 0
-#define e2eb70 0
 #define e7e033 0
-#define e22a8a 0
-#define e22635 0
+#define e1ee32 0
+#define e1f1c6 0
+
+//wifi:mFi-14bEE7   浙江设备B
+#define e2b8d6 0
+#define e28771 0
 #define e2bded 0
-#define e1f1c6 1
 #define e2c4a7 0
+#define e2eb70 0
+
+//wifi:mFi-14C96B   山东设备
+#define e22635 0
+#define e22bb7 0
+#define e22a8a 0
+#define e271fd 0
+#define e22526 0
+
+//剩余未配置wifi设备
+#define e2336c 0
 #define e23035 0
 
 //过程噪音
