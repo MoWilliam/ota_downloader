@@ -49,6 +49,8 @@ typedef struct TagTaskObjectDef
     SdBool     brun_bio;
     UtThread*  Taskthread_spo2;
     SdBool     brun_spo2;
+    UtThread*  Taskthread_power;
+    SdBool     brun_sensor;
 
 }TaskObjectDef,*LPTaskObjectDef;
 

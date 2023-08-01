@@ -18,6 +18,30 @@
 static struct rt_i2c_bus_device *i2c_bus = RT_NULL;     /* I2C总线设备句柄 */
 static rt_bool_t initialized = RT_FALSE;                /* 传感器初始化状态 */
 
+static double p_last = 0;
+static double x_last = 0;
+
+//过程噪音
+#define P_Q 0.1  // Q:过程噪声，Q增大，动态响应变快，收敛稳定性变坏
+//测量噪声
+#define M_R 0.01 //R:测量噪声，R增大，动态响应变慢，收敛稳定性变好
+
+/********卡拉曼滤波************/
+extern float kalman_filter_temp(float inData)
+{
+  static float prevData=0;
+
+  static float p=0.01, q=P_Q, r=M_R, kGain=0; //其中p的初值可以随便取，但是不能为0（为0的话卡尔曼滤波器就认为已经是最优滤波器了）
+    p = p+q;
+    kGain = p/(p+r);
+
+    inData = prevData+(kGain*(inData-prevData));
+    p = (1-kGain)*p;
+
+    prevData = inData;
+
+    return inData;
+}
 /* 写传感器寄存器 */
 static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint8_t *data)
 {

@@ -13,6 +13,7 @@
 
 #include "application.h"
 
+extern float kalman_filter_temp(float inData);
 void bsp_max30205_init(void);
 void bsp_max30205_get(DataFrameDef* dmf);
 

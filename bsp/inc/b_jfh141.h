@@ -11,6 +11,7 @@
 #define BSP_INC_B_JFH141_H_
 #include "application.h"
 
+extern float kalman_filter_jfh141(float inData);
 void bsp_jfh141_init(void);
 void bsp_jfh141_get(Spo2FrameDef* dmf);
 

@@ -298,7 +298,8 @@ void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
         //sprintf(tValue,"%d",dmf->m_btemp);
         temp_Value =dmf->m_btemp*0.00390625;
         temp_Value += dmf->m_atemp;
-        rt_kprintf("max3025************** %.2f",temp_Value);
+        //temp_Value = kalman_filter_temp(temp_Value);
+        rt_kprintf("max302: %.2f",temp_Value);
         sprintf(tValue,"%.2f",temp_Value);
 
         //if ( strlen(tValue) >0){

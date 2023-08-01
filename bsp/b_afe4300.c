@@ -18,6 +18,25 @@
 static double p_last = 0;
 static double x_last = 0;
 
+//综采设备选择
+#define e2b8d6 0
+#define e1ee32 0
+#define e22bb7 0
+#define e28771 0
+#define e22526 0
+#define e27275 0
+#define e7aa1b 0
+#define e271fd 0
+#define e2336c 0
+#define e2eb70 0
+#define e7e033 0
+#define e22a8a 0
+#define e22635 0
+#define e2bded 0
+#define e1f1c6 1
+#define e2c4a7 0
+#define e23035 0
+
 //过程噪音
 #define P_Q 0.2  // Q:过程噪声，Q增大，动态响应变快，收敛稳定性变坏
 //测量噪声
@@ -353,6 +372,77 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 
     z = (1 / k) * sqrt(I_ADC_Value * I_ADC_Value + Q_ADC_Value * Q_ADC_Value) ;
     z= 1.01 * z + 0.31; //校正后的
+
+#if e2b8d6
+    z = 0.99 * z + 13.57;
+#endif
+
+#if e1ee32
+    z = 1.01 *z -12.06;
+
+#endif
+
+#if e22bb7
+    z = 0.99 * z + 2.38;
+#endif
+
+#if e28771
+    z= 0.99 * z + 0.94;
+#endif
+
+#if e22526
+    z= z + 7;
+#endif
+
+#if e27275
+    z= z + 4;
+#endif
+
+#if e7aa1b
+    z= 1.01 * z + 2.84;
+#endif
+
+#if e271fd
+    z= z + 4.25;
+#endif
+
+#if e2336c
+    z= 1.01 * z - 4.48;
+#endif
+
+#if e2eb70
+    z= z - 3;
+#endif
+
+#if e7e033
+    z= 1.01 * z - 4.48;
+#endif
+
+#if e22a8a
+    z= 0.99 * z - 2.02;
+#endif
+
+#if e22635
+    z= z + 11;
+#endif
+
+#if e2bded
+    z= z - 7;
+#endif
+
+#if e1f1c6
+    z= 0.96 * z + 5.95;
+#endif
+
+#if e2c4a7
+    z= z + 10;
+#endif
+
+#if e23035
+    z= 1.01 * z + 3.34;
+#endif
+
+
     //rt_kprintf("z=%f\r\n", z);
     z = kalman_filter(z); //;//做卡尔曼滤波
     //rt_kprintf("kalman z=%f\r\n",z);

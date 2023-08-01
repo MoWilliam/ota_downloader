@@ -25,6 +25,31 @@ static rt_device_t serial;
 uint8_t rwflag = 0;
 uint8_t data[128] = {0};
 
+static double p_last = 0;
+static double x_last = 0;
+
+//过程噪音
+#define P_Q 0.1  // Q:过程噪声，Q增大，动态响应变快，收敛稳定性变坏
+//测量噪声
+#define M_R 0.05 //R:测量噪声，R增大，动态响应变慢，收敛稳定性变好
+
+/********卡拉曼滤波************/
+extern float kalman_filter_jfh141(float inData)
+{
+  static float prevData=0;
+
+  static float p=0.01, q=P_Q, r=M_R, kGain=0; //其中p的初值可以随便取，但是不能为0（为0的话卡尔曼滤波器就认为已经是最优滤波器了）
+    p = p+q;
+    kGain = p/(p+r);
+
+    inData = prevData+(kGain*(inData-prevData));
+    p = (1-kGain)*p;
+
+    prevData = inData;
+
+    return inData;
+}
+
 /* 接收数据回调函数 */
 static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
 {
@@ -51,7 +76,7 @@ void bsp_jfh141_init(void)
     rt_err_t ret = RT_EOK;
     char uart_name[RT_NAME_MAX];
 //    char str[] = "hello RT-Thread!\r\n";
-    uint8_t c_on = 0x8A;
+    uint8_t c_on = 0x8A; //采集开
 
     rt_strncpy(uart_name, SAMPLE_UART_NAME, RT_NAME_MAX);
     /* 查找串口设备 */
@@ -87,12 +112,13 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
             /* 阻塞等待接收信号量，等到信号量后再次读取数据 */
             rt_sem_take(&rx_sem, RT_WAITING_FOREVER);
         }
-        if(ch != 0xFF)
+        if(ch != 0xFF) //实时包以0xFF打头，数据包中不会出现其他0xFF数据
         {
             data[rwflag++] = ch;
             if(rwflag >= 76)
             {
                 //vital_signs_analysis();
+                //心率：66位;血氧：67位;微循环68位
                 dmf->m_spo2 = data[66];
                 dmf->m_bk = data[67];
                 rwflag = 0;
