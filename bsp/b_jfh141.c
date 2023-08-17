@@ -171,30 +171,12 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
         }
 
-        /*//根据物体接触且血氧为0时更新血氧值
-                    if( dmf->m_object_spo2_detected == RT_TRUE ){
-                        dmf->m_spo2 = data[66];
 
-                    }else {
-                        dmf->m_spo2 = last_m_spo2;
-                    }
-                    //根据物体接触且微循环为0时更新血氧值
-                    if( dmf->m_object_bk_detected == RT_TRUE){
-                        dmf->m_bk = data[67];
-                        
-                    } else {
-
-                        //dmf->m_bk = last_m_bk;
-                        dmf->m_bk = last_m_bk;
-
-                    }*/
         
         
     }
 
 }
-void jfh141_value_detected(){
 
-}
 
 
