@@ -2,7 +2,7 @@
  * @Author: wangwei wangwei@bitnei.com
  * @Date: 2023-04-28 10:33:37
  * @LastEditors: wangwei wangwei@bitnei.com
- * @LastEditTime: 2023-08-17 10:39:06
+ * @LastEditTime: 2023-08-17 18:20:44
  * @FilePath: \compositesensor3\task\t_bio.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -31,7 +31,7 @@ void task_thread_bio_recv(void *ptr)
         {
             BioFrameDef dmf;
             dmf.m_bio_value = 0;
-            //bsp_afe4300_get(&dmf);      //正式版本，再改回来
+            bsp_afe4300_get(&dmf);      
             rt_kprintf("afe4300= %d\n",dmf.m_bio_value);
             if ( pstDeviceObject->m_device_collect == 1){
                 ut_msg_send(pstMqueueObject->MMqueue_msg,2,0,emMqttMsgBioData,&dmf,sizeof(dmf));
