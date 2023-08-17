@@ -103,6 +103,8 @@ void bsp_jfh141_init(void)
 void bsp_jfh141_get(Spo2FrameDef* dmf)
 {
     char ch;
+    SdInt16 last_m_spo2 ;   //上次血氧获得的有效值。
+    SdInt16 last_m_bk ;     //上次微循环获得的有效值。
 
     while (1)
     {
@@ -119,11 +121,48 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
             {
                 //vital_signs_analysis();
                 //心率：66位;血氧：67位;微循环68位
-                dmf->m_spo2 = data[66];
-                dmf->m_bk = data[67];
+                //dmf->m_spo2 = data[66];
+                //dmf->m_bk = data[67];
+
+                //判断血氧传感器是否进行检测物体
+                if (data[1] != 0xC4 && data[63] != 0xC4){
+                    //rt_kprintf("111111");
+                    if( data[66] > 0 ){
+                        
+                        //dmf->m_object_spo2_detected = RT_TRUE;  //表明血氧传感器在工作
+                        last_m_spo2 = data[66];  //更新上次检测的血氧有效值
+                        dmf->m_spo2 = data[66];
+
+                        
+                    }else {
+                        if(last_m_spo2 > 0)
+                             dmf->m_spo2 = last_m_spo2;
+
+                        //dmf->m_object_spo2_detected = RT_FALSE;
+                        //object_bk_detected = RT_FALSE;
+                    }
+
+                    if(data[67] > 0 && data[67] < 100) {
+                        //dmf->m_object_bk_detected = RT_TRUE;
+                        last_m_bk = data[67];      //更新上次检测的微循环有效值
+                        dmf->m_bk = data[67];
+                    }else{
+
+                        if(last_m_bk > 0 && last_m_bk <100 )
+                           dmf->m_bk = last_m_bk;
+                        //dmf->m_object_bk_detected = RT_FALSE;
+
+                    }
+                       
+                }else{
+                    dmf->m_spo2 = 0;
+                    dmf->m_bk = 0;
+                }
+
                 rwflag = 0;
                 break;
             }
+            
         }
         else{
             memset(data, 0, sizeof(data));
@@ -131,7 +170,31 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
             data[rwflag++] = ch;
 
         }
+
+        /*//根据物体接触且血氧为0时更新血氧值
+                    if( dmf->m_object_spo2_detected == RT_TRUE ){
+                        dmf->m_spo2 = data[66];
+
+                    }else {
+                        dmf->m_spo2 = last_m_spo2;
+                    }
+                    //根据物体接触且微循环为0时更新血氧值
+                    if( dmf->m_object_bk_detected == RT_TRUE){
+                        dmf->m_bk = data[67];
+                        
+                    } else {
+
+                        //dmf->m_bk = last_m_bk;
+                        dmf->m_bk = last_m_bk;
+
+                    }*/
+        
+        
     }
+
+}
+void jfh141_value_detected(){
+
 }
 
 
