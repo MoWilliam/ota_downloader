@@ -53,9 +53,9 @@ void task_thread_jfh141_recv(void *ptr)
         while (pstTaskObject->brun_spo2)
         {
             Spo2FrameDef dmf;
-            dmf.m_spo2 = 0;
-            dmf.m_bk = 0;
-            bsp_jfh141_get(&dmf);
+            //dmf.m_spo2 = 0;
+            //dmf.m_bk = 0;
+            bsp_jfh141_get(&dmf); 
             //rt_kprintf("bk************** %d",dmf.m_bk);
             //dmf.m_bk = kalman_filter_jfh141(dmf.m_bk);
             //rt_kprintf("kalman_bk******* %d",dmf.m_bk);
