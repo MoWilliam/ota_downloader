@@ -168,7 +168,7 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
                     }
 
                     if ( deviceType->valueint == emDevicePressControlSensor)
-                    {
+                    {   
                         if ( cmdType->valueint == emMqttCmdStart){
                             pstDeviceObject->m_deviceStatus = 1;
                         }
@@ -297,6 +297,7 @@ void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
         memset(tValue,0,8);
         //sprintf(tValue,"%d",dmf->m_btemp);
         temp_Value =dmf->m_btemp*0.00390625;
+
         temp_Value += dmf->m_atemp;
         //temp_Value = kalman_filter_temp(temp_Value);
         rt_kprintf("max302: %.2f",temp_Value);

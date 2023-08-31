@@ -58,7 +58,7 @@ void mq_thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心�
             }
 
             // 每隔10秒发送一个心跳包，确保设备在线
-            rt_thread_mdelay(1000*5);   //每隔5s发送一个心跳包，确保设备在线
+            rt_thread_mdelay(1000*5);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[MQ Module] thread exit\n");
         ut_thread_exit(pstMqueueObject->MMqueue_preheartbeat);

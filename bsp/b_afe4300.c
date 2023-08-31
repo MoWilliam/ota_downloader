@@ -21,7 +21,7 @@ static double x_last = 0;
 //综采设备选择
 
 //wifi:mFi-14CD4A   浙江设备A
-#define e27275 1
+#define e27275 0
 #define e7aa1b 0
 #define e7e033 0
 #define e1ee32 0
@@ -42,7 +42,7 @@ static double x_last = 0;
 #define e22526 0
 
 //剩余未配置wifi设备
-#define e2336c 0
+#define e2336c 1
 #define e23035 0
 
 //过程噪音
@@ -209,9 +209,9 @@ void afe4300_init(void)
     spiWrite(0x1A, 0x0030);
 #else
 
-    spiWrite(0x01, 0x4170);//0x4170); // 860SPS
+    spiWrite(0x01, 0x4130);//0x4170); // 64SPS
     rt_kprintf("spiData = %x\r\n",spiRead(0x01));
-    spiWrite(0x01, 0x4170);
+    spiWrite(0x01, 0x4130);
     // DEVICE_CONTROL1 第0位和第2位 和电源相关
     // 开BMP还是体重
 
@@ -228,7 +228,7 @@ void afe4300_init(void)
     spiWrite(0x0E, 0x0040);//0x00FF)原始频率
     //spiWrite(0x0E, 0x0001);    //3.9k
     rt_kprintf("spiData = %x\r\n",spiRead(0x0E));
-    spiWrite(0x0E, 0x0040);
+    spiWrite(0x0E, 0x0040);     //64K
 
     // 开一个电流的通道     0：+ 1：-
     //spiWrite(0x0A, 0x0201);
@@ -387,6 +387,8 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 
 #if e1ee32
     z = 1.01 *z -12.06;
+    //z = 0.002588 *z * z + 0.7151 * z +3.8422;         // 阻容模型，阻抗一致性测试
+    z = z + 25;
 
 #endif
 
@@ -396,6 +398,7 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 
 #if e28771
     z= 0.99 * z + 0.94;
+    //z = -0.0049264 * z * z + 1.6562 * z - 18.3265;  // 阻容模型，阻抗一致性测试
 #endif
 
 #if e22526
@@ -404,6 +407,7 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 
 #if e27275
     z= z + 4;
+    z = z -7;
 #endif
 
 #if e7aa1b

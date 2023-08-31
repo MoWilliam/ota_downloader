@@ -148,7 +148,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
                         dmf->m_bk = data[67];
                     }else{
 
-                        if(last_m_bk > 0 && last_m_bk <100 )
+                    if(last_m_bk > 0 && last_m_bk <100 )
                            dmf->m_bk = last_m_bk;
                         //dmf->m_object_bk_detected = RT_FALSE;
 
