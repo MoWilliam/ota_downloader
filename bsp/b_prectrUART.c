@@ -73,6 +73,7 @@ void bsp_uart_get(PreCtrmqFrameDef* dmf)
             rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
         }
 
+//这里重写
         if(ch != 0xFF)
         {
             uart_data[uart_flag++] = ch;
