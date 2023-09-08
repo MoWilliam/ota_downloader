@@ -38,32 +38,33 @@ void bsp_PreCtr_GPIO_Init(void)
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(pump1_GPIO_Port, pump1_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(pump5_GPIO_Port, pump5_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOE, pump2_Pin|pump3_Pin|pump4_Pin|pump5_Pin
-                            |valve1_Pin|valve2_Pin|valve3_Pin|valve4_Pin
-                            |valve5_Pin, GPIO_PIN_RESET);
-
+    HAL_GPIO_WritePin(GPIOD, pump1_Pin|pump2_Pin|pump3_Pin|pump4_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOE, valve1_Pin|valve2_Pin|valve3_Pin|valve4_Pin|valve5_Pin, GPIO_PIN_RESET);
     /*Configure GPIO pin : PtPin */
-    GPIO_InitStruct.Pin = pump1_Pin;
+    GPIO_InitStruct.Pin = pump5_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(pump1_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(pump5_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : PEPin PEPin PEPin PEPin
                             PEPin PEPin PEPin PEPin
                             PEPin */
-    GPIO_InitStruct.Pin = pump2_Pin|pump3_Pin|pump4_Pin|pump5_Pin
-                            |valve1_Pin|valve2_Pin|valve3_Pin|valve4_Pin
-                            |valve5_Pin;
+    GPIO_InitStruct.Pin = pump1_Pin|pump2_Pin|pump3_Pin|pump4_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+    //rt_kprintf(" /b_prectrgpio.c/ pump and valve GPIO init\n");  //输出打印
+
+	GPIO_InitStruct.Pin = valve1_Pin|valve2_Pin|valve3_Pin|valve4_Pin|valve5_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-    //rt_kprintf(" /b_prectrgpio.c/ pump and valve GPIO init\n");  //输出打印
-
 }
 
 
