@@ -100,6 +100,7 @@ void bsp_jfh141_init(void)
     rt_device_write(serial, 0, &c_on, 1);
 }
 
+//在这边做个封装
 void bsp_jfh141_get(Spo2FrameDef* dmf)
 {
     char ch;
@@ -127,7 +128,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
                 //判断血氧传感器是否进行检测物体
                 if (data[1] != 0xC4 && data[63] != 0xC4){
                     //rt_kprintf("111111");
-                    if( data[66] > 0 ){
+                    if( data[66] > 0 && data[66] < 101 ){
                         
                         //dmf->m_object_spo2_detected = RT_TRUE;  //表明血氧传感器在工作
                         last_m_spo2 = data[66];  //更新上次检测的血氧有效值
@@ -135,7 +136,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
                         
                     }else {
-                        if(last_m_spo2 > 0)
+                        if(last_m_spo2 > 0 && last_m_spo2 < 101)
                              dmf->m_spo2 = last_m_spo2;
 
                         //dmf->m_object_spo2_detected = RT_FALSE;
@@ -154,7 +155,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
                     }
                        
-                }else{
+                }else if(data[1] == 0xC4 && data[63] == 0xC4){
                     dmf->m_spo2 = 0;
                     dmf->m_bk = 0;
                 }
@@ -171,9 +172,6 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
         }
 
-
-        
-        
     }
 
 }

@@ -210,6 +210,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 baseDataToJSON(&mqttDmf,root_json);
                 out = cJSON_PrintUnformatted(root_json);
                 len = strlen(out);
+                rt_kprintf("*******%d\n******", len);  //2023.9.25增加打印输出
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
@@ -235,6 +236,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 spo2DataToJSON(&mqttDmf,root_json);
                 out = cJSON_PrintUnformatted(root_json);
                 len = strlen(out);
+                rt_kprintf("**%d **\n", len);  //2023.9.25增加打印输出
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
@@ -262,6 +264,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 bioDataToJSON(&mqttDmf,root_json);
                 out = cJSON_PrintUnformatted(root_json);
                 len = strlen(out);
+                rt_kprintf("**%d **\n", len);  //2023.9.25增加打印输出
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
@@ -296,7 +299,8 @@ void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
         //cJSON_AddStringToObject(data_json, "timeStamp", "2023-05-05 10:55:05");
         memset(tValue,0,8);
         //sprintf(tValue,"%d",dmf->m_btemp);
-        temp_Value =dmf->m_btemp*0.00390625;
+        //temp_Value =dmf->m_btemp*0.00390625;
+        temp_Value =dmf->m_btemp*0.00390625; 
         temp_Value += dmf->m_atemp;
         //temp_Value = kalman_filter_temp(temp_Value);
         rt_kprintf("max302: %.2f",temp_Value);

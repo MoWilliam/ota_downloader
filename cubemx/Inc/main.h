@@ -87,6 +87,7 @@ void Error_Handler(void);
 #define emerstop4_GPIO_Port GPIOD
 #define emerstop5_Pin GPIO_PIN_12
 #define emerstop5_GPIO_Port GPIOD
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
