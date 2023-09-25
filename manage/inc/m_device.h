@@ -60,6 +60,8 @@ typedef struct TagSpo2FrameDef
     /* data */
     SdUInt16 m_spo2;
     SdUInt16 m_bk;
+    SdBool m_object_spo2_detected; //血氧状态检测标志位 
+    SdBool m_object_bk_detected; //微循环状态检测标志位 
 
 }Spo2FrameDef,*LPSpo2FrameDef;
 
@@ -107,8 +109,7 @@ typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队�
     SdUInt8 m_deviceType;
     SdUInt8 m_deviceStatus;
 
-    //SdUInt8 m_presorID;        设备号码 设置一个组出来z
-    //SdUInt8 m_prectrcmdtype;   0,1状态位
+
 }PreCtrFrameDef,*LPPreCtrFrameDef;
 
 typedef enum TagPrectrDevList { 
