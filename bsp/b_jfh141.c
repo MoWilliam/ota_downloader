@@ -76,7 +76,7 @@ void bsp_jfh141_init(void)
     rt_err_t ret = RT_EOK;
     char uart_name[RT_NAME_MAX];
 //    char str[] = "hello RT-Thread!\r\n";
-    uint8_t c_on = 0x8A; //采集开
+    uint8_t c_on = 0x8A; //0x88; 采集关
 
     rt_strncpy(uart_name, SAMPLE_UART_NAME, RT_NAME_MAX);
     /* 查找串口设备 */

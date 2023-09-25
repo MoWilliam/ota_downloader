@@ -21,7 +21,7 @@ static double x_last = 0;
 //综采设备选择
 
 //wifi:mFi-14CD4A   浙江设备A
-#define e27275 1
+#define e27275 0
 #define e7aa1b 0
 #define e7e033 0
 #define e1ee32 0
@@ -42,7 +42,7 @@ static double x_last = 0;
 #define e22526 0
 
 //剩余未配置wifi设备
-#define e2336c 0
+#define e2336c 1
 #define e23035 0
 
 //过程噪音
