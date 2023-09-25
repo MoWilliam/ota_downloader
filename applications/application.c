@@ -13,7 +13,7 @@
 #include "task/inc/t_auth.h"
 #include "task/inc/t_bio.h"
 #include "task/inc/t_monitor.h"
-#include "task/inc/t_power.h"
+//#include "task/inc/t_power.h"
 #include "manage/inc/m_comm.h"
 #include "manage/inc/m_device.h"
 #include "manage/inc/m_platform.h"
@@ -146,7 +146,7 @@ void task_module_init(void)
     task_auth_init();
     task_bio_init();
     task_monitor_init();
-    task_power_init();
+    //task_power_init();
 }
 
 void task_module_start(void)
@@ -155,7 +155,7 @@ void task_module_start(void)
     task_auth_start();
     task_bio_start();
     task_monitor_start();
-    task_power_start();
+    //task_power_start();
 }
 
 void task_module_uninit(void)
@@ -164,7 +164,7 @@ void task_module_uninit(void)
     task_auth_stop();
     task_bio_stop();
     task_monitor_stop();
-    task_power_stop();
+    //task_power_stop();
 }
 
 /**

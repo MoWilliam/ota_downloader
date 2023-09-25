@@ -24,15 +24,16 @@ static double x_last = 0;
 #define e27275 0
 #define e7aa1b 0
 #define e7e033 0
-#define e1ee32 0
+#define e23035 0
 #define e1f1c6 0
 
-//wifi:mFi-14bEE7   浙江设备B
-#define e2b8d6 0
+//wifi:mFi-14BEE7   浙江设备B
+
 #define e28771 0
-#define e2bded 0
+#define e2bded 1
 #define e2c4a7 0
 #define e2eb70 0
+#define e27a6d 0
 
 //wifi:mFi-14C96B   山东设备
 #define e22635 0
@@ -42,8 +43,10 @@ static double x_last = 0;
 #define e22526 0
 
 //剩余未配置wifi设备
-#define e2336c 1
-#define e23035 0
+#define e2336c 0
+#define e1ee32 0
+#define e2b8d6 0  //
+
 
 //过程噪音
 #define P_Q 0.2  // Q:过程噪声，Q增大，动态响应变快，收敛稳定性变坏
@@ -386,7 +389,9 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 #endif
 
 #if e1ee32
-    z = 1.01 *z -12.06;
+    z = 1.01 *z -12.06;   //纯电阻校正的电阻值
+    z = 1.02 * z + 24.59; //第一次阻抗校正
+
 
 #endif
 
@@ -404,10 +409,12 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 
 #if e27275
     z= z + 4;
+    z= 0.99 * z -5.96;  //阻抗模型校准
 #endif
 
 #if e7aa1b
-    z= 1.01 * z + 2.84;
+    z= 1.01 * z + 2.84; //纯电阻校准
+    z = z - 3.4;
 #endif
 
 #if e271fd
@@ -420,10 +427,12 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 
 #if e2eb70
     z= z - 3;
+    z = z +6.4;
 #endif
 
 #if e7e033
     z= 1.01 * z - 4.48;
+    z = 0.98 * z + 10.95;
 #endif
 
 #if e22a8a
@@ -432,22 +441,32 @@ void bsp_afe4300_get(BioFrameDef* dmf)
 
 #if e22635
     z= z + 11;
+    z = z - 5.4;
 #endif
 
 #if e2bded
     z= z - 7;
+    z = 0.96 *z + 14.34;
 #endif
 
 #if e1f1c6
     z= 0.96 * z + 5.95;
+    z = z -11.4;
 #endif
 
 #if e2c4a7
     z= z + 10;
+    z = z -19.6;
 #endif
 
 #if e23035
     z= 1.01 * z + 3.34;
+    z = z - 5.4;
+#endif
+
+#if e27a6d
+    z= 1.08 * z + 0.18;
+
 #endif
 
 
