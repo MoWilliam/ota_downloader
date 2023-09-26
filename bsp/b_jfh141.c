@@ -155,9 +155,12 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
                     }
                        
-                }else if(data[1] == 0xC4 && data[63] == 0xC4){
+                }else {
                     dmf->m_spo2 = 0;
                     dmf->m_bk = 0;
+                    last_m_spo2 = 0;
+                    last_m_bk = 0;
+
                 }
 
                 rwflag = 0;

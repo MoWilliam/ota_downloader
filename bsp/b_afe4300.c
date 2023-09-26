@@ -24,13 +24,13 @@ static double x_last = 0;
 #define e27275 0
 #define e7aa1b 0
 #define e7e033 0
-#define e23035 0
+#define e23035 1
 #define e1f1c6 0
 
 //wifi:mFi-14BEE7   浙江设备B
 
 #define e28771 0
-#define e2bded 1
+#define e2bded 0
 #define e2c4a7 0
 #define e2eb70 0
 #define e27a6d 0
