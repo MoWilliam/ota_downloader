@@ -43,7 +43,8 @@ void task_thread_bio_recv(void *ptr)
                 ut_msg_send(pstMqueueObject->MMqueue_msg,2,0,emMqttMsgBioData,&dmf,sizeof(dmf));
             }
            // rt_kprintf("[Task Module] ->task bio thread run\n");
-            rt_thread_mdelay(1000);
+            //rt_thread_mdelay(1000);
+            rt_thread_mdelay(2000);  //2023.9.26，增加发送的时间间隔
         }
         rt_kprintf("[Task Module] bio thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_temp);

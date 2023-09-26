@@ -35,7 +35,8 @@ void task_thread_max30205_recv(void *ptr)
             ut_msg_send(pstMqueueObject->MMqueue_msg,1,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
             }
            // rt_kprintf("[Task Module]->task temp thread run\n");
-            rt_thread_mdelay(1000);
+            //rt_thread_mdelay(1000);
+            rt_thread_mdelay(2000);  //2023.9.26，增加发送的时间间隔
         }
         rt_kprintf("[Task Module] temp thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_temp);
@@ -73,7 +74,7 @@ void task_thread_jfh141_recv(void *ptr)
                 ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
             }
            // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
-            rt_thread_mdelay(1000);
+            rt_thread_mdelay(2000);
         }
         //rt_kprintf("[Task Module] spo2 thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_spo2);

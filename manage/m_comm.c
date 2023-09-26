@@ -210,7 +210,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 baseDataToJSON(&mqttDmf,root_json);
                 out = cJSON_PrintUnformatted(root_json);
                 len = strlen(out);
-                rt_kprintf("*******%d\n******", len);  //2023.9.25增加打印输出
+
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
@@ -236,7 +236,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 spo2DataToJSON(&mqttDmf,root_json);
                 out = cJSON_PrintUnformatted(root_json);
                 len = strlen(out);
-                rt_kprintf("**%d **\n", len);  //2023.9.25增加打印输出
+
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
@@ -264,7 +264,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 bioDataToJSON(&mqttDmf,root_json);
                 out = cJSON_PrintUnformatted(root_json);
                 len = strlen(out);
-                rt_kprintf("**%d **\n", len);  //2023.9.25增加打印输出
+
                 if ( len >0)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
