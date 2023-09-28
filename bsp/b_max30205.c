@@ -99,7 +99,8 @@ static rt_err_t read_regs(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint
     }
 }
 
-static void read_temp_humi(DataFrameDef* dmf)
+//static void read_temp_humi(DataFrameDef* dmf)
+static void read_temp_humi(SensorDataFrameDef* dmf)
 {
     rt_uint8_t temp[2];
 
@@ -155,7 +156,8 @@ void bsp_max30205_init(void)
         max30205_init(name);
     }
 }
-void bsp_max30205_get(DataFrameDef* dmf)
+//void bsp_max30205_get(DataFrameDef* dmf)
+void bsp_max30205_get(SensorDataFrameDef* dmf)   //2023.9.27
 {
 //    if (initialized)
 //    {

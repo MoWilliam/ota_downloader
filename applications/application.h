@@ -112,8 +112,16 @@ typedef struct TagMessageObjectDef
     UtMessage* MMessage_data;
     SdChar * MMessage_data_name;
 
-}MessageObjectDef,*LPMessageObjectDef;
+}MessageObjectDef,*LPMessageObjectDef;  //2023.9.27 临时注释
 
+/*typedef struct {
+    TagMessageObjectDef type;
+    union {
+        DataFrameDef baseData;
+        Spo2FrameDef spo2Data;
+        BioFrameDef bioData;
+    } data;
+} MessageObjectDef,*LPMessageObjectDef;     //2023.9.27*/
 
 /**
 * \enum  enMqttMsgDef

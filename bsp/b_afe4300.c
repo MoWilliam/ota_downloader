@@ -358,7 +358,8 @@ void bsp_afe4300_init(void)
     afe4300_init();
 }
 
-void bsp_afe4300_get(BioFrameDef* dmf)
+//void bsp_afe4300_get(BioFrameDef* dmf)
+void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
 {
     float z = 0;
     short afe4300Data_new = 0;

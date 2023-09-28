@@ -12,6 +12,9 @@
 #define MQ_HEARTBEAT_TOPIC          "/medical/heartbeat"
 #define MQ_CONTROL_TOPIC            "/medical/control"
 #define MQ_DATA_TOPIC               "/medical/data"
+static SdUInt cnt_sensor=0;
+static SdUInt cnt_tmp=0,cnt_spo2=0,cnt_bio=0;
+
 
 //命令类型定义0：心跳命令；1：启动测量；2：结束测量；3：参数设置；4：数据上传；5：开始充气；6：停止充气
 typedef enum TagMqttCmdDef
@@ -51,6 +54,7 @@ void manage_comm_stop(void);
 SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent);
 SdInt comm_mqtt_subMsg(char* topic ,char * message);
 SdInt comm_mqtt_status(int connectStatus);
+SdInt comm_mqtt_msg_publish();
 
 
 

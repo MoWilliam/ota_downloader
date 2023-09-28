@@ -14,10 +14,13 @@
 static SdULong g_msgId_hearBeat;
 static SdULong g_msgId_control;
 static SdULong g_msgId_data;
+SensorDataFrameDef mqttDmf;
 
 void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json);
 void bioDataToJSON(BioFrameDef *bmf, cJSON *root_json);
 void spo2DataToJSON(Spo2FrameDef *dmf, cJSON *root_json);
+
+//void sensorDataToJSON(SensorDataFrameDef *dmf, cJSON *root_json);
 void heartbeatToJSON();
 
 void mqtt_thread_heartbeat(void *ptr)
@@ -185,12 +188,14 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
     return 0;
 }
 
+/*
 SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
 {
     cJSON *root_json = NULL;
     char *out = NULL;
 	int len = 0;
 	int ret = 0;
+
 
 	root_json = cJSON_CreateObject();
 
@@ -215,6 +220,8 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
                     //rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                    cnt_tmp ++;
+                    rt_kprintf("****cnt_tmp:%d\n",cnt_tmp);  //2023.9.27，打印接收tmp计数
                 }
                 cJSON_free(out);
             }
@@ -241,6 +248,9 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
                     //rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                    cnt_spo2 ++;
+                    rt_kprintf("****cnt_spo2:%d\n",cnt_spo2);  //2023.9.27，打印接收spo2计数
+
                 }
                 cJSON_free(out);
             }
@@ -269,6 +279,8 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
                 {
                     ret = mq_publish(MQ_DATA_TOPIC, out);
                    // rt_kprintf("MQTT MSG->topic:%s,ret:%d len:%d msg:%s\n",MQ_DATA_TOPIC,ret,len, out);
+                    cnt_bio ++;
+                    rt_kprintf("****cnt_bio:%d\n",cnt_bio);  //2023.9.27，打印接收bio计数
                 }
                 cJSON_free(out);
             }
@@ -276,8 +288,92 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent)
     }
     cJSON_Delete(root_json);
     return 0;
+} */
+
+
+
+//2023.9.27代码的尝试优化
+SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent) {
+    //cJSON *root_json = cJSON_CreateObject();
+    //char *out = NULL;
+    //int len = 0;
+    //int ret = 0;
+    LPSensorDataFrameDef pdmf = (LPSensorDataFrameDef)pContent;
+    //SensorDataFrameDef mqttDmf;
+    if (pMsg->usMsgID == emMqttMsgBaseData) {
+        if (pContent != SD_NULL) {
+            //LPSensorDataFrameDef pdmf = (LPSensorDataFrameDef)pContent;
+            if (pdmf != NULL) {
+                //SensorDataFrameDef mqttDmf;
+                mqttDmf.m_atemp = pdmf->m_atemp;
+                mqttDmf.m_btemp = pdmf->m_btemp;
+            
+            }
+        }
+    } else if (pMsg->usMsgID == emMqttMsgSpo2Data) {
+        if (pContent != SD_NULL) {
+            
+            if (pdmf != NULL) {
+                
+                mqttDmf.m_spo2 = pdmf->m_spo2;
+                mqttDmf.m_bk = pdmf->m_bk;
+
+            }
+        }
+    } else if (pMsg->usMsgID == emMqttMsgBioData) {
+        if (pContent != SD_NULL) {
+            LPSensorDataFrameDef pbmf = (LPSensorDataFrameDef)pContent;
+            if (pbmf != NULL) {
+                
+                mqttDmf.m_bio_ampere = pbmf->m_bio_ampere;
+                mqttDmf.m_bio_voltage = pbmf->m_bio_voltage;
+                mqttDmf.m_bio_value = pbmf->m_bio_value;
+
+            }
+        }
+    }
+
+    /**************************************************** 发送打包好的 JSON 数据
+    sensorDataToJSON(&mqttDmf, root_json);  //2023.9.27
+    out = cJSON_PrintUnformatted(root_json);
+    len = strlen(out);
+
+    if (len > 0) {
+        ret = mq_publish(MQ_DATA_TOPIC, out);
+        cJSON_free(out);
+        cnt_sensor ++;
+        rt_kprintf("****cnt_sensor:%d\n",cnt_sensor);  //2023.9.27，打印接收传感器参数计数
+    }
+
+    cJSON_Delete(root_json);
+    ********************************************************************************/
+    return 0;
+}  
+SdInt comm_mqtt_msg_publish()
+{
+    cJSON *root_json = cJSON_CreateObject();
+        char *out = NULL;
+        int len = 0;
+        int ret = 0;
+        sensorDataToJSON(&mqttDmf, root_json);  //2023.9.27
+        out = cJSON_PrintUnformatted(root_json);
+        len = strlen(out);
+        rt_kprintf("***************************len:%d\n",len);  //2023.9.27，打印长度
+
+        if (len > 0) {
+            ret = mq_publish(MQ_DATA_TOPIC, out);
+
+            cnt_sensor ++;
+            rt_kprintf("****cnt_sensor:%d\n",cnt_sensor);  //2023.9.27，打印接收传感器参数计数
+        }
+        cJSON_free(out);
+        cJSON_Delete(root_json);
+        return ret;
+
 }
 
+
+/*
 void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
 {
     char tValue[8];
@@ -299,12 +395,11 @@ void baseDataToJSON(DataFrameDef *dmf, cJSON *root_json)
         //cJSON_AddStringToObject(data_json, "timeStamp", "2023-05-05 10:55:05");
         memset(tValue,0,8);
         //sprintf(tValue,"%d",dmf->m_btemp);
-        //temp_Value =dmf->m_btemp*0.00390625;
         temp_Value =dmf->m_btemp*0.00390625; 
         temp_Value += dmf->m_atemp;
-        //temp_Value = kalman_filter_temp(temp_Value);
-        rt_kprintf("max302: %.2f",temp_Value);
-        sprintf(tValue,"%.2f",temp_Value);
+        //temp_Value = kalman_filter_temp(temp_Value);  //可以用于设置基于温度的卡尔曼滤波
+        rt_kprintf("max302: %.1f",temp_Value);
+        sprintf(tValue,"%.1f",temp_Value);
 
         //if ( strlen(tValue) >0){
          //   sprintf(tValue,"%d.%s",dmf->m_atemp,tValue);
@@ -378,7 +473,56 @@ void bioDataToJSON(BioFrameDef *bmf, cJSON *root_json)
 
        cJSON_AddItemToObject(root_json, "data", phase_array);
 	}
-}
+}   
+*/
+void sensorDataToJSON(SensorDataFrameDef *dmf, cJSON *root_json)
+{
+    char tValue_temp[8], tValue_spo2[8], tValue_bio[8];
+    cJSON *data_json = NULL;
+    cJSON *phase_array = NULL;
+    LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
+    if (pstDeviceObject)
+    {
+        cJSON_AddNumberToObject(root_json, "msgId", g_msgId_data++);
+        cJSON_AddNumberToObject(root_json, "msgType", emMqttMsgTypeUp);
+        cJSON_AddStringToObject(root_json, "deviceId", pstDeviceObject->m_deviceId);
+        cJSON_AddNumberToObject(root_json, "deviceType", emDeviceCompositeSensor);
+        cJSON_AddNumberToObject(root_json, "cmdType", emMqttCmdData);
+        cJSON_AddNumberToObject(root_json, "acupointId", pstDeviceObject->m_check_acupointId);
+
+        phase_array = cJSON_CreateArray();
+        
+        // 温度数据
+        data_json = cJSON_CreateObject();
+        memset(tValue_temp, 0, 8);
+        double temp_Value = dmf->m_btemp * 0.00390625;
+        temp_Value += dmf->m_atemp;
+        sprintf(tValue_temp, "%.1f", temp_Value);
+        cJSON_AddStringToObject(data_json, "tempValue", tValue_temp);
+        //cJSON_AddItemToArray(phase_array, data_json);
+
+        // Spo2 数据
+        //data_json = cJSON_CreateObject();
+        memset(tValue_spo2, 0, 8);
+        sprintf(tValue_spo2, "%d", dmf->m_spo2);
+        cJSON_AddStringToObject(data_json, "spo2Value", tValue_spo2);
+        memset(tValue_spo2, 0, 8);
+        sprintf(tValue_spo2, "%d", dmf->m_bk);
+        cJSON_AddStringToObject(data_json, "bkValue", tValue_spo2);
+        //cJSON_AddItemToArray(phase_array, data_json);
+
+        // 生物数据
+        //data_json = cJSON_CreateObject();
+        memset(tValue_bio, 0, 8);
+        sprintf(tValue_bio, "%d", dmf->m_bio_value);
+        cJSON_AddStringToObject(data_json, "bioValue", tValue_bio);
+
+        //整体打包
+        cJSON_AddItemToArray(phase_array, data_json);
+        cJSON_AddItemToObject(root_json, "data", phase_array);
+    }
+} 
+
 
 void heartbeatToJSON()
 {

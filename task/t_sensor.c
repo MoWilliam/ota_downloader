@@ -13,6 +13,7 @@
 
 void task_thread_max30205_recv(void *ptr)
 {
+    int cnt_recv_tmp = 0;
     rt_kprintf("task_thread_temp_recv thread run\n");
     if(SD_NULL != ptr)
     {
@@ -20,7 +21,8 @@ void task_thread_max30205_recv(void *ptr)
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
         while (pstTaskObject->brun)
         {
-            DataFrameDef dmf;
+            //DataFrameDef dmf;
+            SensorDataFrameDef dmf;  //2023.9.27
             dmf.m_atemp = 0;
             dmf.m_btemp = 0;
             bsp_max30205_get(&dmf);
@@ -35,8 +37,10 @@ void task_thread_max30205_recv(void *ptr)
             ut_msg_send(pstMqueueObject->MMqueue_msg,1,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
             }
            // rt_kprintf("[Task Module]->task temp thread run\n");
-            //rt_thread_mdelay(1000);
-            rt_thread_mdelay(2000);  //2023.9.26，增加发送的时间间隔
+            rt_thread_mdelay(1000);
+            //rt_thread_mdelay(2000);  //2023.9.26，增加发送的时间间隔
+            cnt_recv_tmp ++;
+            rt_kprintf("****cnt_recv_tmp:%d\n", cnt_recv_tmp);  //2023.9.27.打印发送tmp计数
         }
         rt_kprintf("[Task Module] temp thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_temp);
@@ -45,6 +49,7 @@ void task_thread_max30205_recv(void *ptr)
 
 void task_thread_jfh141_recv(void *ptr)
 {
+    int cnt_recv_spo2 = 0;
     rt_kprintf("task_thread_temp_recv thread run\n");
     if(SD_NULL != ptr)
     {
@@ -53,7 +58,8 @@ void task_thread_jfh141_recv(void *ptr)
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
         while (pstTaskObject->brun_spo2)
         {
-            Spo2FrameDef dmf;
+            //Spo2FrameDef dmf;
+            SensorDataFrameDef dmf;  //2023.9.27
             //dmf.m_spo2 = 0;
             //dmf.m_bk = 0;
             bsp_jfh141_get(&dmf); 
@@ -74,7 +80,9 @@ void task_thread_jfh141_recv(void *ptr)
                 ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
             }
            // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
-            rt_thread_mdelay(2000);
+            rt_thread_mdelay(1000);
+            cnt_recv_spo2 ++;
+            rt_kprintf("****cnt_recv_spo2:%d\n", cnt_recv_spo2);  //2023.9.27.打印发送spo2计数
         }
         //rt_kprintf("[Task Module] spo2 thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_spo2);

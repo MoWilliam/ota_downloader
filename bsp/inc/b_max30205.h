@@ -15,7 +15,8 @@
 
 extern float kalman_filter_temp(float inData);
 void bsp_max30205_init(void);
-void bsp_max30205_get(DataFrameDef* dmf);
+// void bsp_max30205_get(DataFrameDef* dmf);
+void bsp_max30205_get(SensorDataFrameDef* dmf); //2023.9.27
 
 
 #endif /* BSP_INC_B_MAX30205_H_ */

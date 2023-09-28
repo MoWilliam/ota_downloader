@@ -100,8 +100,9 @@ void bsp_jfh141_init(void)
     rt_device_write(serial, 0, &c_on, 1);
 }
 
-//在这边做个封装
-void bsp_jfh141_get(Spo2FrameDef* dmf)
+
+//void bsp_jfh141_get(Spo2FrameDef* dmf)
+void bsp_jfh141_get(SensorDataFrameDef* dmf) //2023.9.27
 {
     char ch;
     SdInt16 last_m_spo2 ;   //上次血氧获得的有效值。

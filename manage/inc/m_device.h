@@ -41,12 +41,12 @@ typedef enum TagDeviceTypeDef
  * data struct object
  *
  */
+
 typedef struct TagDataFrameDef
 {
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceStatus;
-    /* data */
     SdUInt16 m_atemp;
     SdUInt16 m_btemp;
 
@@ -57,7 +57,6 @@ typedef struct TagSpo2FrameDef
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceStatus;
-    /* data */
     SdUInt16 m_spo2;
     SdUInt16 m_bk;
 
@@ -68,12 +67,33 @@ typedef struct TagBioFrameDef
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceStatus;
-    /* data */
     SdFloat m_bio_voltage;
     SdFloat m_bio_ampere;
     SdUInt16 m_bio_value;
 
 }BioFrameDef,*LPBioFrameDef;
+
+
+//2023.9.27尝试用一个数组安装传感器数据
+
+typedef struct TagSensorDataFrameDef
+{
+    SdUInt16 msgID;
+    char m_deviceid[DEVICE_LENGTH];
+    SdUInt8 m_deviceStatus;
+    //data-temp
+    SdUInt16 m_atemp;
+    SdUInt16 m_btemp;
+    //data-spo2
+    SdUInt16 m_spo2;
+    SdUInt16 m_bk;
+    //data-bio
+    SdFloat m_bio_voltage;
+    SdFloat m_bio_ampere;
+    SdUInt16 m_bio_value;
+
+}SensorDataFrameDef,*LPSensorDataFrameDef;
+
 
 /**
  * device struct object
