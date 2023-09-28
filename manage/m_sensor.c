@@ -20,12 +20,12 @@ void manage_thread_sensor_recv(void *ptr)
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
         while (pstManageObject->brun_data)
         {
-           DataFrameDef dmf;
+            SensorDataFrameDef dmf;
            //SensorDataFrameDef dmf;  //2023.9.27
         //   ut_mqueue_recv(pstMqueueObject->MMqueue_sensor,&dmf,sizeof(dmf),RT_WAITING_FOREVER);
         //   rt_kprintf("[Manage Module] thread recv data %d ,%d ,%d \n",dmf.m_atemp,dmf.m_btemp,dmf.m_spo2);
 
-            DataFrameDef mqttDmf;
+            SensorDataFrameDef mqttDmf;
             //SensorDataFrameDef mqttDmf;  //2023.9.21
             mqttDmf.m_atemp = 0;
             mqttDmf.m_btemp = 0;
