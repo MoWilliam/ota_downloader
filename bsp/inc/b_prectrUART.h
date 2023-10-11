@@ -15,6 +15,7 @@
 // 用于接收消息的信号量
 static struct rt_semaphore rx_sem_4;
 static rt_device_t serial;
+static struct rt_semaphore rx_sem;
 
 #define PreCtr_UART_NAME        "uart4"
 

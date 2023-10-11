@@ -187,7 +187,6 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
 }
 
 
-//2023.9.27代码的尝试优化
 SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent) {
     //cJSON *root_json = cJSON_CreateObject();
     //char *out = NULL;

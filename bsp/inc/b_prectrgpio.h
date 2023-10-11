@@ -1,12 +1,4 @@
 /*
- * @Author: wangwei wangwei@bitnei.com
- * @Date: 2023-06-28 09:26:51
- * @LastEditors: wangwei wangwei@bitnei.com
- * @LastEditTime: 2023-07-21 14:51:24
- * @FilePath: \compositesensor3\bsp\inc\b_prectrgpio.h
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-/*
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -60,20 +52,14 @@
 #define EmerStop_key5             GET_PIN(D, 13) 
 
 
-#define presorid_1     1
-#define presorid_2     2
-#define presorid_3     3
-#define presorid_4     4
-#define presorid_5     5
+#define PressureSensor1     0x10
+#define PressureSensor2     0x11
+#define PressureSensor3     0x12
+#define PressureSensor4     0x13
+#define PressureSensor5     0x14
 //#define MAX_KEY_NUM         5
 
 
-/*#define PRECTR_THREAD_PRESOR_ON       1
-#define PRECTR_THREAD_PRESOR_OFF      0
-
-#define NO_KEY_PRESS       0
-
-#define emerstop_THREAD_SIG        1*/
 
 
 

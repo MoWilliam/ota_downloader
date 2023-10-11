@@ -85,17 +85,26 @@ typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
 
 }PreCtrmqFrameDef,*LPPreCtrmqFrameDef;
 
-typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
+/*typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
 {
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceType;
     SdUInt8 m_deviceStatus;
 
-    //SdUInt8 m_presorID;        设备号码 设置一个组出来z
-    //SdUInt8 m_prectrcmdtype;   0,1状态位
-}PreCtrFrameDef,*LPPreCtrFrameDef;
+}PreCtrFrameDef,*LPPreCtrFrameDef;*/
 
+
+typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
+{
+    SdUInt16 msgID;
+    char m_deviceid[DEVICE_LENGTH];   //
+    SdUInt8 m_msgType;         //信息的下行或上传
+    SdUInt8 m_deviceType;     //设备类型
+    SdUInt8 m_deviceStatus;    //设备工作状态
+    SdUInt8 m_cmdType;       //命令类型
+
+}PreCtrFrameDef,*LPPreCtrFrameDef;
 typedef enum TagPrectrDevList { 
     PressureSensor1, 
     PressureSensor2,

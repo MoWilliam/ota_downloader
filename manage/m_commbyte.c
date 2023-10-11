@@ -40,7 +40,6 @@ void mq_thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心�
         LPPreCtrFrameDef pstPreCtrFrameDef = device_ctrl_object_get();
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get(); //消息队列
         LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
-
         manage_prectrdevice_init();
         
         while (pstPressControlObject->brun_mqprectrheartBeat)
@@ -48,17 +47,19 @@ void mq_thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心�
             //if (pstPreCtrFrameDef && pstPreCtrFrameDef->m_deviceStatus == 1)  //2023.7.6修改
             if (pstPreCtrFrameDef)
             {
+                PreCtrmqFrameDef dmf;
+                bsp_uart_get(&dmf);
                 PreCtrFrameDef message;
                 message.msgID = g_msgId_hearBeat++;  
-                strncpy(message.m_deviceid, "pressurecontrolsensor", DEVICE_LENGTH);   //设备id;
-                message.m_deviceStatus = 1;  
+                strncpy(message.m_deviceType, "pressurecontrolsensor", DEVICE_LENGTH);   //设备id,这里做更改，获取队列中的设备
+                message.m_msgType = 0;  
                 ut_mqueue_send(pstMqueueObject->MMqueue_preheartbeat, &message, sizeof(PreCtrFrameDef));
                 print_heartbeat_info(&message);  //打印心跳包信息
                 rt_kprintf("[MQ Module]-> prectrheartbeat thread run\n");
             }
 
             // 每隔10秒发送一个心跳包，确保设备在线
-            rt_thread_mdelay(1000*5);   //每隔5s发送一个心跳包，确保设备在线
+            rt_thread_mdelay(1000*10);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[MQ Module] thread exit\n");
         ut_thread_exit(pstMqueueObject->MMqueue_preheartbeat);
@@ -103,7 +104,7 @@ SdInt commbyte_status(int connectStatus)
                 if ( pstPreCtrFrameDef)
                 {
                     pstPreCtrFrameDef->m_deviceStatus = 1;
-                    rt_kprintf("UART SERVIER STATUS ONLINE\n");
+                    rt_kprintf("UART SERVIER STATUS Start\n");
                 }
             }
             break;
@@ -113,7 +114,7 @@ SdInt commbyte_status(int connectStatus)
                 if ( pstPreCtrFrameDef)
                 {
                     pstPreCtrFrameDef->m_deviceStatus = 0;
-                    rt_kprintf("UART SERVIER STATUS OFFLINE\n");
+                    rt_kprintf("UART SERVIER STATUS Stop\n");
                 }
             }
             break;
@@ -126,7 +127,8 @@ SdInt commbyte_status(int connectStatus)
 
 void print_heartbeat_info(const PreCtrFrameDef *message)
 {
-    rt_kprintf("Message ID: %d, Device ID: %s, Device Status: %d\n", message->msgID, message->m_deviceid, message->m_deviceStatus);
+    rt_kprintf("Message ID: %d, Device Type: %d, Device Status: %d, Device ID: %s, Cmd Type: %d\n",
+                message->msgID, message->m_deviceType, message->m_deviceStatus, message->m_deviceid, message->m_cmdType);
 
 }
 

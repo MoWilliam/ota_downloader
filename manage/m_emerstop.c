@@ -1,12 +1,4 @@
 /*
- * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @Date: 2023-06-21 15:48:30
- * @LastEditors: wangwei wangwei@bitnei.com
- * @LastEditTime: 2023-06-26 16:05:29
- * @FilePath: \pressurecontrolsensor\compositesensor\manage\m_emerstop.c
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-/*
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -35,7 +27,7 @@ KEY_Action_TypeDef KEY_ReadPin(rt_base_t pin)   //返回结果按下或者松开
     return (KEY_Action_TypeDef)rt_pin_read(pin);
 }
 
-void debounce_handler(void *param)  //延时消抖的处理
+void debounce_handler(void *param)  //急停按键的处理
 {
 	rt_base_t pin = (rt_base_t)param;
 	KEY_Action_TypeDef status = KEY_ReadPin(pin);
@@ -123,7 +115,7 @@ rt_uint8_t set_key_pressed_flags(int idx ,int flag)
 
 rt_uint8_t get_key_pressed_flags(int idx)
 {
-	// 枷锁
+	// 加锁
 	if ( idx >=0 && idx < NUM_PINS){  //限制idx的条件范围
 		return key_pressed_flags[idx];
 	}

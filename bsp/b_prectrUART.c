@@ -14,12 +14,8 @@
 #include "inc/b_prectrUART.h"
 #include <rtdevice.h>
 
-/*判断是否读取一组数据结束的标志位*/
-uint8_t uart_flag = 0;  //数据是否读满标志位
-uint8_t uart_data[1024] = {0};
-
-//建立一个驱动的初始化和获取数据的函数
-
+//判断是否读取一组数据结束的标志位
+uint8_t uart_data[128] = {0};
 
 // 接收数据回调函数
 static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
@@ -31,10 +27,11 @@ static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
 }
 
 
-void bsp_uart_init(void)   //将压力控制器的uart设备放在其中，uart只做读取不做发送
+void bsp_uart_init(void)   //将压力控制器的uart设备放在其中，
 {
     rt_err_t ret = RT_EOK;
     char uart_name[RT_NAME_MAX];  //创建一个长度为8的字符数组存储uart的名称
+    char str[] = "PressureControl\r\n";
     rt_strncpy(uart_name, PreCtr_UART_NAME, RT_NAME_MAX);  
 
     //查找设备
@@ -52,18 +49,19 @@ void bsp_uart_init(void)   //将压力控制器的uart设备放在其中，uart�
     rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &config);   //设备控制
     
     rt_device_open(serial, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);   //以读写和串口接收的方式打开设备
-    /* 设置接收回调函数 */
+
+    //设置接收回调函数 
     rt_device_set_rx_indicate(serial, uart_input);
-    /* 发送字符串 */
-   // rt_device_write(serial, 0, str, 1);
-    //创建 serial接收的线程
-    //rt_kprintf("  /b_prectrUART.c/uart4 init\n");  //输出打印
+
+    //发送字符串 
+   rt_device_write(serial, 0, str, (sizeof(str) - 1));   
     return ret;
 }
 
 void bsp_uart_get(PreCtrmqFrameDef* dmf)
 {
     char ch;
+    rt_size_t UartRec_bytes = 0;
     while (1)
     {
         /* 从串口读取一个字节的数据，没有读取到则等待接收信号量 */
@@ -73,24 +71,21 @@ void bsp_uart_get(PreCtrmqFrameDef* dmf)
             rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
         }
 
-//这里重写
-        if(ch != 0xFF)
+        
+        //获取读取到的数据
+        uart_data[UartRec_bytes++] = ch;
+        if (UartRec_bytes == 3)
         {
-            uart_data[uart_flag++] = ch;
-            if(uart_flag >= 76) //协议包大小
-            {
-                uart_flag = 0;
-                break;
-            }
-        }
-        else{
-            memset(uart_data, 0, sizeof(uart_data));
-            uart_flag = 0;
-            uart_data[uart_flag++] = ch;
+            dmf->m_presorID = uart_data[1];  
+            dmf->m_cmdtype = uart_data[2];   //对应功能 加压或减压
 
+            // 清零操作
+            UartRec_bytes = 0; 
         }
     }
 }
+
+        
 
 
 
