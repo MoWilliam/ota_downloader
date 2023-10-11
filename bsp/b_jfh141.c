@@ -25,6 +25,7 @@ static rt_device_t serial;
 uint8_t rwflag = 0;
 uint8_t data[128] = {0};
 
+//卡尔曼滤波
 static double p_last = 0;
 static double x_last = 0;
 

@@ -24,7 +24,7 @@ static double x_last = 0;
 #define e27275 0
 #define e7aa1b 0
 #define e7e033 0
-#define e23035 1
+#define e23035 0
 #define e1f1c6 0
 
 //wifi:mFi-14BEE7   浙江设备B
@@ -36,7 +36,7 @@ static double x_last = 0;
 #define e27a6d 0
 
 //wifi:mFi-14C96B   山东设备
-#define e22635 0
+#define e22635 1
 #define e22bb7 0
 #define e22a8a 0
 #define e271fd 0
@@ -384,7 +384,7 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
 
     z = (1 / k) * sqrt(I_ADC_Value * I_ADC_Value + Q_ADC_Value * Q_ADC_Value) ;
     z= 1.01 * z + 0.31; //校正后的
-
+    //z = kalman_filter(z); //做卡尔曼滤波校正
 #if e2b8d6
     z = 0.99 * z + 13.57;
 #endif
@@ -398,6 +398,7 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
 
 #if e22bb7
     z = 0.99 * z + 2.38;
+    z = z - 1.67;
 #endif
 
 #if e28771
@@ -405,7 +406,8 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
 #endif
 
 #if e22526
-    z= z + 7;
+    z= z + 7 -11.67;
+
 #endif
 
 #if e27275
@@ -420,6 +422,7 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
 
 #if e271fd
     z= z + 4.25;
+    z= z - 11.56;
 #endif
 
 #if e2336c
@@ -438,11 +441,12 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
 
 #if e22a8a
     z= 0.99 * z - 2.02;
+    z= 0.99 * z + 6.18;
 #endif
 
 #if e22635
-    z= z + 11;
-    z = z - 5.4;
+    z= 0.98 * (z + 5.6) -14.65;
+    //z = 0.98 * z - 14.65;
 #endif
 
 #if e2bded
@@ -472,7 +476,7 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
 
 
     //rt_kprintf("z=%f\r\n", z);
-    z = kalman_filter(z); //;//做卡尔曼滤波
+    z = kalman_filter(z); ////做卡尔曼滤波改变
     //rt_kprintf("kalman z=%f\r\n",z);
 
     dmf->m_bio_value = z;
