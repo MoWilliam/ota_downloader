@@ -16,7 +16,7 @@ msgId：消息ID
 msgType：  上传：1    下传:2
 deviceId：设备ID
 deviceType：采集终端设备类型： 1、综合采集器   2、压力传感器  3、气动单元
-cmdType： 命令类型定义 0：心跳命令；1：参数命令 2：加压；3：泄压  4：急停命令
+cmdType： 命令类型定义 0：心跳命令；1：参数命令 2：加压；3：泄压  
 PressureSensorId：控制的压力传感器设备
 泄压命令调整  可以是过多长时间后自动泄压，也可以是通过主控终端接收到的压力数值调整泄压数值
 
@@ -40,21 +40,20 @@ void mq_thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心�
         LPPreCtrFrameDef pstPreCtrFrameDef = device_ctrl_object_get();
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get(); //消息队列
         LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
-        manage_prectrdevice_init();
+        manage_prectrdevice_init();  //初始化数组
         
         while (pstPressControlObject->brun_mqprectrheartBeat)
         {
             //if (pstPreCtrFrameDef && pstPreCtrFrameDef->m_deviceStatus == 1)  //2023.7.6修改
             if (pstPreCtrFrameDef)
             {
-                PreCtrmqFrameDef dmf;
-                bsp_uart_get(&dmf);
-                PreCtrFrameDef message;
-                message.msgID = g_msgId_hearBeat++;  
-                strncpy(message.m_deviceType, "pressurecontrolsensor", DEVICE_LENGTH);   //设备id,这里做更改，获取队列中的设备
-                message.m_msgType = 0;  
-                ut_mqueue_send(pstMqueueObject->MMqueue_preheartbeat, &message, sizeof(PreCtrFrameDef));
-                print_heartbeat_info(&message);  //打印心跳包信息
+                PreCtrFrameDef dmf;
+                bsp_uart_send(&dmf);
+                dmf.msgID = g_msgId_hearBeat++; 
+                dmf.m_msgType = 0; 
+                //strncpy(dmf.m_deviceType, "pressurecontrolsensor", DEVICE_LENGTH);   //设备id,这里做更改，获取队列中的设备
+                //ut_mqueue_send(pstMqueueObject->MMqueue_preheartbeat, &dmf, sizeof(PreCtrFrameDef));
+                print_heartbeat_info(&dmf);  //打印心跳包信息
                 rt_kprintf("[MQ Module]-> prectrheartbeat thread run\n");
             }
 
@@ -125,10 +124,17 @@ SdInt commbyte_status(int connectStatus)
     return 0;
 }
 
-void print_heartbeat_info(const PreCtrFrameDef *message)
+/*void print_heartbeat_info(const PreCtrFrameDef *dmf)
 {
-    rt_kprintf("Message ID: %d, Device Type: %d, Device Status: %d, Device ID: %s, Cmd Type: %d\n",
-                message->msgID, message->m_deviceType, message->m_deviceStatus, message->m_deviceid, message->m_cmdType);
+    rt_kprintf("Message ID: %d, Message Type: %d, Device Type: %d, Device Status: %d, Device ID: %d, Cmd Type: %d\n",
+                dmf->msgID, dmf->m_msgType, dmf->m_deviceType, dmf->m_deviceStatus, dmf->m_deviceid, dmf->m_cmdType);
+
+}*/
+
+void print_heartbeat_info(const PreCtrFrameDef *dmf)
+{
+    rt_kprintf("Message ID: %d, Message Type: %d, Device Type: %d, Device Id: %d, Cmd Type: %d\n",
+                dmf->msgID, dmf->m_msgType, dmf->m_deviceType, dmf->m_deviceId, dmf->m_cmdType);
 
 }
 

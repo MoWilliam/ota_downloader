@@ -58,34 +58,64 @@ void bsp_uart_init(void)   //将压力控制器的uart设备放在其中，
     return ret;
 }
 
-void bsp_uart_get(PreCtrmqFrameDef* dmf)
+/*
+void bsp_uart_send(PreCtrFrameDef* dmf)
 {
     char ch;
     rt_size_t UartRec_bytes = 0;
+    uint8_t buffer[12]; // 根据数据结构的大小分配足够的缓冲区
     while (1)
     {
-        /* 从串口读取一个字节的数据，没有读取到则等待接收信号量 */
+        // 从串口读取一个字节的数据，没有读取到则等待接收信号量 
         while (rt_device_read(serial, -1, &ch, 1) != 1)
         {
-            /* 阻塞等待接收信号量，等到信号量后再次读取数据 */
+            // 阻塞等待接收信号量，等到信号量后再次读取数据 
             rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
         }
 
         
         //获取读取到的数据
         uart_data[UartRec_bytes++] = ch;
-        if (UartRec_bytes == 3)
-        {
-            dmf->m_presorID = uart_data[1];  
-            dmf->m_cmdtype = uart_data[2];   //对应功能 加压或减压
-
-            // 清零操作
-            UartRec_bytes = 0; 
+        buffer[UartRec_bytes++] = ch;
+        if(UartRec_bytes == 6){
+            dmf->msgID = buffer[0];
+            dmf->m_pressureid = buffer[1];
+            dmf->m_msgType = buffer[2];
+            dmf->m_deviceType = buffer[3];
+            dmf->m_deviceStatus = buffer[4];
+            dmf->m_cmdType = buffer[5];
+            UartRec_bytes = 0;
         }
     }
-}
-
+    // 发送数据到串口
+    rt_device_write(serial, 0, buffer, sizeof(buffer));
+    rt_kprintf("bsp-uart-send ok!\n");
         
+}*/
 
 
+void bsp_uart_send(PreCtrFrameDef* dmf)
+{
+    char ch;
+    rt_size_t UartRec_bytes = 0;
+    uint8_t buffer[12]; // 根据数据结构的大小分配足够的缓冲区
+    
+    
+    buffer[UartRec_bytes++] = ch;
+    if(UartRec_bytes == 6){
+        dmf->msgID = buffer[0];
+        dmf->m_pressureid = buffer[1];
+        dmf->m_msgType = buffer[2];
+        dmf->m_deviceType = buffer[3];
+        dmf->m_deviceStatus = buffer[4];
+        
+        dmf->m_cmdType = buffer[5];
+        UartRec_bytes = 0;
+        rt_kprintf("dmf->m_pressureid:%d\n", dmf->m_pressureid);
+        }
+    
+    // 发送数据到串口
+    rt_device_write(serial, 0, buffer, sizeof(buffer));
+    rt_kprintf("bsp-uart-send ok!\n");
 
+}

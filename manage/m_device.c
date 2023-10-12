@@ -62,10 +62,13 @@ void manage_prectrdevice_init(void)   //气动单元
     LPPreCtrFrameDef pstPreCtrFrameDef = device_ctrl_object_get();
     if ( pstPreCtrFrameDef )
     {
+        pstPreCtrFrameDef->msgID = 0;
+        pstPreCtrFrameDef->m_pressureid = 0;
+        pstPreCtrFrameDef->m_msgType = 0;
         pstPreCtrFrameDef->m_deviceType = emDevicePressControlSensor;
         pstPreCtrFrameDef->m_deviceStatus = 0;
-        //pstPreCtrFrameDef->m_presorID = 0;
-
+        pstPreCtrFrameDef->m_cmdType = 0;
+        
     }
 }
 

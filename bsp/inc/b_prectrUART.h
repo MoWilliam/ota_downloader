@@ -38,6 +38,7 @@ static struct rt_semaphore rx_sem;
 #define ID_PreSor5                 5
 
 void bsp_uart_init(void);
-void bsp_uart_get(PreCtrmqFrameDef* dmf);
+//void bsp_uart_get(PreCtrFrameDef* dmf);
+void bsp_uart_send(PreCtrFrameDef* dmf);
 
 #endif /* BSP_INC_B_PRECTRUARTT_H_ */

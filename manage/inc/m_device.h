@@ -77,13 +77,13 @@ typedef struct TagDeviceObjectDef
 
 }DeviceObjectDef,*LPDeviceObjectDef;
 
-typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
+/*typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
 {
     SdUInt16 msgID;
     SdUInt8 m_presorID;  //所需要控制加压设备
     SdUInt8 m_cmdtype;  //加压和泄压命令
 
-}PreCtrmqFrameDef,*LPPreCtrmqFrameDef;
+}PreCtrmqFrameDef,*LPPreCtrmqFrameDef; */
 
 /*typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
 {
@@ -98,7 +98,8 @@ typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
 typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
 {
     SdUInt16 msgID;
-    char m_deviceid[DEVICE_LENGTH];   //
+    char m_deviceId[DEVICE_LENGTH];
+    SdUInt8 m_pressureid;         //
     SdUInt8 m_msgType;         //信息的下行或上传
     SdUInt8 m_deviceType;     //设备类型
     SdUInt8 m_deviceStatus;    //设备工作状态
