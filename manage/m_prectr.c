@@ -36,7 +36,7 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
         {
             uartRecvRet = rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);  // 获取USART4接收信号量，有返回的状态
             PreCtrFrameDef dmf;
-            bsp_uart_send(&dmf);
+            bsp_uart_get(&dmf);
             if (RT_EOK == uartRecvRet)
             {
 
@@ -133,7 +133,7 @@ void m_prectruart_thread(void)  //开启线程，UART信号的接收
                                             UT_THREAD_STACK_SIZE_LARGE,
                                             UT_THREAD_PRIORITY_DEFAULT,
                                             UT_THREAD_TICK_DEFAULT,
-                                            bsp_uart_send,pstPressControlObject);  //uart发送数据的线程
+                                            bsp_uart_get,pstPressControlObject);  //uart发送数据的线程
             }
             //rt_kprintf("  /m_prectr.c/ m_prectruart_thread run\n");   //添加输出打印
 

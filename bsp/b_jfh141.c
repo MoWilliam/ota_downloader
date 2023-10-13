@@ -13,15 +13,15 @@
 #include "bsp/inc/b_jfh141.h"
 #include <rtdevice.h>
 
- /* 串口设备名称 不能使用UART2 ,需要重新分配*/
+ // 串口设备名称 不能使用UART2 ,需要重新分配
 
 #define SAMPLE_UART_NAME       "uart3"
 
-/* 用于接收消息的信号量 */
+// 用于接收消息的信号量 
 static struct rt_semaphore rx_sem;
 static rt_device_t serial;
 
-/*判断是否读取一组数据结束的标志位*/
+//判断是否读取一组数据结束的标志位
 uint8_t rwflag = 0;
 uint8_t data[128] = {0};
 

@@ -136,7 +136,6 @@ void message_ctrl_uninit(void)
 
 }
 
-
 /**
  * @brief  task module 
  * 
@@ -144,27 +143,34 @@ void message_ctrl_uninit(void)
  */
 void task_module_init(void)
 {
+
+#if COMPOSITE_CONTROL_FLAG
     task_sensor_init();
-    task_auth_init();
     task_bio_init();
+#endif
+    task_auth_init();
     task_monitor_init();
     //task_power_init();
 }
 
 void task_module_start(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     task_sensor_start();
-    task_auth_start();
     task_bio_start();
+#endif
+    task_auth_start();
     task_monitor_start();
     //task_power_start();
 }
 
 void task_module_uninit(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     task_sensor_stop();
-    task_auth_stop();
     task_bio_stop();
+#endif
+    task_auth_stop();
     task_monitor_stop();
     //task_power_stop();
 }
@@ -331,6 +337,7 @@ void appStart(void)
     bsp_module_init();
     rt_hw_us_delay(1000*100);
     bsp_module_start();
+
 
     // task 模块初始化
     task_module_init();

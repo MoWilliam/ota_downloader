@@ -16,7 +16,7 @@ msgId：消息ID
 msgType：  上传：1    下传:2
 deviceId：设备ID
 deviceType：采集终端设备类型： 1、综合采集器   2、压力传感器  3、气动单元
-cmdType： 命令类型定义 0：心跳命令；1：参数命令 2：加压；3：泄压  
+cmdType： 命令类型定义 0：心跳命令；1：参数命令 2：加压；3：泄压
 PressureSensorId：控制的压力传感器设备
 泄压命令调整  可以是过多长时间后自动泄压，也可以是通过主控终端接收到的压力数值调整泄压数值
 
@@ -48,7 +48,7 @@ void mq_thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心�
             if (pstPreCtrFrameDef)
             {
                 PreCtrFrameDef dmf;
-                bsp_uart_send(&dmf);
+                bsp_uart_get(&dmf);
                 dmf.msgID = g_msgId_hearBeat++; 
                 dmf.m_msgType = 0; 
                 //strncpy(dmf.m_deviceType, "pressurecontrolsensor", DEVICE_LENGTH);   //设备id,这里做更改，获取队列中的设备
@@ -58,7 +58,7 @@ void mq_thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心�
             }
 
             // 每隔10秒发送一个心跳包，确保设备在线
-            rt_thread_mdelay(1000*10);   //每隔10s发送一个心跳包，确保设备在线
+            rt_thread_mdelay(1000*3);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[MQ Module] thread exit\n");
         ut_thread_exit(pstMqueueObject->MMqueue_preheartbeat);
