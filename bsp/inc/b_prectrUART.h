@@ -29,6 +29,7 @@ struct uart_data {
     rt_bool_t received;
 };
 
+
 void bsp_uart_init(void);
 void bsp_uart_get (PreCtrFrameDef* dmf);
 #endif /* BSP_INC_B_PRECTRUARTT_H_ */

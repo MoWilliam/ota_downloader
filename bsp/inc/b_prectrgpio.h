@@ -20,28 +20,30 @@
 #include <rtdbg.h>
 
 //pump-pin
+#define pump_GPIO_Port GPIOB
 #define pump1_Pin GPIO_PIN_12
-#define pump1_GPIO_Port GPIOB
+//#define pump1_GPIO_Port GPIOB
 #define pump2_Pin GPIO_PIN_13
-#define pump2_GPIO_Port GPIOB
+//#define pump2_GPIO_Port GPIOB
 #define pump3_Pin GPIO_PIN_14
-#define pump3_GPIO_Port GPIOB
+//#define pump3_GPIO_Port GPIOB
 #define pump4_Pin GPIO_PIN_15
-#define pump4_GPIO_Port GPIOB
+//#define pump4_GPIO_Port GPIOB
 #define pump5_Pin GPIO_PIN_8
 #define pump5_GPIO_Port GPIOD
 
 //valve-pin
-#define valve1_Pin GPIO_PIN_2
-#define valve1_GPIO_Port GPIOE
-#define valve2_Pin GPIO_PIN_3
-#define valve2_GPIO_Port GPIOE
+#define valve_GPIO_Port GPIOE
+#define valve1_Pin GPIO_PIN_6
+//#define valve1_GPIO_Port GPIOE
+#define valve2_Pin GPIO_PIN_5
+//#define valve2_GPIO_Port GPIOE
 #define valve3_Pin GPIO_PIN_4
-#define valve3_GPIO_Port GPIOE
-#define valve4_Pin GPIO_PIN_5
-#define valve4_GPIO_Port GPIOE
-#define valve5_Pin GPIO_PIN_6
-#define valve5_GPIO_Port GPIOE
+//#define valve3_GPIO_Port GPIOE
+#define valve4_Pin GPIO_PIN_3
+//#define valve4_GPIO_Port GPIOE
+#define valve5_Pin GPIO_PIN_2
+//#define valve5_GPIO_Port GPIOE
 
 
 #define NUM_PINS 5

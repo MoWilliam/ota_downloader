@@ -17,6 +17,7 @@
 #include "inc/m_device.h"
 #include "inc/m_emerstop.h"
 
+static rt_timer_t emerstop_timer = RT_NULL; 
 
 rt_base_t pins[NUM_PINS] = {EmerStop_key1, EmerStop_key2, EmerStop_key3, EmerStop_key4, EmerStop_key5};
 rt_uint8_t key_pressed_flags[NUM_PINS] = {0};    //储存每个急停按钮的状态标志位，松开后状态位置0
@@ -123,9 +124,29 @@ rt_uint8_t get_key_pressed_flags(int idx)
 }
 
 
-void manage_emerstop_init(void)  //开启循环扫描，检测急停按键的按键状态
+static void emerstop_timer_callback(void *parameter)
 {
-	read_pins_status();
+    // 调用急停按钮状态检测函数
+    read_pins_status();
+    //rt_kprintf("****emerstop_timer_callback****\n");  //打印测试
+}
+
+void manage_emerstop_init(void)
+{
+    //rt_kprintf("****manage_emerstop_init****\n");    //打印测试
+    // 创建定时器，定时周期为 100 毫秒
+    emerstop_timer = rt_timer_create("emerstop_timer", emerstop_timer_callback, RT_NULL, 100, RT_TIMER_FLAG_PERIODIC);
+    
+    if (emerstop_timer != RT_NULL)
+    {
+        // 启动定时器
+        rt_timer_start(emerstop_timer);
+        
+    }
+    else
+    {
+        rt_kprintf("Failed to create emerstop timer\n");
+    }
 }
 
 

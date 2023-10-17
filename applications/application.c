@@ -87,9 +87,10 @@ void mq_ctrl_init(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        pstMqueueObject->MMqueue_preheartbeat = ut_mqueue_create("MQUEUE_preUartHeartbeat",
+        pstMqueueObject->MMqueue_prectrUART = ut_mqueue_create("MQUEUE_prectrUART",
                         UT_MQUEUE_MSGMAX_SIZE,
                         UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+        rt_kprintf("***555****\n");
     #endif
     }
 }
@@ -109,31 +110,35 @@ void mq_ctrl_unint(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        ut_mqueue_delete(pstMqueueObject->MMqueue_preheartbeat);
-        pstMqueueObject->MMqueue_preheartbeat = SD_NULL;
+        ut_mqueue_delete(pstMqueueObject->MMqueue_prectrUART);
+        pstMqueueObject->MMqueue_prectrUART = SD_NULL;
+        rt_kprintf("***666****\n");
     #endif
     }
 }
 
 void message_ctrl_init(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     LPMessageObjectDef pstMessageObject = message_ctrl_object_get();
     if (SD_NULL != pstMessageObject)
     {
         pstMessageObject->MMessage_data =  ut_message_create("MANAGE_MESSAGE_DATA",
                         UT_MESSAGE_MAXMSG_SIZE,RT_IPC_FLAG_FIFO);
     }
+#endif
 }
 
 void message_ctrl_uninit(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     LPMessageObjectDef pstMessageObject = message_ctrl_object_get();
     if (SD_NULL != pstMessageObject)
     {
         ut_message_delete(pstMessageObject->MMessage_data);
         pstMessageObject->MMessage_data = SD_NULL;
     }
-
+#endif
 }
 
 /**
@@ -191,6 +196,7 @@ void manage_module_init(void)
 
 #if PRESS_CONTROL_FLAG
     manage_commbyte_init();
+    manage_prectrdevice_init();
     manage_prectr_init();
     manage_emerstop_init();
 #endif
@@ -206,9 +212,10 @@ void manage_module_start(void)
 #endif
 
 #if PRESS_CONTROL_FLAG
-    manage_commbyte_start();  //启动心跳包线程
+    manage_commbyte_start();  
+    manage_prectrdevice_start();
     manage_prectr_start();
-    void manage_prectruart_start();
+    manage_prectruart_start();
 #endif
 }
 
@@ -221,7 +228,8 @@ void manage_module_uninit(void)
     manage_platform_stop();
 #endif
 #if PRESS_CONTROL_FLAG
-    manage_commbyte_stop();   //停止心跳包线程，标志位翻转
+    manage_commbyte_stop();   
+    manage_prectrdevice_stop();
     manage_prectr_stop();
     manage_prectruart_stop(); 
 #endif
@@ -256,13 +264,17 @@ void bsp_module_uninit(void)
 
 }
 
+
 void app_module_init(void)
 {
     LPAppObjectDef pstAppObject = app_ctrl_object_get();
     pstAppObject->brun = SD_FALSE;
 }
+
+
 void app_module_start(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     LPAppObjectDef pstAppObject = app_ctrl_object_get();
     if(SD_NULL != pstAppObject)
     {
@@ -277,7 +289,9 @@ void app_module_start(void)
         }
 
     }
+#endif
 }
+
 
 void app_module_uninit(void)
 {

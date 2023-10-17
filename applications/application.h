@@ -71,16 +71,16 @@ typedef struct TagManageObjectDef
 /** 
  * PressControl object
  * thread
- * data
+ * bool
  * 
  */
 typedef struct TagPressControlObjectDef
 {
-    UtThread*  MqThead_prectrheartBeat;   //心跳包线程以及标志位
-    SdBool    brun_mqprectrheartBeat;
-    UtThread*  Thead_prectrRecv;   //加压和减压以及标志位
-    SdBool    brun_prectrRecv;
-    UtThread*  Thead_prectrUart;   //加压和减压以及标志位
+    UtThread*  Thead_prectrheartBeat;   //心跳包线程以及标志位
+    SdBool    brun_prectrheartBeat;
+    UtThread*  Thead_preControl;   //压力控制以及标志位
+    SdBool    brun_preControl;
+    UtThread*  Thead_prectrUart;   //uart数据接收县线程和标志位
     SdBool    brun_prectrUart;
 
 }PressControlObjectDef,*LPPressControlObjectDef;
@@ -97,8 +97,8 @@ typedef struct TagMqueueObjectDef
     SdChar *   MMqueue_bio_name;
     UtMqueue*  MMqueue_msg;
     SdChar *   MMqueue_msg_name;
-    UtMqueue*  MMqueue_preheartbeat;
-    SdChar *   MMqueue_preheartbeat_name;
+    UtMqueue*  MMqueue_prectrUART;
+    SdChar * MMqueue_prectrUART_name;
 
 }MqueueObjectDef,*LPMqueueObjectDef;
 

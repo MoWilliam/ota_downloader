@@ -15,134 +15,100 @@
 #include "inc/b_prectrUART.h"
 #include <rtdevice.h>
 
+//static struct uart_data uart_rx_data = {0};
 
+//rt_mq_t uart4_rx_mq;
 
-#define BUFFER_SIZE 12
-static char receive_buffer[BUFFER_SIZE];
-static int receive_index = 0;
-
-// 接收数据回调函数
-static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
+struct mq_msg
 {
-    // 串口接收到数据后产生中断，调用此回调函数，然后发送接收信号量
-    rt_sem_release(&rx_sem_4);
-    rt_kprintf("***444****\n"); // 打印测试
+    rt_device_t dev;
+    rt_size_t size;
+};
+
+static rt_err_t uart4_rx_callback(rt_device_t dev, rt_size_t size)
+{
+    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
+    struct mq_msg msg;
+    msg.dev = dev;
+    msg.size = size;
+    if (SD_NULL != pstMqueueObject)
+    {
+        ut_mqueue_send(pstMqueueObject->MMqueue_prectrUART, &msg, sizeof(msg));
+    }
     return RT_EOK;
 }
 
-// 接收中断回调函数
-
-
-/*
-void bsp_uart_init(void)   //uart串口初始化
+void bsp_uart_init(void)
 {
-    rt_err_t ret = RT_EOK;
-    char uart_name[RT_NAME_MAX];  //创建一个长度为8的字符数组存储uart的名称
-    char str[] = "****333***\n";
-    rt_strncpy(uart_name, PreCtr_UART_NAME, RT_NAME_MAX);  
+    char send_str[] = "Uart4 is ok/r/n";
+    rt_size_t send_size = 0;
 
-    //查找设备
-    serial_4 = rt_device_find(uart_name);
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // UART 设备参数配置
+
+    serial_4 = rt_device_find(UART_DEV_NAME);
     if (!serial_4)
     {
-        rt_kprintf("find %s failed!\n", uart_name);
+        rt_kprintf("find %s failed!\n", UART_DEV_NAME);
         return RT_ERROR;
     }
-
-    //初始化信号量
     rt_sem_init(&rx_sem_4, "rx_sem", 0, RT_IPC_FLAG_FIFO);
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;   //uart设备参数配置
-    config.baud_rate = BAUD_RATE_115200;
-    rt_device_control(serial_4, RT_DEVICE_CTRL_CONFIG, &config);   //设备控制
-
-    rt_device_open(serial_4, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);   //以读写和串口接收的方式打开设备
     
-    //设置接收回调函数
-    rt_device_set_rx_indicate(serial_4, uart_input);
-
-    //发送字符串
-   rt_device_write(serial_4, 0, str, (sizeof(str) - 1));
-   //rt_kprintf("***333****\n"); // 打印测试
-
-   
-    return ret;
-}*/
-
-
-
-
-static rt_err_t uart_rx_callback(rt_device_t dev, rt_size_t size)
-{
-    rt_uint8_t ch;
-    rt_size_t read_len = 0;
-
-    while (read_len < size) {
-        rt_device_read(dev, -1, &ch, 1);
-        uart_rx_data.data[read_len] = ch;
-        read_len++;
-    }
-
-    if (read_len == 5) {
-        uart_rx_data.received = RT_TRUE;
-    }
-
-    return RT_EOK;
+    //config.baud_rate = 38400;
+    //config.bufsz = 128; //缓冲区大小
+    rt_device_control(serial_4, RT_DEVICE_CTRL_CONFIG, &config);
+    rt_device_open(serial_4, RT_DEVICE_FLAG_DMA_RX);
+    rt_device_set_rx_indicate(serial_4, uart4_rx_callback);
+    send_size = rt_device_write(serial_4,0,send_str,sizeof(send_str));
+    rt_kprintf("the length of send string : %d\n", send_size);
+    
 }
 
-static void uart_rx_task(PreCtrFrameDef* dmf)
+void bsp_uart_get(PreCtrFrameDef *dmf)
 {
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;   //uart设备参数配置
+    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
+    struct mq_msg msg;
+    char rx_buf[128];
+    rt_size_t rx_len;
 
-    rt_device_t uart_dev = rt_device_find(UART_DEV_NAME);
-    rt_device_open(uart_dev, RT_DEVICE_FLAG_INT_RX);
-    rt_device_control(uart_dev, RT_DEVICE_CTRL_CONFIG, &config);
-    rt_device_set_rx_indicate(uart_dev, uart_rx_callback);
+    while(1)
+    {
+        //将队列中的内容清零
 
-    while (1) {
-        if (uart_rx_data.received == RT_TRUE) {
-            // 数据匹配标志
-            rt_bool_t data_matched = RT_TRUE;
+        rt_memset(&msg, 0, sizeof(msg));
+        rt_memset(&rx_buf, 0, 128);
+        if (SD_NULL != pstMqueueObject)
+        {
+            //rt_kprintf("***555****\n");
+            //判断是否有接收到消息
+            if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrUART, &msg, sizeof(msg), RT_WAITING_FOREVER ) == RT_EOK)
+            {
+                //rt_kprintf("***666****\n");
 
-            // 期望的数据，其中 * 表示通配符
-            uint8_t expected_data[] = {0x00, 0x01, 0x10, 0x02, 0x01};
-
-            // 数据格式以空格分隔
-            char data_string[10]; // 假设最大长度为10
-            snprintf(data_string, sizeof(data_string), "%c %c %c %c %c", 
-                     uart_rx_data.data[0], uart_rx_data.data[1],
-                     uart_rx_data.data[2], uart_rx_data.data[3],
-                     uart_rx_data.data[4]);
-
-            
-            char* token = strtok(data_string, " ");
-            int index = 0;
-            
-            while (token != RT_NULL && index < 5) {
-                if (expected_data[index] != 0x2A &&  // 0x2A 表示通配符 *
-                    (uint8_t)strtoul(token, RT_NULL, 16) != expected_data[index]) {
-                    data_matched = RT_FALSE;
-                    break;  // 一旦有不匹配的部分，跳出循环
+                rx_len = rt_device_read(msg.dev, 0, &rx_buf, msg.size);
+                //memcpy(&dmf, rx_buf, sizeof(PreCtrFrameDef));
+                //rt_kprintf("rx_len = %d content: %s\n", rx_len, rx_buf);
+                if (rx_len == sizeof(PreCtrFrameDef))
+                {
+                    dmf->msgID = rx_buf[0];
+                    dmf->m_msgType = rx_buf[1];
+                    dmf->m_pressureid = rx_buf[2];
+                    dmf->m_deviceType = rx_buf[3];
+                    dmf->m_cmdType = rx_buf[4];   
+                    rt_kprintf("Received data: msgID=%02X, m_msgType=%02X, m_pressureid=%02X, m_deviceType=%02X, m_cmdType=%02X\n",
+                                dmf->msgID, dmf->m_msgType, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType);
+                }else
+                {
+                    rt_kprintf("Received data has incorrect length.\n");
                 }
-                token = strtok(RT_NULL, " "); // 获取下一个标记
-                index++;
+                
             }
-
-            if (data_matched) {
-                dmf->msgID = uart_rx_data.data[0];
-                dmf->m_msgType = uart_rx_data.data[1];
-                dmf->m_pressureid = uart_rx_data.data[2];
-                dmf->m_deviceType = uart_rx_data.data[3];
-                dmf->m_cmdType = uart_rx_data.data[4];
-                rt_kprintf("received successfully\n");
-            } else {
-                rt_kprintf("received failed\n");
-            }
-
-            uart_rx_data.received = RT_FALSE;
         }
-
-        rt_thread_mdelay(10);
+        rt_thread_mdelay(1000);
+        
     }
 }
+
+    
+
 
 
