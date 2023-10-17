@@ -57,35 +57,35 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define pump1_Pin GPIO_PIN_2
-#define pump1_GPIO_Port GPIOB
-#define pump2_Pin GPIO_PIN_7
-#define pump2_GPIO_Port GPIOE
-#define pump3_Pin GPIO_PIN_8
-#define pump3_GPIO_Port GPIOE
-#define pump4_Pin GPIO_PIN_9
-#define pump4_GPIO_Port GPIOE
-#define pump5_Pin GPIO_PIN_10
-#define pump5_GPIO_Port GPIOE
-#define valve1_Pin GPIO_PIN_11
-#define valve1_GPIO_Port GPIOE
-#define valve2_Pin GPIO_PIN_12
-#define valve2_GPIO_Port GPIOE
-#define valve3_Pin GPIO_PIN_13
-#define valve3_GPIO_Port GPIOE
-#define valve4_Pin GPIO_PIN_14
-#define valve4_GPIO_Port GPIOE
-#define valve5_Pin GPIO_PIN_15
+#define valve5_Pin GPIO_PIN_2
 #define valve5_GPIO_Port GPIOE
-#define emerstop1_Pin GPIO_PIN_8
+#define valve4_Pin GPIO_PIN_3
+#define valve4_GPIO_Port GPIOE
+#define valve3_Pin GPIO_PIN_4
+#define valve3_GPIO_Port GPIOE
+#define valve2_Pin GPIO_PIN_5
+#define valve2_GPIO_Port GPIOE
+#define valve1_Pin GPIO_PIN_6
+#define valve1_GPIO_Port GPIOE
+#define pump1_Pin GPIO_PIN_12
+#define pump1_GPIO_Port GPIOB
+#define pump2_Pin GPIO_PIN_13
+#define pump2_GPIO_Port GPIOB
+#define pump3_Pin GPIO_PIN_14
+#define pump3_GPIO_Port GPIOB
+#define pump4_Pin GPIO_PIN_15
+#define pump4_GPIO_Port GPIOB
+#define pump5_Pin GPIO_PIN_8
+#define pump5_GPIO_Port GPIOD
+#define emerstop1_Pin GPIO_PIN_9
 #define emerstop1_GPIO_Port GPIOD
-#define emerstop2_Pin GPIO_PIN_9
+#define emerstop2_Pin GPIO_PIN_10
 #define emerstop2_GPIO_Port GPIOD
-#define emerstop3_Pin GPIO_PIN_10
+#define emerstop3_Pin GPIO_PIN_11
 #define emerstop3_GPIO_Port GPIOD
-#define emerstop4_Pin GPIO_PIN_11
+#define emerstop4_Pin GPIO_PIN_12
 #define emerstop4_GPIO_Port GPIOD
-#define emerstop5_Pin GPIO_PIN_12
+#define emerstop5_Pin GPIO_PIN_13
 #define emerstop5_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */

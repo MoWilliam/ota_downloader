@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "rtc.h"
 #include "usart.h"
 #include "gpio.h"
@@ -90,6 +91,7 @@ __WEAK int main(void)
   MX_USART1_UART_Init();
   MX_UART4_Init();
   MX_RTC_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

@@ -11,10 +11,12 @@
 #include "inc/t_power.h"
 #include "bsp/inc/b_jfh141.h"
 #include "bsp/inc/b_afe4300.h"
+#include "bsp/inc/adc.h"
 #include <drivers/pm.h>
 #include <rtthread.h>
 #include "rtdevice.h"
 #include "drivers/board.h"
+
 
 static rt_tick_t period_start_time = 0; //计时器变量
 static SdUInt16 prev_bio_value = 0;
