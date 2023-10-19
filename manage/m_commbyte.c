@@ -49,7 +49,7 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
 
                 PreCtrFrameDef dmf;
 
-                //bsp_uart_get(&dmf);
+                bsp_uart_get(&dmf);
                 //rt_kprintf("***111***\n");
                 dmf.msgID = g_msgId_hearBeat++; 
                 char STM32_DEVICEID[DEVICE_LENGTH];

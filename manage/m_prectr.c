@@ -33,8 +33,8 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
         while(pstPressControlObject->brun_preControl )
         {
             PreCtrFrameDef dmf;
-            //bsp_uart_get(&dmf);
-            rt_kprintf("***222***\n");
+            bsp_uart_get(&dmf);
+            //rt_kprintf("***222***\n");
             // 根据设备ID选择设备，并根据命令类型确定设备的开关状态
             if (strcmp(dmf.m_pressureid, PressureSensor1) == 0)
             {
@@ -124,7 +124,7 @@ void m_prectr_thread(void)
         if ( pstPressControlObject->brun_preControl == SD_FALSE)
         {
             pstPressControlObject->brun_preControl = SD_TRUE;
-            ut_thread_create(pstPressControlObject->Thead_preControl,"PRECTR_THREAD",
+            ut_thread_create(pstPressControlObject->Thead_preControl,"PRECTRControl_THREAD",
                             UT_THREAD_STACK_SIZE_LARGE,
                             UT_THREAD_PRIORITY_DEFAULT,
                             UT_THREAD_TICK_DEFAULT,

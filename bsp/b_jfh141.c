@@ -17,7 +17,7 @@
 
 #define SAMPLE_UART_NAME       "uart3"
 
-// 用于接收消息的信号量 
+// 用于接收消息的信号量
 static struct rt_semaphore rx_sem;
 static rt_device_t serial;
 

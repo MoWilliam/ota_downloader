@@ -87,10 +87,10 @@ void mq_ctrl_init(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        pstMqueueObject->MMqueue_prectrUART = ut_mqueue_create("MQUEUE_prectrUART",
-                        UT_MQUEUE_MSGMAX_SIZE,
-                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
-        rt_kprintf("***555****\n");
+        //pstMqueueObject->MMqueue_prectrUART = ut_mqueue_create("MQUEUE_prectrUART",
+                        //UT_MQUEUE_MSGMAX_SIZE,
+                        //UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+        //rt_kprintf("***555****\n");
     #endif
     }
 }
@@ -110,9 +110,9 @@ void mq_ctrl_unint(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        ut_mqueue_delete(pstMqueueObject->MMqueue_prectrUART);
-        pstMqueueObject->MMqueue_prectrUART = SD_NULL;
-        rt_kprintf("***666****\n");
+        //ut_mqueue_delete(pstMqueueObject->MMqueue_prectrUART);
+        //pstMqueueObject->MMqueue_prectrUART = SD_NULL;
+        //rt_kprintf("***666****\n");
     #endif
     }
 }
