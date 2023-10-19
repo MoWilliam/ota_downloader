@@ -102,10 +102,11 @@ typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队�
     SdUInt8 m_pressureid;         //
     SdUInt8 m_msgType;         //信息的下行或上传
     SdUInt8 m_deviceType;     //设备类型
-    SdUInt8 m_deviceStatus;    //设备工作状态
     SdUInt8 m_cmdType;       //命令类型
+    //SdUInt8 m_deviceStatus;    //设备工作状态
 
 }PreCtrFrameDef,*LPPreCtrFrameDef;
+
 typedef enum TagPrectrDevList { 
     PressureSensor1, 
     PressureSensor2,

@@ -66,8 +66,8 @@ void manage_prectrdevice_init(void)   //气动单元
         pstPreCtrFrameDef->m_pressureid = 0;
         pstPreCtrFrameDef->m_msgType = 0;
         pstPreCtrFrameDef->m_deviceType = emDevicePressControlSensor;
-        pstPreCtrFrameDef->m_deviceStatus = 0;
         pstPreCtrFrameDef->m_cmdType = 0;
+        //pstPreCtrFrameDef->m_deviceStatus = 0;
         
     }
 }
@@ -137,6 +137,7 @@ void get_STM32_uid(char * deviceid)
     {
         memset(deviceid ,0 ,DEVICE_LENGTH);
         strcpy(deviceid ,STM32_DEVICEID);
+
     }
 }
 

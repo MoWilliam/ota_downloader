@@ -55,6 +55,7 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                 char STM32_DEVICEID[DEVICE_LENGTH];
                 get_STM32_uid(STM32_DEVICEID);
                 strcpy(dmf.m_deviceId, STM32_DEVICEID);   //将芯片uid号赋值过去
+                //rt_kprintf("dmf.m_deviceId： %d\n", dmf.m_deviceId);
                 print_heartbeat_info(&dmf);  //打印心跳包信息
 
                 
@@ -62,7 +63,7 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
             }
 
             // 每隔10秒发送一个心跳包，确保设备在线
-            rt_thread_mdelay(1000);   //每隔10s发送一个心跳包，确保设备在线
+            rt_thread_mdelay(1000*5);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[Thread Module] thread exit\n");
         ut_thread_exit(pstPressControlObject->Thead_prectrheartBeat);
@@ -83,7 +84,7 @@ void commbyte_prectrheartBeat(void)     //创建线程
                             UT_THREAD_PRIORITY_DEFAULT,
                             UT_THREAD_TICK_DEFAULT,
                             thread_prectrheartbeat,pstPressControlObject);
-            rt_kprintf("***222****\n");
+            //rt_kprintf("***222****\n");
         }
     }
 }
@@ -91,9 +92,9 @@ void commbyte_prectrheartBeat(void)     //创建线程
 //心跳包信息的打印
 void print_heartbeat_info(const PreCtrFrameDef *dmf)
 {
-    rt_kprintf("***666***\n");
-    rt_kprintf("Message ID: %d, Message Type: %d, Device Type: %d, Device Id: %d, Cmd Type: %d\n",
-                dmf->msgID, dmf->m_msgType, dmf->m_deviceType, dmf->m_deviceId, dmf->m_cmdType);
+    //rt_kprintf("***666***\n");
+    rt_kprintf("Message ID: %d, Message Type: %d, Device Id: %d, Device Type: %d,  Cmd Type: %d\n",
+                dmf->msgID, dmf->m_msgType, dmf->m_deviceId, dmf->m_deviceType, dmf->m_cmdType);
 
 }
 
@@ -121,6 +122,7 @@ void manage_commbyte_stop(void)
 
 
 //连接状态的状态标明
+/*
 SdInt commbyte_status(int connectStatus)
 {
     LPPreCtrFrameDef pstPreCtrFrameDef = device_ctrl_object_get();
@@ -158,4 +160,4 @@ SdInt commbyte_status(int connectStatus)
             break;
     }
     return 0;
-}
+}*/
