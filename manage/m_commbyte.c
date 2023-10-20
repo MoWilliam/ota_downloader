@@ -52,10 +52,9 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                 bsp_uart_get(&dmf);
                 //rt_kprintf("***111***\n");
                 dmf.msgID = g_msgId_hearBeat++; 
-                char STM32_DEVICEID[DEVICE_LENGTH];
-                get_STM32_uid(STM32_DEVICEID);
-                strcpy(dmf.m_deviceId, STM32_DEVICEID);   //将芯片uid号赋值过去
-                //rt_kprintf("dmf.m_deviceId： %d\n", dmf.m_deviceId);
+                //char STM32_DEVICEID[DEVICE_LENGTH];
+                //get_STM32_uid(STM32_DEVICEID);
+                //strcpy(dmf.m_deviceId, STM32_DEVICEID);   //将芯片uid号赋值过去
                 print_heartbeat_info(&dmf);  //打印心跳包信息
 
                 

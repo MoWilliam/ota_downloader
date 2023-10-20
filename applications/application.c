@@ -212,7 +212,7 @@ void manage_module_start(void)
 #endif
 
 #if PRESS_CONTROL_FLAG
-    manage_commbyte_start();  
+    manage_commbyte_start();
     manage_prectrdevice_start();
     manage_prectr_start();
     manage_prectruart_start();

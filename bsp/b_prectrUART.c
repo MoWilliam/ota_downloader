@@ -76,7 +76,10 @@ void bsp_uart_init(void)
     }
     rt_sem_init(&rx_sem_4, "rx_sem", 0, RT_IPC_FLAG_FIFO);
     rt_device_open(serial_4, RT_DEVICE_FLAG_INT_RX);
+    config.bufsz = 128;
     rt_device_control(serial_4, RT_DEVICE_CTRL_CONFIG, &config);
+
+    //中断回调函数
     rt_device_set_rx_indicate(serial_4, uart4_rx_callback);
 
     send_size = rt_device_write(serial_4, 0, tx_data, sizeof(tx_data));
@@ -131,3 +134,5 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
         uart_rx_data.received = RT_FALSE;
     }
 }
+
+

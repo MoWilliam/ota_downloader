@@ -118,6 +118,7 @@ typedef enum TagPrectrDevList {
 LPDeviceObjectDef device_ctrl_object_get(void);
 
 /*STM32 uid*/
+
 void get_STM32_uid(char * deviceid);
 void get_esp8266_mac(char *macAddr);
 void set_esp8266_mac(rt_uint32_t mac0,rt_uint32_t mac1,rt_uint32_t mac2);
@@ -136,5 +137,6 @@ int afe4300_deviceStatus(void);
 void manage_prectrdevice_init(void);
 void manage_prectrdevice_start(void);
 void manage_prectrdevice_stop(void);
+void get_STM32_Pressuid(char * deviceid);
 
 #endif /* MANAGER_M_DEVICE_H_ */
