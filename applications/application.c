@@ -13,7 +13,7 @@
 #include "task/inc/t_auth.h"
 #include "task/inc/t_bio.h"
 #include "task/inc/t_monitor.h"
-#include "task/inc/t_power.h"
+//#include "task/inc/t_power.h"
 #include "manage/inc/m_comm.h"
 #include "manage/inc/m_device.h"
 #include "manage/inc/m_platform.h"
@@ -72,11 +72,13 @@ void mq_ctrl_init(void)
     {
     #if COMPOSITE_CONTROL_FLAG
         pstMqueueObject->MMqueue_sensor = ut_mqueue_create("MQUEUE_SENSOR",
-                        sizeof(DataFrameDef),
+                        //sizeof(DataFrameDef),
+                        sizeof(SensorDataFrameDef),
                         UT_MQUEUE_MINMSG_COUNT,RT_IPC_FLAG_FIFO);
                         
         pstMqueueObject->MMqueue_bio = ut_mqueue_create("MQUEUE_BIO",
-                        sizeof(BioFrameDef),
+                        //sizeof(BioFrameDef),
+                        sizeof(SensorDataFrameDef),
                         UT_MQUEUE_MINMSG_COUNT,RT_IPC_FLAG_FIFO);
 
         pstMqueueObject->MMqueue_msg = ut_mqueue_create("MQUEUE_MSG",
@@ -85,9 +87,10 @@ void mq_ctrl_init(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        pstMqueueObject->MMqueue_preheartbeat = ut_mqueue_create("MQUEUE_preUartHeartbeat",
-                        UT_MQUEUE_MSGMAX_SIZE,
-                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+        //pstMqueueObject->MMqueue_prectrUART = ut_mqueue_create("MQUEUE_prectrUART",
+                        //UT_MQUEUE_MSGMAX_SIZE,
+                        //UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+        //rt_kprintf("***555****\n");
     #endif
     }
 }
@@ -107,33 +110,36 @@ void mq_ctrl_unint(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        ut_mqueue_delete(pstMqueueObject->MMqueue_preheartbeat);
-        pstMqueueObject->MMqueue_preheartbeat = SD_NULL;
+        //ut_mqueue_delete(pstMqueueObject->MMqueue_prectrUART);
+        //pstMqueueObject->MMqueue_prectrUART = SD_NULL;
+        //rt_kprintf("***666****\n");
     #endif
     }
 }
 
 void message_ctrl_init(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     LPMessageObjectDef pstMessageObject = message_ctrl_object_get();
     if (SD_NULL != pstMessageObject)
     {
         pstMessageObject->MMessage_data =  ut_message_create("MANAGE_MESSAGE_DATA",
                         UT_MESSAGE_MAXMSG_SIZE,RT_IPC_FLAG_FIFO);
     }
+#endif
 }
 
 void message_ctrl_uninit(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     LPMessageObjectDef pstMessageObject = message_ctrl_object_get();
     if (SD_NULL != pstMessageObject)
     {
         ut_message_delete(pstMessageObject->MMessage_data);
         pstMessageObject->MMessage_data = SD_NULL;
     }
-
+#endif
 }
-
 
 /**
  * @brief  task module 
@@ -142,29 +148,36 @@ void message_ctrl_uninit(void)
  */
 void task_module_init(void)
 {
+
+#if COMPOSITE_CONTROL_FLAG
     task_sensor_init();
-    task_auth_init();
     task_bio_init();
+#endif
+    task_auth_init();
     task_monitor_init();
-    task_power_init();
+    //task_power_init();
 }
 
 void task_module_start(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     task_sensor_start();
-    task_auth_start();
     task_bio_start();
+#endif
+    task_auth_start();
     task_monitor_start();
-    task_power_start();
+    //task_power_start();
 }
 
 void task_module_uninit(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     task_sensor_stop();
-    task_auth_stop();
     task_bio_stop();
+#endif
+    task_auth_stop();
     task_monitor_stop();
-    task_power_stop();
+    //task_power_stop();
 }
 
 /**
@@ -183,6 +196,7 @@ void manage_module_init(void)
 
 #if PRESS_CONTROL_FLAG
     manage_commbyte_init();
+    manage_prectrdevice_init();
     manage_prectr_init();
     manage_emerstop_init();
 #endif
@@ -198,9 +212,10 @@ void manage_module_start(void)
 #endif
 
 #if PRESS_CONTROL_FLAG
-    manage_commbyte_start();  //启动心跳包线程
+    manage_commbyte_start();
+    manage_prectrdevice_start();
     manage_prectr_start();
-    void manage_prectruart_start();
+    manage_prectruart_start();
 #endif
 }
 
@@ -213,7 +228,8 @@ void manage_module_uninit(void)
     manage_platform_stop();
 #endif
 #if PRESS_CONTROL_FLAG
-    manage_commbyte_stop();   //停止心跳包线程，标志位翻转
+    manage_commbyte_stop();   
+    manage_prectrdevice_stop();
     manage_prectr_stop();
     manage_prectruart_stop(); 
 #endif
@@ -248,13 +264,17 @@ void bsp_module_uninit(void)
 
 }
 
+
 void app_module_init(void)
 {
     LPAppObjectDef pstAppObject = app_ctrl_object_get();
     pstAppObject->brun = SD_FALSE;
 }
+
+
 void app_module_start(void)
 {
+#if COMPOSITE_CONTROL_FLAG
     LPAppObjectDef pstAppObject = app_ctrl_object_get();
     if(SD_NULL != pstAppObject)
     {
@@ -269,7 +289,9 @@ void app_module_start(void)
         }
 
     }
+#endif
 }
+
 
 void app_module_uninit(void)
 {
@@ -284,9 +306,19 @@ void app_thread_msg_recv(void *ptr)
     {
         LPAppObjectDef pstAppObject = (LPAppObjectDef)ptr;
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
+        SensorDataFrameDef mqttDmf;
+        int count = 0;
         while (pstAppObject->brun)
         {
+            count++;
             ut_msg_recv(pstMqueueObject->MMqueue_msg);
+            if (count == 10)
+            {
+
+                count = 0; // 重置计数器
+                comm_mqtt_msg_publish();
+            }
+            //ut_msg_recv(pstMqueueObject->MMqueue_msg);
            // rt_kprintf("[App Module]-> msg thread run\n");
             rt_thread_mdelay(100);
         }
@@ -320,6 +352,7 @@ void appStart(void)
     rt_hw_us_delay(1000*100);
     bsp_module_start();
 
+
     // task 模块初始化
     task_module_init();
     // task 模块启动
@@ -347,12 +380,35 @@ void appStop(void)
 
 SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
 {
+
     //rt_kprintf("[App Msg Handle] usMsgId %d\n",pMsg->usMsgID);
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
 	switch(pMsg->usMsgID)
 	{	
 		case emMqttMsgBaseData:
+		    if ( pstDeviceObject)
+		                {
+		                    if ( pstDeviceObject->m_mqttStatus == 1)
+		                    {
+		                     if (pstDeviceObject->m_deviceStatus == 1)
+		                        {
+		                            comm_mqtt_msg(pMsg,pContent);
+		                        }
+		                    }
+		                }
+		                break;
 		case emMqttMsgSpo2Data:
+		    if ( pstDeviceObject)
+		                {
+		                    if ( pstDeviceObject->m_mqttStatus == 1)
+		                    {
+		                     if (pstDeviceObject->m_deviceStatus == 1)
+		                        {
+		                            comm_mqtt_msg(pMsg,pContent);
+		                        }
+		                    }
+		                }
+		                break;
 		case emMqttMsgBioData:
             if ( pstDeviceObject)
             {

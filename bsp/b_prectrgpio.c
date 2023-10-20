@@ -41,8 +41,8 @@ void bsp_PreCtr_GPIO_Init(void)
     HAL_GPIO_WritePin(pump5_GPIO_Port, pump5_Pin, GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOD, pump1_Pin|pump2_Pin|pump3_Pin|pump4_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOE, valve1_Pin|valve2_Pin|valve3_Pin|valve4_Pin|valve5_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(pump_GPIO_Port, pump1_Pin|pump2_Pin|pump3_Pin|pump4_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(valve_GPIO_Port, valve1_Pin|valve2_Pin|valve3_Pin|valve4_Pin|valve5_Pin, GPIO_PIN_RESET);
     /*Configure GPIO pin : PtPin */
     GPIO_InitStruct.Pin = pump5_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -57,14 +57,14 @@ void bsp_PreCtr_GPIO_Init(void)
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+    HAL_GPIO_Init(pump_GPIO_Port, &GPIO_InitStruct);
     //rt_kprintf(" /b_prectrgpio.c/ pump and valve GPIO init\n");  //输出打印
 
 	GPIO_InitStruct.Pin = valve1_Pin|valve2_Pin|valve3_Pin|valve4_Pin|valve5_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+    HAL_GPIO_Init(valve_GPIO_Port, &GPIO_InitStruct);
 }
 
 
@@ -75,16 +75,16 @@ void PUMP_on(int device_id)  //气泵的打开，变高电平
 	switch(device_id)
 	{
 		case PressureSensor1:
-		HAL_GPIO_WritePin(pump1_GPIO_Port, pump1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump1_Pin, GPIO_PIN_SET);
 		break;
 		case PressureSensor2:
-		HAL_GPIO_WritePin(pump2_GPIO_Port, pump2_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump2_Pin, GPIO_PIN_SET);
 		break;
 		case PressureSensor3:
-		HAL_GPIO_WritePin(pump3_GPIO_Port, pump3_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump3_Pin, GPIO_PIN_SET);
 		break;
 		case PressureSensor4:
-		HAL_GPIO_WritePin(pump4_GPIO_Port, pump4_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump4_Pin, GPIO_PIN_SET);
         case PressureSensor5:
 		HAL_GPIO_WritePin(pump5_GPIO_Port, pump5_Pin, GPIO_PIN_SET);
 		break;
@@ -100,16 +100,16 @@ void PUMP_off(int device_id)  //气泵的关闭，停止工作，变低电平
 	switch(device_id)
 	{
 		case PressureSensor1:
-		HAL_GPIO_WritePin(pump1_GPIO_Port, pump1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump1_Pin, GPIO_PIN_RESET);
 		break;
 		case PressureSensor2:
-		HAL_GPIO_WritePin(pump2_GPIO_Port, pump2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump2_Pin, GPIO_PIN_RESET);
 		break;
 		case PressureSensor3:
-		HAL_GPIO_WritePin(pump3_GPIO_Port, pump3_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump3_Pin, GPIO_PIN_RESET);
 		break;
 		case PressureSensor4:
-		HAL_GPIO_WritePin(pump4_GPIO_Port, pump4_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(pump_GPIO_Port, pump4_Pin, GPIO_PIN_RESET);
         case PressureSensor5:
 		HAL_GPIO_WritePin(pump5_GPIO_Port, pump5_Pin, GPIO_PIN_RESET);
 		break;
@@ -126,19 +126,19 @@ void VALVE_on(int device_id)
 	switch(device_id)
 	{
 		case PressureSensor1:
-		HAL_GPIO_WritePin(valve1_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
 		break;
 		break;
 		case PressureSensor2:
-		HAL_GPIO_WritePin(valve2_GPIO_Port, valve2_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve2_Pin, GPIO_PIN_SET);
 		break;
 		case PressureSensor3:
-		HAL_GPIO_WritePin(valve3_GPIO_Port, valve3_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve3_Pin, GPIO_PIN_SET);
 		break;
 		case PressureSensor4:
-		HAL_GPIO_WritePin(valve1_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
         case PressureSensor5:
-		HAL_GPIO_WritePin(valve1_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
 		break;
         
 		default:
@@ -155,18 +155,18 @@ void VALVE_off(int device_id)
 	switch(device_id)
 	{
 		case PressureSensor1:
-		HAL_GPIO_WritePin(valve1_GPIO_Port, valve1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve1_Pin, GPIO_PIN_RESET);
 		break;
 		case PressureSensor2:
-		HAL_GPIO_WritePin(valve2_GPIO_Port, valve2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve2_Pin, GPIO_PIN_RESET);
 		break;
 		case PressureSensor3:
-		HAL_GPIO_WritePin(valve3_GPIO_Port, valve3_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve3_Pin, GPIO_PIN_RESET);
 		break;
 		case PressureSensor4:
-		HAL_GPIO_WritePin(valve4_GPIO_Port, valve4_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve4_Pin, GPIO_PIN_RESET);
         case PressureSensor5:
-		HAL_GPIO_WritePin(valve5_GPIO_Port, valve5_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve5_Pin, GPIO_PIN_RESET);
 		break;
         
 		default:

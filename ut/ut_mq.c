@@ -60,11 +60,11 @@ SdInt ut_mqueue_recv(UtMqueue *iMqueue,void* iBuffer,SdULong iSize, SdInt iTimeO
         rt_err_t rt_ret =  rt_mq_recv(iMqueue,iBuffer,iSize,iTimeOut);
         if (-RT_ETIMEOUT == rt_ret)
         {
-            rt_kprintf("[UMqueue] Recv Data TimeOut !\n");
+            //rt_kprintf("[UMqueue] Recv Data TimeOut !\n");
         }
         if (RT_EOK != rt_ret )
         {
-            rt_kprintf("[UMqueue] Recv Data Error Code[%d]\n" ,rt_ret);
+            //rt_kprintf("[UMqueue] Recv Data Error Code[%d]\n" ,rt_ret);
             return -1;
         }
     }
@@ -125,14 +125,15 @@ SdInt ut_msg_recv(UtMqueue *iMqueue)
     SdChar* msg = SD_NULL;
     msg = rt_malloc(UT_MQUEUE_MSGMAX_SIZE);
    // rt_kprintf("[UTMsg] Start Recv Data !\n");
-    rt_err_t rt_ret = rt_mq_recv(iMqueue,msg,UT_MQUEUE_MSGMAX_SIZE,RT_WAITING_FOREVER);
+    //rt_err_t rt_ret = rt_mq_recv(iMqueue,msg,UT_MQUEUE_MSGMAX_SIZE,RT_WAITING_FOREVER);  //2023.9.27
+    rt_err_t rt_ret = rt_mq_recv(iMqueue,msg,UT_MQUEUE_MSGMAX_SIZE,RT_WAITING_NO);
     if (-RT_ETIMEOUT == rt_ret)
     {
-        rt_kprintf("[UTMsg] Recv Data TimeOut !\n");
+        //rt_kprintf("[UTMsg] Recv Data TimeOut !\n");
     }
     if (RT_EOK != rt_ret )
     {
-        rt_kprintf("[UTMsg] Recv Data Error Code[%d]\n" ,rt_ret);
+        //rt_kprintf("[UTMsg] Recv Data Error Code[%d]\n" ,rt_ret);
     }
     if (RT_EOK == rt_ret )
     {

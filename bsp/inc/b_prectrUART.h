@@ -14,29 +14,22 @@
 
 // 用于接收消息的信号量
 static struct rt_semaphore rx_sem_4;
-static rt_device_t serial;
+static rt_device_t serial_4;
 
-#define PreCtr_UART_NAME        "uart4"
+#define UART_DEV_NAME "uart3"
 
 #define ENDLESS_LOOP_TIMEOUT	20000
-
 #define DEVICE_ID_LENGTH   20
-
-
-
 
 #define ON                      1
 #define OFF                     0
 
+struct uart_data {
+    uint8_t data[5];
+    rt_bool_t received;
+};
 
-
-#define ID_PreSor1                 1
-#define ID_PreSor2                 2
-#define ID_PreSor3                 3
-#define ID_PreSor4                 4
-#define ID_PreSor5                 5
 
 void bsp_uart_init(void);
-void bsp_uart_get(PreCtrmqFrameDef* dmf);
-
+void bsp_uart_get (PreCtrFrameDef* dmf);
 #endif /* BSP_INC_B_PRECTRUARTT_H_ */

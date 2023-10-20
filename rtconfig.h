@@ -92,10 +92,12 @@
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
+#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_ADC
 #define RT_USING_PM
 #define PM_TICKLESS_THRESHOLD_TIME 2
 #define RT_USING_RTC
@@ -182,16 +184,12 @@
 /* Wiced WiFi */
 
 /* end of Wiced WiFi */
+
+/* CYW43012 WiFi */
+
+/* end of CYW43012 WiFi */
 /* end of Wi-Fi */
 #define PKG_USING_AT_DEVICE
-#define AT_DEVICE_USING_ESP8266
-#define AT_DEVICE_ESP8266_INIT_ASYN
-#define AT_DEVICE_ESP8266_SOCKET
-#define AT_DEVICE_ESP8266_SAMPLE
-#define ESP8266_SAMPLE_WIFI_SSID "HUAWEI_E5576_EF3D"
-#define ESP8266_SAMPLE_WIFI_PASSWORD "1234567890bit"
-#define ESP8266_SAMPLE_CLIENT_NAME "uart2"
-#define ESP8266_SAMPLE_RECV_BUFF_LEN 512
 #define PKG_USING_AT_DEVICE_LATEST_VERSION
 #define PKG_AT_DEVICE_VER_NUM 0x99999
 
@@ -226,10 +224,6 @@
 /* u8g2: a monochrome graphic library */
 
 /* end of u8g2: a monochrome graphic library */
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-/* end of PainterEngine: A cross-platform graphics application framework written in C language */
 /* end of multimedia packages */
 
 /* tools packages */
@@ -241,6 +235,11 @@
 /* enhanced kernel services */
 
 #define PKG_USING_RT_VSNPRINTF_FULL
+#define PKG_VSNPRINTF_INTEGER_BUFFER_SIZE 32
+#define PKG_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
+#define PKG_VSNPRINTF_DEFAULT_FLOAT_PRECISION 6
+#define PKG_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
+#define PKG_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 #define PKG_USING_RT_VSNPRINTF_FULL_LATEST_VERSION
 /* end of enhanced kernel services */
 
@@ -259,6 +258,15 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+#define PKG_USING_TMP1075
+#define PKG_USING_TMP1075_LATEST_VERSION
+/* end of sensors drivers */
+
+/* touch drivers */
+
+/* end of touch drivers */
 
 /* Kendryte SDK */
 
@@ -268,6 +276,10 @@
 /* AI packages */
 
 /* end of AI packages */
+
+/* Signal Processing and Control Algorithm Packages */
+
+/* end of Signal Processing and Control Algorithm Packages */
 
 /* miscellaneous packages */
 
@@ -283,47 +295,6 @@
 
 /* end of entertainment: terminal games and other interesting software packages */
 /* end of miscellaneous packages */
-
-/* Arduino libraries */
-
-
-/* Projects */
-
-/* end of Projects */
-
-/* Sensors */
-
-/* end of Sensors */
-
-/* Display */
-
-/* end of Display */
-
-/* Timing */
-
-/* end of Timing */
-
-/* Data Processing */
-
-/* end of Data Processing */
-
-/* Data Storage */
-
-/* Communication */
-
-/* Device Control */
-
-/* end of Device Control */
-
-/* Other */
-
-/* Signal IO */
-
-/* end of Signal IO */
-
-/* Uncategorized */
-
-/* end of Arduino libraries */
 /* end of RT-Thread online packages */
 
 /* samples: kernel and components samples */

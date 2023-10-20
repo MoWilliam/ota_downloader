@@ -22,6 +22,9 @@
 
 float kalman_filter(float inData);
 void bsp_afe4300_init(void);
-void bsp_afe4300_get(BioFrameDef* dmf);
+//void bsp_afe4300_get(BioFrameDef* dmf);
+//void bsp_afe4300_get(BioFrameDef* dmf);   
+void bsp_afe4300_get(SensorDataFrameDef* dmf);   //2023.9.27
+
 
 #endif /* BSP_B_AFE4300_H_ */

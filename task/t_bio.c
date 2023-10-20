@@ -21,6 +21,7 @@
 
 void task_thread_bio_recv(void *ptr)
 {
+    int cnt_recv_bio = 0;
     rt_kprintf("task_thread_bio_recv thread run\n");
     if(SD_NULL != ptr)
     {
@@ -29,7 +30,8 @@ void task_thread_bio_recv(void *ptr)
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
         while (pstTaskObject->brun_bio)
         {
-            BioFrameDef dmf;
+            //BioFrameDef dmf;
+            SensorDataFrameDef dmf;  //2023.9.27
             dmf.m_bio_value = 0;
             bsp_afe4300_get(&dmf);      
             rt_kprintf("afe4300= %d\n",dmf.m_bio_value);
@@ -44,6 +46,8 @@ void task_thread_bio_recv(void *ptr)
             }
            // rt_kprintf("[Task Module] ->task bio thread run\n");
             rt_thread_mdelay(1000);
+            //cnt_recv_bio ++;
+            //rt_kprintf("****cnt_recv_bio:%d\n", cnt_recv_bio);  //2023.9.27.打印发送bio计数
         }
         rt_kprintf("[Task Module] bio thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_temp);

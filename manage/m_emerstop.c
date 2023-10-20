@@ -1,12 +1,4 @@
 /*
- * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @Date: 2023-06-21 15:48:30
- * @LastEditors: wangwei wangwei@bitnei.com
- * @LastEditTime: 2023-06-26 16:05:29
- * @FilePath: \pressurecontrolsensor\compositesensor\manage\m_emerstop.c
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-/*
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -25,6 +17,7 @@
 #include "inc/m_device.h"
 #include "inc/m_emerstop.h"
 
+static rt_timer_t emerstop_timer = RT_NULL; 
 
 rt_base_t pins[NUM_PINS] = {EmerStop_key1, EmerStop_key2, EmerStop_key3, EmerStop_key4, EmerStop_key5};
 rt_uint8_t key_pressed_flags[NUM_PINS] = {0};    //储存每个急停按钮的状态标志位，松开后状态位置0
@@ -35,7 +28,7 @@ KEY_Action_TypeDef KEY_ReadPin(rt_base_t pin)   //返回结果按下或者松开
     return (KEY_Action_TypeDef)rt_pin_read(pin);
 }
 
-void debounce_handler(void *param)  //延时消抖的处理
+void debounce_handler(void *param)  //急停按键的处理
 {
 	rt_base_t pin = (rt_base_t)param;
 	KEY_Action_TypeDef status = KEY_ReadPin(pin);
@@ -123,7 +116,7 @@ rt_uint8_t set_key_pressed_flags(int idx ,int flag)
 
 rt_uint8_t get_key_pressed_flags(int idx)
 {
-	// 枷锁
+	// 加锁
 	if ( idx >=0 && idx < NUM_PINS){  //限制idx的条件范围
 		return key_pressed_flags[idx];
 	}
@@ -131,9 +124,29 @@ rt_uint8_t get_key_pressed_flags(int idx)
 }
 
 
-void manage_emerstop_init(void)  //开启循环扫描，检测急停按键的按键状态
+static void emerstop_timer_callback(void *parameter)
 {
-	read_pins_status();
+    // 调用急停按钮状态检测函数
+    read_pins_status();
+    //rt_kprintf("****emerstop_timer_callback****\n");  //打印测试
+}
+
+void manage_emerstop_init(void)
+{
+    //rt_kprintf("****manage_emerstop_init****\n");    //打印测试
+    // 创建定时器，定时周期为 100 毫秒
+    emerstop_timer = rt_timer_create("emerstop_timer", emerstop_timer_callback, RT_NULL, 100, RT_TIMER_FLAG_PERIODIC);
+    
+    if (emerstop_timer != RT_NULL)
+    {
+        // 启动定时器
+        rt_timer_start(emerstop_timer);
+        
+    }
+    else
+    {
+        rt_kprintf("Failed to create emerstop timer\n");
+    }
 }
 
 

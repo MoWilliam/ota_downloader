@@ -15,7 +15,7 @@
  * Date           Author       Notes
  * 2023-01-04     Administrator       the first version
  */
-#ifndef TASK_T_POWER_H_
+/*#ifndef TASK_T_POWER_H_
 #define TASK_T_POWER_H_
 
 #include "application.h"

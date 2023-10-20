@@ -13,18 +13,19 @@
 #include "bsp/inc/b_jfh141.h"
 #include <rtdevice.h>
 
- /* 串口设备名称 不能使用UART2 ,需要重新分配*/
+ // 串口设备名称 不能使用UART2 ,需要重新分配
 
-#define SAMPLE_UART_NAME       "uart3"
+#define SAMPLE_UART_NAME       "uart4"
 
-/* 用于接收消息的信号量 */
+// 用于接收消息的信号量
 static struct rt_semaphore rx_sem;
 static rt_device_t serial;
 
-/*判断是否读取一组数据结束的标志位*/
+//判断是否读取一组数据结束的标志位
 uint8_t rwflag = 0;
 uint8_t data[128] = {0};
 
+//卡尔曼滤波
 static double p_last = 0;
 static double x_last = 0;
 
@@ -76,7 +77,7 @@ void bsp_jfh141_init(void)
     rt_err_t ret = RT_EOK;
     char uart_name[RT_NAME_MAX];
 //    char str[] = "hello RT-Thread!\r\n";
-    uint8_t c_on = 0x8A; //采集开
+    uint8_t c_on = 0x8A; //0x88; 采集关
 
     rt_strncpy(uart_name, SAMPLE_UART_NAME, RT_NAME_MAX);
     /* 查找串口设备 */
@@ -100,7 +101,9 @@ void bsp_jfh141_init(void)
     rt_device_write(serial, 0, &c_on, 1);
 }
 
-void bsp_jfh141_get(Spo2FrameDef* dmf)
+
+//void bsp_jfh141_get(Spo2FrameDef* dmf)
+void bsp_jfh141_get(SensorDataFrameDef* dmf) //2023.9.27
 {
     char ch;
     SdInt16 last_m_spo2 ;   //上次血氧获得的有效值。
@@ -127,7 +130,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
                 //判断血氧传感器是否进行检测物体
                 if (data[1] != 0xC4 && data[63] != 0xC4){
                     //rt_kprintf("111111");
-                    if( data[66] > 0 ){
+                    if( data[66] > 0 && data[66] < 101 ){
                         
                         //dmf->m_object_spo2_detected = RT_TRUE;  //表明血氧传感器在工作
                         last_m_spo2 = data[66];  //更新上次检测的血氧有效值
@@ -135,7 +138,7 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
                         
                     }else {
-                        if(last_m_spo2 > 0)
+                        if(last_m_spo2 > 0 && last_m_spo2 < 101)
                              dmf->m_spo2 = last_m_spo2;
 
                         //dmf->m_object_spo2_detected = RT_FALSE;
@@ -154,9 +157,12 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
                     }
                        
-                }else{
+                }else {
                     dmf->m_spo2 = 0;
                     dmf->m_bk = 0;
+                    last_m_spo2 = 0;
+                    last_m_bk = 0;
+
                 }
 
                 rwflag = 0;
@@ -171,9 +177,6 @@ void bsp_jfh141_get(Spo2FrameDef* dmf)
 
         }
 
-
-        
-        
     }
 
 }

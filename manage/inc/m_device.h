@@ -41,41 +41,24 @@ typedef enum TagDeviceTypeDef
  * data struct object
  *
  */
-typedef struct TagDataFrameDef
+typedef struct TagSensorDataFrameDef
 {
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceStatus;
-    /* data */
+    //data-temp
     SdUInt16 m_atemp;
     SdUInt16 m_btemp;
-
-}DataFrameDef,*LPDataFrameDef;
-
-typedef struct TagSpo2FrameDef
-{
-    SdUInt16 msgID;
-    char m_deviceid[DEVICE_LENGTH];
-    SdUInt8 m_deviceStatus;
-    /* data */
+    //data-spo2
     SdUInt16 m_spo2;
     SdUInt16 m_bk;
-    SdBool m_object_spo2_detected; //血氧状态检测标志位 
-    SdBool m_object_bk_detected; //微循环状态检测标志位 
-
-}Spo2FrameDef,*LPSpo2FrameDef;
-
-typedef struct TagBioFrameDef
-{
-    SdUInt16 msgID;
-    char m_deviceid[DEVICE_LENGTH];
-    SdUInt8 m_deviceStatus;
-    /* data */
+    //data-bio
     SdFloat m_bio_voltage;
     SdFloat m_bio_ampere;
     SdUInt16 m_bio_value;
 
-}BioFrameDef,*LPBioFrameDef;
+}SensorDataFrameDef,*LPSensorDataFrameDef;
+
 
 /**
  * device struct object
@@ -94,21 +77,33 @@ typedef struct TagDeviceObjectDef
 
 }DeviceObjectDef,*LPDeviceObjectDef;
 
-typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
+/*typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
 {
     SdUInt16 msgID;
     SdUInt8 m_presorID;  //所需要控制加压设备
     SdUInt8 m_cmdtype;  //加压和泄压命令
 
-}PreCtrmqFrameDef,*LPPreCtrmqFrameDef;
+}PreCtrmqFrameDef,*LPPreCtrmqFrameDef; */
 
-typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
+/*typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
 {
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceType;
     SdUInt8 m_deviceStatus;
 
+}PreCtrFrameDef,*LPPreCtrFrameDef;*/
+
+
+typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
+{
+    SdUInt16 msgID;
+    char m_deviceId[DEVICE_LENGTH];
+    SdUInt8 m_pressureid;         //
+    SdUInt8 m_msgType;         //信息的下行或上传
+    SdUInt8 m_deviceType;     //设备类型
+    SdUInt8 m_cmdType;       //命令类型
+    //SdUInt8 m_deviceStatus;    //设备工作状态
 
 }PreCtrFrameDef,*LPPreCtrFrameDef;
 
@@ -123,6 +118,7 @@ typedef enum TagPrectrDevList {
 LPDeviceObjectDef device_ctrl_object_get(void);
 
 /*STM32 uid*/
+
 void get_STM32_uid(char * deviceid);
 void get_esp8266_mac(char *macAddr);
 void set_esp8266_mac(rt_uint32_t mac0,rt_uint32_t mac1,rt_uint32_t mac2);
@@ -141,5 +137,6 @@ int afe4300_deviceStatus(void);
 void manage_prectrdevice_init(void);
 void manage_prectrdevice_start(void);
 void manage_prectrdevice_stop(void);
+void get_STM32_Pressuid(char * deviceid);
 
 #endif /* MANAGER_M_DEVICE_H_ */
