@@ -15,6 +15,7 @@
 #define AFE4300_DEVICEID     "afe4300"
 
 static DeviceObjectDef g_DeviceObject;
+static PreCtrFrameDef g_PreCtrFrame;
 
 uint32_t idAddr[]={
         0x1FFFF7AC,
@@ -31,6 +32,11 @@ uint32_t idAddr[]={
 LPDeviceObjectDef device_ctrl_object_get(void)
 {
     return &g_DeviceObject;
+}
+
+LPPreCtrFrameDef device_prectrl_object_get(void)
+{
+    return &g_PreCtrFrame;
 }
 
 void manage_device_init(void)

@@ -13,7 +13,7 @@
 
 void task_thread_max30205_recv(void *ptr)
 {
-    int cnt_recv_tmp = 0;
+    //int cnt_recv_tmp = 0;
     rt_kprintf("task_thread_temp_recv thread run\n");
     if(SD_NULL != ptr)
     {
@@ -63,9 +63,9 @@ void task_thread_jfh141_recv(void *ptr)
             //dmf.m_spo2 = 0;
             //dmf.m_bk = 0;
             bsp_jfh141_get(&dmf); 
-            //rt_kprintf("bk************** %d",dmf.m_bk);
+            
             //dmf.m_bk = kalman_filter_jfh141(dmf.m_bk);
-            //rt_kprintf("kalman_bk******* %d",dmf.m_bk);
+            
             if ( dmf.m_spo2 >0){
                 pstDeviceObject->m_device_collect = 1;
             }else{

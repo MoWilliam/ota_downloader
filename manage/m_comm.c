@@ -239,13 +239,13 @@ SdInt comm_mqtt_msg_publish()
         sensorDataToJSON(&mqttDmf, root_json);  //2023.9.27
         out = cJSON_PrintUnformatted(root_json);
         len = strlen(out);
-        rt_kprintf("***************************len:%d\n",len);  //2023.9.27，打印长度
+        //rt_kprintf("***************************len:%d\n",len);  //2023.9.27，打印长度
 
         if (len > 0) {
             ret = mq_publish(MQ_DATA_TOPIC, out);
 
-            cnt_sensor ++;
-            rt_kprintf("****cnt_sensor:%d\n",cnt_sensor);  //2023.9.27，打印接收传感器参数计数
+            //cnt_sensor ++;
+            //rt_kprintf("****cnt_sensor:%d\n",cnt_sensor);  //2023.9.27，打印接收传感器参数计数
         }
         cJSON_free(out);
         cJSON_Delete(root_json);

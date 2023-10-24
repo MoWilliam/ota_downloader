@@ -16,7 +16,7 @@
 static struct rt_semaphore rx_sem_4;
 static rt_device_t serial_4;
 
-#define UART_DEV_NAME "uart3"
+#define UART_DEV_NAME "uart4"
 
 #define ENDLESS_LOOP_TIMEOUT	20000
 #define DEVICE_ID_LENGTH   20
@@ -32,4 +32,5 @@ struct uart_data {
 
 void bsp_uart_init(void);
 void bsp_uart_get (PreCtrFrameDef* dmf);
+void print_heartbeat_info(PreCtrFrameDef *dmf);
 #endif /* BSP_INC_B_PRECTRUARTT_H_ */
