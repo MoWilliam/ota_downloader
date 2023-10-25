@@ -41,31 +41,7 @@ void bsp_uart_init(void)
 {
 
     uint8_t tx_data[] = {0x00, 0x00, 0x00, 0x00, 0x00};
-#if bsp_printf
-    rt_device_t uart_device = rt_device_find("uart4");
 
-    if (uart_device != RT_NULL)
-    {
-
-        char rx_data[sizeof(tx_data)];
-
-        rt_device_write(uart_device, 0, tx_data, sizeof(tx_data)); // 发送数据
-
-        rt_uint32_t rx_size = rt_device_read(uart_device, 0, rx_data, sizeof(rx_data)); // 接收数据
-
-        if (rx_size == sizeof(tx_data))
-        {
-            rt_kprintf("Received data: %s\n", rx_data); // 打印接收到的数据
-        }
-        else if (rx_size < 0) {
-            rt_kprintf("Data receive error: %d\n", -rx_size); // 打印错误代码
-        } else {
-            rt_kprintf("Received data size is incorrect. Expected: %d, Actual: %d\n", sizeof(tx_data), rx_size);
-        }
-    }
-#endif
-
-#if bsp_uart
     rt_size_t send_size = 0;
 
     serial_4 = rt_device_find(UART_DEV_NAME);
@@ -85,7 +61,6 @@ void bsp_uart_init(void)
     send_size = rt_device_write(serial_4, 0, tx_data, sizeof(tx_data));
 
     rt_kprintf("the length of send string : %d\n", send_size);
-#endif
 
 
 }

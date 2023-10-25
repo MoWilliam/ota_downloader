@@ -8,7 +8,9 @@ extern SPI_HandleTypeDef SPI1_Handler;  //SPI���
 #define SPI_AFE4300_CS       PBout(12)       //W25QXX的片选信号
 
 
-#define SPI_AFE4300_RESET    PBin(10)   //综采老板子为PBout(10) 新版为PB
+//#define SPI_AFE4300_RESET    PBin(10)   //综采老板子为PBout(10) 新版为PBin
+
+#define SPI_AFE4300_RESET      PBout(10)   //综采板子
 
 
 

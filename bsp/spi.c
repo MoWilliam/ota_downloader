@@ -11,13 +11,15 @@ void SPI2_Init(void)
     __HAL_RCC_GPIOB_CLK_ENABLE();           //使能GPIOB时钟
 
         //PB14
+
     GPIO_Initure.Pin=GPIO_PIN_12 | GPIO_PIN_10;            //PB14
     GPIO_Initure.Mode=GPIO_MODE_OUTPUT_PP;  //推挽输出
     GPIO_Initure.Pull=GPIO_PULLUP;          //上拉
     GPIO_Initure.Speed=GPIO_SPEED_FAST;     //快速
     HAL_GPIO_Init(GPIOB,&GPIO_Initure);     //初始化
 
-    SPI_AFE4300_RESET=1;
+
+    SPI_AFE4300_RESET=0;
     SPI_AFE4300_CS=1;                            //SPI FLASH不选中
     SPI1_Init();                            //初始化SPI
     SPI1_SetSpeed(SPI_BAUDRATEPRESCALER_4); //设置为42M时钟,高速模式

@@ -19,8 +19,7 @@
 #define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
 #define PRESS_CONTROL_FLAG 0  // 压力控制器
 
-#define bsp_printf     1  //打印串口信息
-#define bsp_uart       0  //正常工作
+
 
 
 /** 

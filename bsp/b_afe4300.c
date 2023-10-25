@@ -90,9 +90,9 @@ void AFE4300_Reset(void)
 //     GPIO_ResetBits(GPIOG, GPIO_Pin_14);
 //     delay_ms(1);
 //     GPIO_SetBits(GPIOG, GPIO_Pin_14);
-    SPI_AFE4300_RESET = 0;
-    rt_thread_mdelay(10);
     SPI_AFE4300_RESET = 1;
+    rt_thread_mdelay(10);
+    SPI_AFE4300_RESET = 0;
 }
 
 /**
