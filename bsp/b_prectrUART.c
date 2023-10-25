@@ -18,6 +18,7 @@
 struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // UART 设备参数配置
 
 uint8_t rx_rwflag = 0;
+#define rx_rwflag_num 7
 uint8_t rx_data[128] = {0};
 
 
@@ -32,7 +33,7 @@ static rt_err_t uart4_rx_callback(rt_device_t dev, rt_size_t size)
 void bsp_uart_init(void)
 {
     rt_err_t ret = 0;
-    char send_str[] = "Uart4 is ok/r/n";
+    //char send_str[] = "Uart4 is ok/r/n";
 
     rt_size_t send_size = 0;
 
@@ -54,7 +55,7 @@ void bsp_uart_init(void)
 
     //中断回调函数
     rt_device_set_rx_indicate(serial_4, uart4_rx_callback);
-    send_size = rt_device_write(serial_4,0,send_str,sizeof(send_str));
+    //send_size = rt_device_write(serial_4,0,send_str,sizeof(send_str));
 
     rt_kprintf("the length of send string : %d\n", send_size);
 
@@ -67,43 +68,57 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
 {
     char ch;
     LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    //pstPreCtrFrameDef dmf;
+    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
+    //PreCtrFrameDef dmf;
     while (1) {
         // 尝试从串口读取一个字节的数据
         rt_size_t read_count = rt_device_read(serial_4, 0, &ch, 1);
 
         if (read_count > 0) {
             //printf("Received data: 0x%02X\n", (unsigned char)ch);
-            rx_data[rx_rwflag++] = ch;
-            if (rx_rwflag >= 4){
+            //rt_device_write(serial_4,0,&ch,1);   //发回串口
 
-                pstPreCtrFrameDef->m_msgType = rx_data[0];
-                pstPreCtrFrameDef->m_pressureid = rx_data[1];
-                pstPreCtrFrameDef->m_deviceType = rx_data[2];
-                pstPreCtrFrameDef->m_cmdType = rx_data[3];
-                rt_kprintf("dmf->m_msgType: 0x%02X\n", pstPreCtrFrameDef->m_msgType);
-                rt_kprintf("m_pressureid: 0x%02X\n", pstPreCtrFrameDef->m_pressureid);
-                rt_kprintf("dmf->m_deviceType: 0x%02X\n", pstPreCtrFrameDef->m_deviceType);
-                rt_kprintf("dmf->m_cmdType: 0x%02X\n", pstPreCtrFrameDef->m_cmdType);
+
+            rx_data[rx_rwflag++] = ch;
+            if (rx_rwflag >= rx_rwflag_num){
+                if(rx_data[0] == 0x00 && rx_data[rx_rwflag_num-2] == 0x01 && rx_data[rx_rwflag_num-1] == 0x01)  //设立校验帧
+                {
+                    //rt_device_write(serial_4,0,rx_data[2],1);
+                    //rt_device_write(serial_4,0,pstPreCtrFrameDef->m_deviceId,1);
+                    pstPreCtrFrameDef->m_msgType = rx_data[1];
+                    pstPreCtrFrameDef->m_pressureid = rx_data[2];
+                    pstPreCtrFrameDef->m_deviceType = rx_data[3];
+                    pstPreCtrFrameDef->m_cmdType = rx_data[4];
+
+
+                    //rt_kprintf("***recvmsgID %u\n", dmf->msgID);
+                    //rt_kprintf("Received Message: Msgid: %d, pressureid: 0x%02X\n", dmf->msgID, dmf->m_pressureid);
+
+                    //rt_device_write(serial_4,0,rx_data,rx_rwflag);   //发回串口
+
+
+
+                }else{
+                    rt_kprintf("UART4 Recv failed!!!\n");
+                }
                 rx_rwflag = 0;
-                //print_heartbeat_info(dmf);
-                //uart_kprintf(dmf);
+                //ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER);
+                while(1){
+                    rt_device_write(serial_4,0,pstPreCtrFrameDef,7);
+                    rt_kprintf("Received Message: Msgid: %d, pressureid: 0x%02X\n", pstPreCtrFrameDef->msgID, pstPreCtrFrameDef->m_pressureid);
+                    rt_thread_mdelay(5000);
+                }
             }
 
         } else {
             // 如果未成功读取到数据，等待信号量释放
-            rt_sem_take(&rx_sem_4, RT_WAITING_NO);
+            rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
         }
+        //ut_mqueue_delete(&dmf);
     }
 
     //rt_thread_mdelay(50);
 }
 
-/*void print_heartbeat_info(PreCtrFrameDef *dmf) {
-    // 访问传递的 dmf 参数
-
-    rt_kprintf("Message ID: %u, Message Type: %u, pressure Id: %u, Device Type: %u,  Cmd Type: %u\n",
-                    dmf->msgID, dmf->m_msgType, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType);
-}*/
 
 

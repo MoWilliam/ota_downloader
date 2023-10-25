@@ -87,9 +87,9 @@ void mq_ctrl_init(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        //pstMqueueObject->MMqueue_prectrUART = ut_mqueue_create("MQUEUE_prectrUART",
-                        //UT_MQUEUE_MSGMAX_SIZE,
-                        //UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+        pstMqueueObject->MMqueue_prectrheartBeat = ut_mqueue_create("MQUEUE_prectrheartBeat",
+                        UT_MQUEUE_MSGMAX_SIZE,
+                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
 
     #endif
     }
@@ -110,8 +110,8 @@ void mq_ctrl_unint(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        //ut_mqueue_delete(pstMqueueObject->MMqueue_prectrUART);
-        //pstMqueueObject->MMqueue_prectrUART = SD_NULL;
+        ut_mqueue_delete(pstMqueueObject->MMqueue_prectrheartBeat);
+        pstMqueueObject->MMqueue_prectrheartBeat = SD_NULL;
 
     #endif
     }
@@ -311,12 +311,12 @@ void app_thread_msg_recv(void *ptr)
         int count = 0;
         while (pstAppObject->brun)
         {
-            count++;
+            //count++;
             ut_msg_recv(pstMqueueObject->MMqueue_msg);
             if (count == 10)
             {
 
-                count = 0; // 重置计数器
+                //count = 0; // 重置计数器
                 comm_mqtt_msg_publish();
             }
             //ut_msg_recv(pstMqueueObject->MMqueue_msg);

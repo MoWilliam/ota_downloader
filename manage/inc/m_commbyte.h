@@ -22,7 +22,11 @@
 /*尝试字节流的编写*/
 //命令类型定义0：心跳命令；1：参数设置；2：开始加压；3：泄压操作。
 
-
+struct mq_msg
+{
+    rt_device_t dev;  //设备的句柄
+    rt_size_t size;   //接收数据的大小
+};
 
 typedef enum TagUartCmdDef
 {
