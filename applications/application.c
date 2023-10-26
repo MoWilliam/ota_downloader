@@ -324,7 +324,7 @@ void app_thread_msg_recv(void *ptr)
         int count = 0;
         while (pstAppObject->brun)
         {
-            //count++;
+            count++;
             ut_msg_recv(pstMqueueObject->MMqueue_msg);
             if (count == 10)
             {

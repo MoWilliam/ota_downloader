@@ -27,7 +27,6 @@ PressureSensorId：控制的压力传感器设备 0x10 0x11 0x12 0x13 0x14
 #include "inc/m_device.h"
 #include "ut/inc/ut_mq.h"
 
-void print_heartbeat_info(const PreCtrFrameDef *message);
 
 void print_heartbeat_info(PreCtrFrameDef *dmf);
 static SdULong g_msgId_hearBeat;
@@ -102,15 +101,8 @@ void commbyte_prectrheartBeat(void)     //创建线程
 //心跳包信息的打印
 void print_heartbeat_info(PreCtrFrameDef *dmf)
 {
-
-    //bsp_uart_get(&dmf);
-    //rt_kprintf("dmf->m_msgType: 0x%02X\n", dmf->m_msgType);
-    //rt_kprintf("m_pressureid: 0x%02X\n", dmf->m_pressureid);
-    //rt_kprintf("dmf->m_deviceType: 0x%02X\n", dmf->m_deviceType);
-    //rt_kprintf("dmf->m_cmdType: 0x%02X\n", dmf->m_cmdType);
     rt_kprintf("Message ID: %u, Message Type: %u,divice Id: %02X, pressure Id: 0x%02X, Device Type: %u,  Cmd Type: %u\n",
                     dmf->msgID, dmf->m_msgType,dmf->m_deviceId, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType);
-
 }
 
 void manage_commbyte_init(void)
