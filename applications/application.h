@@ -16,8 +16,8 @@
 #include "ut/inc/ut_thread.h"
 #include "manage/inc/m_device.h"
 
-#define COMPOSITE_CONTROL_FLAG 0 // 综合传感器，
-#define PRESS_CONTROL_FLAG 1  // 压力控制器
+#define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
+#define PRESS_CONTROL_FLAG 0  // 压力控制器
 
 
 
@@ -33,9 +33,6 @@ typedef struct TagAppObjectDef
     SdBool    brun;
     UtThread*  MqttThead_heartBeat;
     SdBool    brun_mqtt;
-    UtThread*  MqueueThead_heartBeat;  //使用队列的方式将心跳包发送出去
-    SdBool    brun_Mqueue;
-
 
 }AppObjectDef,*LPAppObjectDef;
 
@@ -90,10 +87,6 @@ typedef struct TagPressControlObjectDef
     SdBool    brun_prectrheartBeat;
     UtThread*  Thead_preControl;   //压力控制以及标志位
     SdBool    brun_preControl;
-    /*UtThread*  Thead_prectrUart;   //uart数据接收线程和标志位
-    SdBool    brun_prectrUart;
-    UtThread*  Thead_prectrUart_Send;   //uart数据发送线程和标志位
-    SdBool    brun_prectrUart_Send;*/
 
 }PressControlObjectDef,*LPPressControlObjectDef;
 
@@ -110,7 +103,7 @@ typedef struct TagMqueueObjectDef
     UtMqueue*  MMqueue_msg;
     SdChar *   MMqueue_msg_name;
     UtMqueue*  MMqueue_prectrheartBeat;
-    SdChar * MMqueue_prectrheartBeat_name;
+    SdChar *   MMqueue_prectrheartBeat_name;
 
 }MqueueObjectDef,*LPMqueueObjectDef;
 
@@ -124,7 +117,7 @@ typedef struct TagMessageObjectDef
     UtMessage* MMessage_data;
     SdChar * MMessage_data_name;
 
-}MessageObjectDef,*LPMessageObjectDef;  //2023.9.27 临时注释
+}MessageObjectDef,*LPMessageObjectDef;  //
 
 /*typedef struct {
     TagMessageObjectDef type;

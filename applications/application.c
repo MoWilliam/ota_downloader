@@ -157,8 +157,10 @@ void task_module_init(void)
     task_auth_init();
     task_monitor_init();
     //task_power_init();
+#if PRESS_CONTROL_FLAG
     task_uart4_recv_init();
     task_uart4_send_init();
+#endif
 
 }
 
@@ -171,8 +173,10 @@ void task_module_start(void)
     task_auth_start();
     task_monitor_start();
     //task_power_start();
+#if PRESS_CONTROL_FLAG
     task_uart4_recv_start();
     task_uart4_send_start();
+#endif
 }
 
 void task_module_uninit(void)
@@ -184,8 +188,10 @@ void task_module_uninit(void)
     task_auth_stop();
     task_monitor_stop();
     //task_power_stop();
+#if PRESS_CONTROL_FLAG
     task_uart4_recv_stop();
     task_uart4_send_stop();
+#endif
 }
 
 /**
@@ -324,7 +330,7 @@ void app_thread_msg_recv(void *ptr)
             if (count == 10)
             {
 
-                //count = 0; // 重置计数器
+                count = 0; // 重置计数器
                 comm_mqtt_msg_publish();
             }
             //ut_msg_recv(pstMqueueObject->MMqueue_msg);
