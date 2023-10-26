@@ -161,7 +161,6 @@ void task_module_init(void)
     task_uart4_recv_init();
     task_uart4_send_init();
 #endif
-
 }
 
 void task_module_start(void)
@@ -230,7 +229,7 @@ void manage_module_start(void)
     manage_commbyte_start();
     manage_prectrdevice_start();
     manage_prectr_start();
-   
+
 #endif
 }
 
@@ -251,7 +250,7 @@ void manage_module_uninit(void)
 }
 
 /**
- * @brief  manage module 
+ * @brief  manage module
  * 
  * @return 
  */
@@ -399,7 +398,7 @@ SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
     //rt_kprintf("[App Msg Handle] usMsgId %d\n",pMsg->usMsgID);
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
 	switch(pMsg->usMsgID)
-	{	
+	{
 		case emMqttMsgBaseData:
 		    if ( pstDeviceObject)
 		                {

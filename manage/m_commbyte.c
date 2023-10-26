@@ -27,6 +27,7 @@ PressureSensorId：控制的压力传感器设备 0x10 0x11 0x12 0x13 0x14
 #include "inc/m_device.h"
 #include "ut/inc/ut_mq.h"
 
+void print_heartbeat_info(const PreCtrFrameDef *message);
 
 void print_heartbeat_info(PreCtrFrameDef *dmf);
 static SdULong g_msgId_hearBeat;
@@ -47,7 +48,7 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
             if (pstPreCtrFrameDef)
             {
                 PreCtrFrameDef dmf;
-                
+
                 dmf.msgID = LITTLE_TO_BIG_ENDIAN_16(pstPreCtrFrameDef->msgID);
                 pstPreCtrFrameDef->msgID = 0;
                 pstPreCtrFrameDef->msgID = g_msgId_hearBeat++;
@@ -59,11 +60,11 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                 {
                     if(pstPreCtrFrameDef->m_deviceType == 3)  //是否为压力控制器部分
                     {
-                        
-                        dmf.m_msgType = 0; 
+
+                        dmf.m_msgType = 0;
                         ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
-                    } 
-                     
+                    }
+
                 }
                 char STM32_DEVICEID[DEVICE_LENGTH];
                 get_STM32_uid(STM32_DEVICEID);

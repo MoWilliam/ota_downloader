@@ -18,7 +18,7 @@ static rt_device_t serial_4;
 
 #define UART_DEV_NAME "uart4"
 
-#define ENDLESS_LOOP_TIMEOUT	20000
+#define ENDLESS_LOOP_TIMEOUT    20000
 #define DEVICE_ID_LENGTH   20
 
 #define ON                      1

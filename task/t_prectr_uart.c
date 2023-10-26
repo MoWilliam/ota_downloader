@@ -23,7 +23,7 @@ void task_thread_uart4_recv(void *ptr)
         LPPreCtrFrameDef pstPreCtrObject = device_prectrl_object_get();
         while (pstTaskObject->brun_prectrUart_Recv)
         {
-            
+
             PreCtrFrameDef dmf;
             bsp_uart_get(&dmf);
         }
@@ -45,7 +45,7 @@ void task_thread_uart4_send(void *ptr)
 
             PreCtrFrameDef dmf;
             bsp_uart_send(&dmf);
-            
+
         }
 
         rt_kprintf("[TASK Module] uart4_send thread exit\n");

@@ -16,8 +16,9 @@
 #include "ut/inc/ut_thread.h"
 #include "manage/inc/m_device.h"
 
-#define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
-#define PRESS_CONTROL_FLAG 0  // 压力控制器
+#define COMPOSITE_CONTROL_FLAG 0 // 综合传感器，
+#define PRESS_CONTROL_FLAG 1  // 压力控制器
+
 
 
 
@@ -57,7 +58,6 @@ typedef struct TagTaskObjectDef
     SdBool     brun_prectrUart_Recv;
     UtThread*  Taskthread_prectrUart_Send;   //uart数据发送线程和标志位
     SdBool     brun_prectrUart_Send;
-
 
 }TaskObjectDef,*LPTaskObjectDef;
 
@@ -103,7 +103,7 @@ typedef struct TagMqueueObjectDef
     UtMqueue*  MMqueue_msg;
     SdChar *   MMqueue_msg_name;
     UtMqueue*  MMqueue_prectrheartBeat;
-    SdChar *   MMqueue_prectrheartBeat_name;
+    SdChar * MMqueue_prectrheartBeat_name;
 
 }MqueueObjectDef,*LPMqueueObjectDef;
 
