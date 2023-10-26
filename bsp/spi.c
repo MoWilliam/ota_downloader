@@ -19,7 +19,7 @@ void SPI2_Init(void)
     HAL_GPIO_Init(GPIOB,&GPIO_Initure);     //初始化
 
 
-    SPI_AFE4300_RESET=0;
+    SPI_AFE4300_RESET=1;
     SPI_AFE4300_CS=1;                            //SPI FLASH不选中
     SPI1_Init();                            //初始化SPI
     SPI1_SetSpeed(SPI_BAUDRATEPRESCALER_4); //设置为42M时钟,高速模式

@@ -18,18 +18,15 @@ static rt_device_t serial_4;
 
 #define UART_DEV_NAME "uart4"
 
-#define ENDLESS_LOOP_TIMEOUT	20000
+#define ENDLESS_LOOP_TIMEOUT    20000
 #define DEVICE_ID_LENGTH   20
 
 #define ON                      1
 #define OFF                     0
 
-struct uart_data {
-    uint8_t data[5];
-    rt_bool_t received;
-};
 
 
 void bsp_uart_init(void);
 void bsp_uart_get (PreCtrFrameDef* dmf);
+void bsp_uart_send(PreCtrFrameDef *dmf);
 #endif /* BSP_INC_B_PRECTRUARTT_H_ */

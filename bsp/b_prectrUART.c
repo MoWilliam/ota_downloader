@@ -15,32 +15,25 @@
 #include "inc/b_prectrUART.h"
 #include <rtdevice.h>
 
-
-static struct uart_data uart_rx_data = {0};
 struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // UART 设备参数配置
+
+uint8_t rx_rwflag = 0;
+#define rx_rwflag_num 7
+uint8_t rx_data[128] = {0};
+
 
 static rt_err_t uart4_rx_callback(rt_device_t dev, rt_size_t size)
 {
-    rt_uint8_t ch;
-    rt_size_t read_len = 0;
-    
-    while (read_len < size) {
-        rt_device_read(dev, -1, &ch, 1);
-        uart_rx_data.data[read_len] = ch;
-        read_len++;
-    }
 
-    if (read_len == 5) {
-        uart_rx_data.received = RT_TRUE;
-    }
-
+    rt_sem_release(&rx_sem_4);  //释放信号量
     return RT_EOK;
 }
 
+
 void bsp_uart_init(void)
 {
-
-    uint8_t tx_data[] = {0x00, 0x00, 0x00, 0x00, 0x00};
+    rt_err_t ret = 0;
+    //char send_str[] = "Uart4 is ok/r/n";
 
     rt_size_t send_size = 0;
 
@@ -50,64 +43,90 @@ void bsp_uart_init(void)
         rt_kprintf("find %s failed!\n", UART_DEV_NAME);
         return RT_ERROR;
     }
-    rt_sem_init(&rx_sem_4, "rx_sem", 0, RT_IPC_FLAG_FIFO);
-    rt_device_open(serial_4, RT_DEVICE_FLAG_INT_RX);
+    rt_sem_init(&rx_sem_4, "rx_sem", 0, RT_IPC_FLAG_FIFO);   //初始化信号量
+    ret = rt_device_open(serial_4, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX);  //以读写和中断接收的方式
+    if(ret < 0){
+        rt_kprintf("open %s failed!\n", UART_DEV_NAME);
+                return RT_ERROR;
+    }
+    //config.baud_rate = 38400;
     config.bufsz = 128;
     rt_device_control(serial_4, RT_DEVICE_CTRL_CONFIG, &config);
 
     //中断回调函数
     rt_device_set_rx_indicate(serial_4, uart4_rx_callback);
+    //send_size = rt_device_write(serial_4,0,send_str,sizeof(send_str));
 
-    send_size = rt_device_write(serial_4, 0, tx_data, sizeof(tx_data));
-
-    rt_kprintf("the length of send string : %d\n", send_size);
+    //rt_kprintf("the length of send string : %d\n", send_size);
 
 
 }
 
+
+
 void bsp_uart_get(PreCtrFrameDef *dmf)
 {
-    if (uart_rx_data.received == RT_TRUE) {
+    char ch;
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    //PreCtrFrameDef dmf;
+    while (1) {
+        // 尝试从串口读取一个字节的数据
+        rt_size_t read_count = rt_device_read(serial_4, 0, &ch, 1);
 
-        // 数据匹配标志
-        rt_bool_t data_matched = RT_TRUE;
+        if (read_count > 0) {
+            //printf("Received data: 0x%02X\n", (unsigned char)ch);
+            //rt_device_write(serial_4,0,&ch,1);   //发回串口
 
-        // 期望的数据，其中 * 表示通配符
-        uint8_t expected_data[] = {0x00, 0x01, 0x10, 0x02, 0x01};
 
-        // 数据格式以空格分隔
-        char data_string[10]; // 假设最大长度为10
-        snprintf(data_string, sizeof(data_string), "%c %c %c %c %c",
-                 uart_rx_data.data[0], uart_rx_data.data[1],
-                 uart_rx_data.data[2], uart_rx_data.data[3],
-                 uart_rx_data.data[4]);
+            rx_data[rx_rwflag++] = ch;
+            if (rx_rwflag >= rx_rwflag_num)
+            {
+                if(rx_data[0] == 0x00 && rx_data[rx_rwflag_num-2] == 0x01 && rx_data[rx_rwflag_num-1] == 0x01)  //设立校验帧
+                {
 
-        char *token = strtok(data_string, " ");
-        int index = 0;
+                    pstPreCtrFrameDef->m_msgType = rx_data[1];
+                    pstPreCtrFrameDef->m_pressureid = rx_data[2];
+                    pstPreCtrFrameDef->m_deviceType = rx_data[3];
+                    pstPreCtrFrameDef->m_cmdType = rx_data[4];
 
-        while (token != RT_NULL && index < 5) {
-            if (expected_data[index] != 0x2A && // 0x2A 表示通配符 *
-                (uint8_t)strtoul(token, RT_NULL, 16) != expected_data[index]) {
-                data_matched = RT_FALSE;
-                break; // 一旦有不匹配的部分，跳出循环
+
+
+
+                }else{
+                    rt_kprintf("UART4 Recv failed!!!\n");
+                }
+                rx_rwflag = 0;
+
             }
-            token = strtok(RT_NULL, " "); // 获取下一个标记
-            index++;
-        }
 
-        if (data_matched) {
-            dmf->msgID = uart_rx_data.data[0];
-            dmf->m_msgType = uart_rx_data.data[1];
-            dmf->m_pressureid = uart_rx_data.data[2];
-            dmf->m_deviceType = uart_rx_data.data[3];
-            dmf->m_cmdType = uart_rx_data.data[4];
         } else {
-            rt_kprintf("data receive failed!\n");
-            return RT_ERROR;// 执行数据不匹配时的错误处理
+            // 如果未成功读取到数据，等待信号量释放
+            rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
         }
-
-        uart_rx_data.received = RT_FALSE;
+        //ut_mqueue_delete(&dmf);
     }
+
+    //rt_thread_mdelay(50);
+}
+
+void bsp_uart_send(PreCtrFrameDef *dmf){
+
+    //rt_size_t i;
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
+    while(1){
+        PreCtrFrameDef dmf;
+        rt_memset(&dmf, 0, sizeof(dmf));
+        //rt_memset(&rx_data, 0, 128);
+
+        //判断队列是否接收到消息
+        if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER) == RT_EOK){
+            rt_device_write(serial_4, 0, &dmf, 6);
+
+        }
+        rt_thread_mdelay(1000*2);
+    }
+
 }
 
 

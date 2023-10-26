@@ -13,6 +13,7 @@
 #include "task/inc/t_auth.h"
 #include "task/inc/t_bio.h"
 #include "task/inc/t_monitor.h"
+#include "task/inc/t_prectr_uart.h"
 //#include "task/inc/t_power.h"
 #include "manage/inc/m_comm.h"
 #include "manage/inc/m_device.h"
@@ -87,10 +88,10 @@ void mq_ctrl_init(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        //pstMqueueObject->MMqueue_prectrUART = ut_mqueue_create("MQUEUE_prectrUART",
-                        //UT_MQUEUE_MSGMAX_SIZE,
-                        //UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
-        //rt_kprintf("***555****\n");
+        pstMqueueObject->MMqueue_prectrheartBeat = ut_mqueue_create("MQUEUE_prectrheartBeat",
+                        UT_MQUEUE_MSGMAX_SIZE,
+                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+
     #endif
     }
 }
@@ -110,9 +111,9 @@ void mq_ctrl_unint(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        //ut_mqueue_delete(pstMqueueObject->MMqueue_prectrUART);
-        //pstMqueueObject->MMqueue_prectrUART = SD_NULL;
-        //rt_kprintf("***666****\n");
+        ut_mqueue_delete(pstMqueueObject->MMqueue_prectrheartBeat);
+        pstMqueueObject->MMqueue_prectrheartBeat = SD_NULL;
+
     #endif
     }
 }
@@ -156,6 +157,10 @@ void task_module_init(void)
     task_auth_init();
     task_monitor_init();
     //task_power_init();
+#if PRESS_CONTROL_FLAG
+    task_uart4_recv_init();
+    task_uart4_send_init();
+#endif
 }
 
 void task_module_start(void)
@@ -167,6 +172,10 @@ void task_module_start(void)
     task_auth_start();
     task_monitor_start();
     //task_power_start();
+#if PRESS_CONTROL_FLAG
+    task_uart4_recv_start();
+    task_uart4_send_start();
+#endif
 }
 
 void task_module_uninit(void)
@@ -178,6 +187,10 @@ void task_module_uninit(void)
     task_auth_stop();
     task_monitor_stop();
     //task_power_stop();
+#if PRESS_CONTROL_FLAG
+    task_uart4_recv_stop();
+    task_uart4_send_init();
+#endif
 }
 
 /**
@@ -215,7 +228,7 @@ void manage_module_start(void)
     manage_commbyte_start();
     manage_prectrdevice_start();
     manage_prectr_start();
-    manage_prectruart_start();
+
 #endif
 }
 
@@ -231,12 +244,12 @@ void manage_module_uninit(void)
     manage_commbyte_stop();   
     manage_prectrdevice_stop();
     manage_prectr_stop();
-    manage_prectruart_stop(); 
+
 #endif
 }
 
 /**
- * @brief  manage module 
+ * @brief  manage module
  * 
  * @return 
  */
@@ -384,7 +397,7 @@ SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
     //rt_kprintf("[App Msg Handle] usMsgId %d\n",pMsg->usMsgID);
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
 	switch(pMsg->usMsgID)
-	{	
+	{
 		case emMqttMsgBaseData:
 		    if ( pstDeviceObject)
 		                {
