@@ -13,6 +13,7 @@
 #include "task/inc/t_auth.h"
 #include "task/inc/t_bio.h"
 #include "task/inc/t_monitor.h"
+#include "task/inc/t_prectr_uart.h"
 //#include "task/inc/t_power.h"
 #include "manage/inc/m_comm.h"
 #include "manage/inc/m_device.h"
@@ -156,6 +157,9 @@ void task_module_init(void)
     task_auth_init();
     task_monitor_init();
     //task_power_init();
+    task_uart4_recv_init();
+    task_uart4_send_init();
+
 }
 
 void task_module_start(void)
@@ -167,6 +171,8 @@ void task_module_start(void)
     task_auth_start();
     task_monitor_start();
     //task_power_start();
+    task_uart4_recv_start();
+    task_uart4_send_start();
 }
 
 void task_module_uninit(void)
@@ -178,6 +184,8 @@ void task_module_uninit(void)
     task_auth_stop();
     task_monitor_stop();
     //task_power_stop();
+    task_uart4_recv_stop();
+    task_uart4_send_stop();
 }
 
 /**
@@ -197,7 +205,7 @@ void manage_module_init(void)
 #if PRESS_CONTROL_FLAG
     manage_commbyte_init();
     manage_prectrdevice_init();
-    m_uart4_recv_init();
+    
     manage_prectr_init();
     manage_emerstop_init();
 #endif
@@ -216,7 +224,7 @@ void manage_module_start(void)
     manage_commbyte_start();
     manage_prectrdevice_start();
     manage_prectr_start();
-    m_uart4_recv_start();
+   
 #endif
 }
 
@@ -232,7 +240,7 @@ void manage_module_uninit(void)
     manage_commbyte_stop();   
     manage_prectrdevice_stop();
     manage_prectr_stop();
-    m_uart4_recv_stop(); 
+
 #endif
 }
 

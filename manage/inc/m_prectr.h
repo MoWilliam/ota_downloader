@@ -30,10 +30,5 @@ void manage_prectr_init(void) ;
 void manage_prectr_start(void);  
 void manage_prectr_stop(void);
 
-void m_uart4_recv_init(void);
-void m_uart4_recv_start(void);
-void m_uart4_recv_stop(void);
-/*void manage_prectruart_start(void);
-void manage_prectruart_stop(void);*/
   
 #endif /* M_PRECTR_H_ */

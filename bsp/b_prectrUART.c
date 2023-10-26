@@ -57,7 +57,7 @@ void bsp_uart_init(void)
     rt_device_set_rx_indicate(serial_4, uart4_rx_callback);
     //send_size = rt_device_write(serial_4,0,send_str,sizeof(send_str));
 
-    rt_kprintf("the length of send string : %d\n", send_size);
+    //rt_kprintf("the length of send string : %d\n", send_size);
 
 
 }
@@ -68,7 +68,6 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
 {
     char ch;
     LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
     //PreCtrFrameDef dmf;
     while (1) {
         // 尝试从串口读取一个字节的数据
@@ -80,21 +79,16 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
 
 
             rx_data[rx_rwflag++] = ch;
-            if (rx_rwflag >= rx_rwflag_num){
+            if (rx_rwflag >= rx_rwflag_num)
+            {
                 if(rx_data[0] == 0x00 && rx_data[rx_rwflag_num-2] == 0x01 && rx_data[rx_rwflag_num-1] == 0x01)  //设立校验帧
                 {
-                    //rt_device_write(serial_4,0,rx_data[2],1);
-                    //rt_device_write(serial_4,0,pstPreCtrFrameDef->m_deviceId,1);
+
                     pstPreCtrFrameDef->m_msgType = rx_data[1];
                     pstPreCtrFrameDef->m_pressureid = rx_data[2];
                     pstPreCtrFrameDef->m_deviceType = rx_data[3];
                     pstPreCtrFrameDef->m_cmdType = rx_data[4];
 
-
-                    //rt_kprintf("***recvmsgID %u\n", dmf->msgID);
-                    //rt_kprintf("Received Message: Msgid: %d, pressureid: 0x%02X\n", dmf->msgID, dmf->m_pressureid);
-
-                    //rt_device_write(serial_4,0,rx_data,rx_rwflag);   //发回串口
 
 
 
@@ -102,12 +96,7 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
                     rt_kprintf("UART4 Recv failed!!!\n");
                 }
                 rx_rwflag = 0;
-                //ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER);
-                while(1){
-                    rt_device_write(serial_4,0,pstPreCtrFrameDef,7);
-                    rt_kprintf("Received Message: Msgid: %d, pressureid: 0x%02X\n", pstPreCtrFrameDef->msgID, pstPreCtrFrameDef->m_pressureid);
-                    rt_thread_mdelay(5000);
-                }
+
             }
 
         } else {
@@ -120,5 +109,24 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
     //rt_thread_mdelay(50);
 }
 
+void bsp_uart_send(PreCtrFrameDef *dmf){
+
+    //rt_size_t i;
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
+    while(1){
+        PreCtrFrameDef dmf;
+        rt_memset(&dmf, 0, sizeof(dmf));
+        //rt_memset(&rx_data, 0, 128);
+
+        //判断队列是否接收到消息
+        if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER) == RT_EOK){
+            rt_device_write(serial_4, 0, &dmf, 6);
+
+        }
+        rt_thread_mdelay(1000*2);
+    }
+
+}
 
 

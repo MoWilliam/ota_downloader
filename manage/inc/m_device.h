@@ -98,11 +98,12 @@ typedef struct TagDeviceObjectDef
 typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
 {
     SdUInt16 msgID;
-    char m_deviceId[DEVICE_LENGTH];
-    SdUInt8 m_pressureid;         //
     SdUInt8 m_msgType;         //信息的下行或上传
+    SdUInt8 m_pressureid;         //
     SdUInt8 m_deviceType;     //设备类型
     SdUInt8 m_cmdType;       //命令类型
+    char m_deviceId[DEVICE_LENGTH];
+
     //SdUInt8 m_deviceStatus;    //设备工作状态
 
 }PreCtrFrameDef,*LPPreCtrFrameDef;

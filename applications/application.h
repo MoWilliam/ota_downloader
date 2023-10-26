@@ -16,8 +16,8 @@
 #include "ut/inc/ut_thread.h"
 #include "manage/inc/m_device.h"
 
-#define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
-#define PRESS_CONTROL_FLAG 0  // 压力控制器
+#define COMPOSITE_CONTROL_FLAG 0 // 综合传感器，
+#define PRESS_CONTROL_FLAG 1  // 压力控制器
 
 
 
@@ -56,6 +56,11 @@ typedef struct TagTaskObjectDef
     SdBool     brun_spo2;
     UtThread*  Taskthread_power;
     SdBool     brun_sensor;
+    UtThread*  Taskthread_prectrUart_Recv;   //uart数据接收线程和标志位
+    SdBool     brun_prectrUart_Recv;
+    UtThread*  Taskthread_prectrUart_Send;   //uart数据发送线程和标志位
+    SdBool     brun_prectrUart_Send;
+
 
 }TaskObjectDef,*LPTaskObjectDef;
 
@@ -85,8 +90,10 @@ typedef struct TagPressControlObjectDef
     SdBool    brun_prectrheartBeat;
     UtThread*  Thead_preControl;   //压力控制以及标志位
     SdBool    brun_preControl;
-    UtThread*  Thead_prectrUart;   //uart数据接收县线程和标志位
+    /*UtThread*  Thead_prectrUart;   //uart数据接收线程和标志位
     SdBool    brun_prectrUart;
+    UtThread*  Thead_prectrUart_Send;   //uart数据发送线程和标志位
+    SdBool    brun_prectrUart_Send;*/
 
 }PressControlObjectDef,*LPPressControlObjectDef;
 

@@ -30,6 +30,7 @@ PressureSensorId：控制的压力传感器设备 0x10 0x11 0x12 0x13 0x14
 
 void print_heartbeat_info(PreCtrFrameDef *dmf);
 static SdULong g_msgId_hearBeat;
+#define LITTLE_TO_BIG_ENDIAN_16(x) ((uint16_t)((((x) & 0xFF) << 8) | (((x) >> 8) & 0xFF)))
 
 void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳包发送给主控终端
 {
@@ -45,39 +46,34 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
         {
             if (pstPreCtrFrameDef)
             {
-
                 PreCtrFrameDef dmf;
-
-
-                //dmf.m_msgType = 0;
-                //dmf.m_pressureid = 0;
-                //dmf.m_deviceType = 0;
-                //dmf.m_cmdType = 0;
-                //dmf.msgID = 0;
-                dmf.msgID = pstPreCtrFrameDef->msgID;
+                
+                dmf.msgID = LITTLE_TO_BIG_ENDIAN_16(pstPreCtrFrameDef->msgID);
+                pstPreCtrFrameDef->msgID = 0;
+                pstPreCtrFrameDef->msgID = g_msgId_hearBeat++;
                 dmf.m_msgType = pstPreCtrFrameDef->m_msgType;
                 dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;
                 dmf.m_deviceType = pstPreCtrFrameDef->m_deviceType;
                 dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
-                //bsp_uart_get(&dmf);
-
-                pstPreCtrFrameDef->msgID = g_msgId_hearBeat++;
+                if(pstPreCtrFrameDef->m_msgType == 1)  //发送下行命令（控制设备）
+                {
+                    if(pstPreCtrFrameDef->m_deviceType == 3)  //是否为压力控制器部分
+                    {
+                        
+                        dmf.m_msgType = 0; 
+                        ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
+                    } 
+                     
+                }
                 char STM32_DEVICEID[DEVICE_LENGTH];
                 get_STM32_uid(STM32_DEVICEID);
                 strcpy(pstPreCtrFrameDef->m_deviceId, STM32_DEVICEID);   //将芯片uid号赋值过去
-                //rt_kprintf("before pstPreCtrFrameDef->m_pressureid: %d\n", pstPreCtrFrameDef->m_pressureid);
-                print_heartbeat_info(pstPreCtrFrameDef);  //打印心跳包信息
-                //rt_kprintf("after pstPreCtrFrameDef->m_pressureid: %d\n", pstPreCtrFrameDef->m_pressureid);
+                print_heartbeat_info(pstPreCtrFrameDef);  //调试口打印心跳包信息
 
-                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));
-                //rt_kprintf("send_msgID: %u\n", dmf.msgID);
-
-                //ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER);
-                //rt_kprintf("***recvmsgID %d\n", dmf.msgID);
             }
 
             // 每隔5秒发送一个心跳包，确保设备在线
-            rt_thread_mdelay(1000*5);   //每隔5s发送一个心跳包，确保设备在线
+            rt_thread_mdelay(1000*2);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[Thread Module] thread exit\n");
         ut_thread_exit(pstPressControlObject->Thead_prectrheartBeat);

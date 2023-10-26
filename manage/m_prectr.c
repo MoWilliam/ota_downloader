@@ -9,7 +9,7 @@
  */
 
 /**
-该模块主要是  读取主控终端发送到的数据，并进行操作命令（app上 设备id、加压和泄压操作）  app以外急停命令
+该模块主要是  读取主控终端发送到的数据，并进行操作命令（app上 设备id、加压和泄压操作）  
 
 **/
 
@@ -115,27 +115,6 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
     }
 }
 
-void m_thread_uart4_recv(void *ptr)
-{
-    rt_kprintf("m_thread_uart4_recv thread run\n");
-    if(SD_NULL != ptr)
-    {
-        LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
-        LPPreCtrFrameDef pstPreCtrObject = device_prectrl_object_get();
-        while (pstPressControlObject->brun_prectrUart)
-        {
-            
-
-            bsp_uart_get(pstPressControlObject);
-            //rt_thread_mdelay(1000);
-        }
-
-        rt_kprintf("[Manage Module] uart4_recv thread exit\n");
-        ut_thread_exit(pstPressControlObject->Thead_prectrUart);
-    }
-}
-
-
 
 //压力控制命令线程
 void m_prectr_thread(void)    
@@ -159,34 +138,7 @@ void m_prectr_thread(void)
 
 
 
-void m_uart4_recv_init(void)
-{
-    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
-    pstPressControlObject->brun_prectrUart = SD_FALSE;
-}
-void m_uart4_recv_start(void)
-{
-    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
-    if(SD_NULL != pstPressControlObject)
-    {
-        if (SD_FALSE == pstPressControlObject->brun_prectrUart)
-        {
-            pstPressControlObject->brun_prectrUart = SD_TRUE;
-            ut_thread_create(pstPressControlObject->Thead_prectrUart,"MANAGE_UART4_RECV_THREAD",
-                UT_THREAD_STACK_SIZE_LARGE,
-                UT_THREAD_PRIORITY_DEFAULT,
-                UT_THREAD_TICK_DEFAULT,
-                m_thread_uart4_recv,pstPressControlObject);
 
-        }
-    }
-}
-
-void m_uart4_recv_stop(void)
-{
-    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
-    pstPressControlObject->brun_prectrUart = SD_FALSE;
-}
 
 void manage_prectr_init(void)   
 {
@@ -209,39 +161,5 @@ void manage_prectr_stop(void)
 }
 
 
-//uart_get 的编写
-/*void m_prectruart_thread(void)  //开启线程，UART信号的接收
-{
-
-        LPPressControlObjectDef pstPressControlObject = device_prectrl_object_get();
-        if(SD_NULL != pstPressControlObject)
-        {
-            if ( pstPressControlObject->brun_prectrUart == SD_FALSE)
-            {
-                pstPressControlObject->brun_prectrUart = SD_TRUE;
-                ut_thread_create(pstPressControlObject->Thead_prectrUart,"UARTRecv_PRECTR_THREAD",
-                                            UT_THREAD_STACK_SIZE_LARGE,
-                                            UT_THREAD_PRIORITY_DEFAULT,
-                                            UT_THREAD_TICK_DEFAULT,
-                                            bsp_uart_get,pstPressControlObject);  //uart发送数据的线程
-            }
-            rt_kprintf("  /m_prectr.c/ m_prectruart_thread run\n");   //添加输出打印
-
-        }
-
-}
-
-void manage_prectruart_start(void)
-{
-
-    m_prectruart_thread();
-}
-
-void manage_prectruart_stop(void)
-{
-    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
-    pstPressControlObject->brun_prectrUart = SD_FALSE;
-
-}*/
 
 
