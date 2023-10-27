@@ -136,9 +136,9 @@ void VALVE_on(int device_id)
 		HAL_GPIO_WritePin(valve_GPIO_Port, valve3_Pin, GPIO_PIN_SET);
 		break;
 		case PressureSensor4:
-		HAL_GPIO_WritePin(valve_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve4_Pin, GPIO_PIN_SET);
         case PressureSensor5:
-		HAL_GPIO_WritePin(valve_GPIO_Port, valve1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(valve_GPIO_Port, valve5_Pin, GPIO_PIN_SET);
 		break;
         
 		default:
