@@ -143,32 +143,10 @@ void get_STM32_uid(char * deviceid)
     {
         memset(deviceid ,0 ,DEVICE_LENGTH);
         strcpy(deviceid ,STM32_DEVICEID);
-
+        //rt_kprintf("deviceId: %02X\n", deviceid);
     }
 }
 
-void get_STM32_Pressuid(char * deviceid)
-{
-    LPPreCtrFrameDef pstPreCtrFrameDef = device_ctrl_object_get();
-    if ( pstPreCtrFrameDef)
-    {
-        uint32_t id[3];
-        MCUTypedef type = STM32F4;
-        id[0]=*(uint32_t*)(idAddr[type]);
-        id[1]=*(uint32_t*)(idAddr[type]+4);
-        id[2]=*(uint32_t*)(idAddr[type]+8);
-        char STM32_DEVICEID[DEVICE_LENGTH];
-        memset(STM32_DEVICEID ,0 ,DEVICE_LENGTH);
-        itoa(id[2],STM32_DEVICEID,10);
-        memset(pstPreCtrFrameDef->m_deviceId ,0 ,DEVICE_LENGTH);
-        strcpy(pstPreCtrFrameDef->m_deviceId ,STM32_DEVICEID);
-        rt_kprintf("dmf.m_deviceId： %d\n", pstPreCtrFrameDef->m_deviceId);
-
-
-    }
-
-
-}
 
 void get_esp8266_mac(char *macAddr)
 {

@@ -65,9 +65,8 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                     }
 
                 }
-                char STM32_DEVICEID[DEVICE_LENGTH];
-                get_STM32_uid(STM32_DEVICEID);
-                strcpy(pstPreCtrFrameDef->m_deviceId, STM32_DEVICEID);   //将芯片uid号赋值过去
+
+                get_STM32_uid(dmf.m_deviceId);
                 print_heartbeat_info(pstPreCtrFrameDef);  //调试口打印心跳包信息
 
             }

@@ -77,22 +77,6 @@ typedef struct TagDeviceObjectDef
 
 }DeviceObjectDef,*LPDeviceObjectDef;
 
-/*typedef struct TagPreCtrmqFrameDef    //uart接收消息队列
-{
-    SdUInt16 msgID;
-    SdUInt8 m_presorID;  //所需要控制加压设备
-    SdUInt8 m_cmdtype;  //加压和泄压命令
-
-}PreCtrmqFrameDef,*LPPreCtrmqFrameDef; */
-
-/*typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
-{
-    SdUInt16 msgID;
-    char m_deviceid[DEVICE_LENGTH];
-    SdUInt8 m_deviceType;
-    SdUInt8 m_deviceStatus;
-
-}PreCtrFrameDef,*LPPreCtrFrameDef;*/
 
 
 typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
@@ -138,6 +122,5 @@ int afe4300_deviceStatus(void);
 void manage_prectrdevice_init(void);
 void manage_prectrdevice_start(void);
 void manage_prectrdevice_stop(void);
-void get_STM32_Pressuid(char * deviceid);
 
 #endif /* MANAGER_M_DEVICE_H_ */
