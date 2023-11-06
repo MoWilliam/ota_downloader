@@ -27,14 +27,13 @@ typedef enum TagUartCmdDef
 {
     emUartCmdUnknown = -1,
     emUartCmdHeartBeat,   //气动单元的设备
-    //emUartCmdSetting,
     emUartCmdStartPress,
     emUartCmdStopPress,
 }enUartCmdDef;
 
 typedef enum TagUartMsgTypeDef
 {
-    emUartMsgTypeUnknown,
+    emUartMsgTypeUnknown = -1,
     emUartMsgTypeUp,
     emUartMsgTypeDown
 

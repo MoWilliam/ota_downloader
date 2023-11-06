@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2023-0605      WangWei      the first version
  */
-
+/*uart的初始化  串口读写功能的*/
 #include <rtthread.h>
 #include "stdint.h"
 #include "string.h"
@@ -67,6 +67,7 @@ void bsp_uart_init(void)
 void bsp_uart_get(PreCtrFrameDef *dmf)
 {
     char ch;
+    
     LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
     //PreCtrFrameDef dmf;
     while (1) {
@@ -74,10 +75,7 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
         rt_size_t read_count = rt_device_read(serial_4, 0, &ch, 1);
 
         if (read_count > 0) {
-            //printf("Received data: 0x%02X\n", (unsigned char)ch);
-            //rt_device_write(serial_4,0,&ch,1);   //发回串口
-
-
+            
             rx_data[rx_rwflag++] = ch;
             if (rx_rwflag >= rx_rwflag_num)
             {
@@ -103,7 +101,6 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
             // 如果未成功读取到数据，等待信号量释放
             rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
         }
-        //ut_mqueue_delete(&dmf);
     }
 
     //rt_thread_mdelay(50);
@@ -117,12 +114,11 @@ void bsp_uart_send(PreCtrFrameDef *dmf){
     while(1){
         PreCtrFrameDef dmf;
         rt_memset(&dmf, 0, sizeof(dmf));
-        //rt_memset(&rx_data, 0, 128);
 
         //判断队列是否接收到消息
         if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER) == RT_EOK){
-            rt_device_write(serial_4, 0, &dmf, 6);
-
+            rt_device_write(serial_4, 0, &dmf, 14);
+            //rt_kprintf("***divice Id: %s\n",dmf.m_deviceId);
         }
         rt_thread_mdelay(1000*2);
     }

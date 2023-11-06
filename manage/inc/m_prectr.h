@@ -23,8 +23,8 @@
 #define UART_BUFFER_SIZE        256
 uint8_t  g_prectrUart_RxBuf[UART_BUFFER_SIZE];
 
-#define PRESOR_ON       1
-#define PRESOR_OFF      2
+//#define PRESOR_ON       1
+//#define PRESOR_OFF      2
 
 void manage_prectr_init(void) ; 
 void manage_prectr_start(void);  

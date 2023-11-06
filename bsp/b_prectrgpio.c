@@ -11,7 +11,7 @@
 
 
 /*
-做重新变更：1.设置GPIO加压和减压操作
+gpio口的初始化， 加压减压功能实现
 */
 
 #include <rthw.h>
@@ -175,17 +175,15 @@ void VALVE_off(int device_id)
 	}
 }
 
-
-
-
-
-void bsp_PreCtr_GPIO_start(int device_id)
+//加压功能
+void bsp_PreCtr_GPIO_start(int device_id)  
 {
     PUMP_on(device_id);
     VALVE_off(device_id);
 
 }
 
+//泄压功能
 void bsp_PreCtr_GPIO_stop(int device_id)
 {
     PUMP_off(device_id);

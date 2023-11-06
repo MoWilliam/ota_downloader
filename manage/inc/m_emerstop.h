@@ -25,6 +25,14 @@ typedef enum
 }KEY_Action_TypeDef;
 
 
+typedef enum TagPrectrEmerstopDef
+{
+    emPrectrEmerstop_FlagOff = 0,
+    emUARTCmdStopPress_FlagOn
+
+}enPrectrCmdDef;
+
+
 void debounce_handler(void *param);
 KEY_Action_TypeDef KEY_ReadPin(rt_base_t pin);
 

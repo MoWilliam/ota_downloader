@@ -30,7 +30,7 @@ PressureSensorId：控制的压力传感器设备 0x10 0x11 0x12 0x13 0x14
 
 void print_heartbeat_info(PreCtrFrameDef *dmf);
 static SdULong g_msgId_hearBeat;
-#define LITTLE_TO_BIG_ENDIAN_16(x) ((uint16_t)((((x) & 0xFF) << 8) | (((x) >> 8) & 0xFF)))
+#define LITTLE_TO_BIG_ENDIAN_16(x) ((uint16_t)((((x) & 0xFF) << 8) | (((x) >> 8) & 0xFF)))  //大端形式
 
 void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳包发送给主控终端
 {
@@ -55,23 +55,22 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                 dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;
                 dmf.m_deviceType = pstPreCtrFrameDef->m_deviceType;
                 dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
-                if(pstPreCtrFrameDef->m_msgType == 1)  //发送下行命令（控制设备）
+                if(pstPreCtrFrameDef->m_msgType == emUartMsgTypeDown)  //发送下行命令（控制设备）
                 {
-                    if(pstPreCtrFrameDef->m_deviceType == 3)  //是否为压力控制器部分
+                    if(pstPreCtrFrameDef->m_deviceType == emDevicePressControlSensor)  //是否为压力控制器部分
                     {
-
+                        //g_msgId_hearBeat = 0;
                         dmf.m_msgType = 0;
                         ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
                     }
 
                 }
-
                 get_STM32_uid(dmf.m_deviceId);
+
                 print_heartbeat_info(pstPreCtrFrameDef);  //调试口打印心跳包信息
 
             }
 
-            // 每隔5秒发送一个心跳包，确保设备在线
             rt_thread_mdelay(1000*2);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[Thread Module] thread exit\n");
@@ -100,9 +99,12 @@ void commbyte_prectrheartBeat(void)     //创建线程
 //心跳包信息的打印
 void print_heartbeat_info(PreCtrFrameDef *dmf)
 {
-    rt_kprintf("Message ID: %u, Message Type: %u,divice Id: %02X, pressure Id: 0x%02X, Device Type: %u,  Cmd Type: %u\n",
-                    dmf->msgID, dmf->m_msgType,dmf->m_deviceId, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType);
+    //LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    rt_kprintf("Message ID: %u, Message Type: %u, pressure Id: 0x%02X, Device Type: %u,  Cmd Type: %u, divice Id: %X\n",
+                    dmf->msgID, dmf->m_msgType, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType,dmf->m_deviceId);
 }
+
+
 
 void manage_commbyte_init(void)
 {
