@@ -138,14 +138,16 @@ void get_STM32_uid(char * deviceid)
     id[2]=*(uint32_t*)(idAddr[type]+8);
     char STM32_DEVICEID[DEVICE_LENGTH];
     memset(STM32_DEVICEID ,0 ,DEVICE_LENGTH);
-    itoa(id[2],STM32_DEVICEID,10);
+    //itoa(id[2],STM32_DEVICEID,10);    //该函数的含义将整数转换为字符串
+    sprintf(STM32_DEVICEID, "%X", id[2]);
     if ( deviceid != SD_NULL)
     {
         memset(deviceid ,0 ,DEVICE_LENGTH);
         strcpy(deviceid ,STM32_DEVICEID);
-        //rt_kprintf("deviceId: %02X\n", deviceid);
+        rt_kprintf("deviceId: %s\n", deviceid);
     }
 }
+
 
 
 void get_esp8266_mac(char *macAddr)

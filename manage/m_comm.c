@@ -116,19 +116,19 @@ SdInt comm_mqtt_status(int connectStatus)
     return 0;
 }
 
-SdInt comm_mqtt_subMsg(char* topic, char * message)
+SdInt comm_mqtt_subMsg(char* topic, char * message)    //订阅
 {
     rt_kprintf("MQTT MSG->topic:%s,msg:%s\n",topic,message);
     cJSON *root = NULL,*data = NULL;
     cJSON *msgType = NULL, *deviceId = NULL, *deviceType = NULL,*cmdType = NULL;
     cJSON *acupointId = NULL,*pressure = NULL;
 
-    if ( rt_strcmp( topic,MQ_CONTROL_TOPIC) == 0)
+    if ( rt_strcmp( topic,MQ_CONTROL_TOPIC) == 0)  //控制主题的消息
     {
-        root = cJSON_Parse(message);
+        root = cJSON_Parse(message);  // 用于解析 JSON 字符串并构建一个 cJSON 数据结构以便于后续的 JSON 数据处理。
         if(root)
         {
-            msgType = cJSON_GetObjectItem(root, "msgType");
+            msgType = cJSON_GetObjectItem(root, "msgType");     // 用于从 JSON 对象中获取指定名称的元素（字段）的指针
             deviceId = cJSON_GetObjectItem(root, "deviceId");
             deviceType = cJSON_GetObjectItem(root, "deviceType");
             cmdType = cJSON_GetObjectItem(root, "cmdType");
@@ -159,7 +159,9 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
                     if ( deviceType->valueint == emDevicePressSensor)
                     {
                         if ( acupointId){
-                            pstDeviceObject->m_check_acupointId = atoi(acupointId->valuestring);
+                            pstDeviceObject->m_check_acupointId = atoi(acupointId->valuestring);        //atoi 是一个标准 C 库函数，用于将字符串转换为整数。\
+                                                                                                        它会从字符串中解析整数值，直到遇到非数字字符为止。如\
+                                                                                                        果字符串无法解析为有效整数，将返回 0。                                                              
                         }
 
                         if ( pressure){
@@ -168,7 +170,7 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
 
                     }
 
-                    if ( deviceType->valueint == emDevicePressControlSensor)
+                    if ( deviceType->valueint == emDevicePressControlSensor)      //气动单元部分
                     {
                         if ( cmdType->valueint == emMqttCmdStart){
                             pstDeviceObject->m_deviceStatus = 1;
@@ -180,7 +182,7 @@ SdInt comm_mqtt_subMsg(char* topic, char * message)
                 }
             }
         }
-        cJSON_Delete(root);
+        cJSON_Delete(root);  //释放，以免造成指针泄漏
     }
 
     return 0;
@@ -196,7 +198,7 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent) {
     //SensorDataFrameDef mqttDmf;
     if (pMsg->usMsgID == emMqttMsgBaseData) {
         if (pContent != SD_NULL) {
-            //LPSensorDataFrameDef pdmf = (LPSensorDataFrameDef)pContent;
+            
             if (pdmf != NULL) {
                 //SensorDataFrameDef mqttDmf;
                 mqttDmf.m_atemp = pdmf->m_atemp;
@@ -230,22 +232,22 @@ SdInt comm_mqtt_msg(const UTMsgDef *pMsg, const void *pContent) {
 
     return 0;
 }  
-SdInt comm_mqtt_msg_publish()
+SdInt comm_mqtt_msg_publish()    //利用mqqt将数据发送到平台上
 {
     cJSON *root_json = cJSON_CreateObject();
         char *out = NULL;
         int len = 0;
         int ret = 0;
         sensorDataToJSON(&mqttDmf, root_json);  //2023.9.27
-        out = cJSON_PrintUnformatted(root_json);
+        out = cJSON_PrintUnformatted(root_json);     //将 cJSON 对象转换为 JSON 字符串。生成的字符串是紧凑的，不包含额外的空格、换行或缩进
         len = strlen(out);
-        rt_kprintf("***************************len:%d\n",len);  //2023.9.27，打印长度
+        
 
         if (len > 0) {
             ret = mq_publish(MQ_DATA_TOPIC, out);
 
-            cnt_sensor ++;
-            rt_kprintf("****cnt_sensor:%d\n",cnt_sensor);  //2023.9.27，打印接收传感器参数计数
+            //cnt_sensor ++;
+            //rt_kprintf("****cnt_sensor:%d\n",cnt_sensor);  //2023.9.27，打印接收传感器参数计数
         }
         cJSON_free(out);
         cJSON_Delete(root_json);
@@ -255,7 +257,7 @@ SdInt comm_mqtt_msg_publish()
 
 
 
-void sensorDataToJSON(SensorDataFrameDef *dmf, cJSON *root_json)
+void sensorDataToJSON(SensorDataFrameDef *dmf, cJSON *root_json)   //传感器数据的整体打包
 {
     char tValue_temp[8], tValue_spo2[8], tValue_bio[8];
     cJSON *data_json = NULL;
@@ -263,7 +265,7 @@ void sensorDataToJSON(SensorDataFrameDef *dmf, cJSON *root_json)
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
     if (pstDeviceObject)
     {
-        cJSON_AddNumberToObject(root_json, "msgId", g_msgId_data++);
+        cJSON_AddNumberToObject(root_json, "msgId", g_msgId_data++);   //将一个数字值添加到 cJSON 对象中
         cJSON_AddNumberToObject(root_json, "msgType", emMqttMsgTypeUp);
         cJSON_AddStringToObject(root_json, "deviceId", pstDeviceObject->m_deviceId);
         cJSON_AddNumberToObject(root_json, "deviceType", emDeviceCompositeSensor);
@@ -277,7 +279,7 @@ void sensorDataToJSON(SensorDataFrameDef *dmf, cJSON *root_json)
         memset(tValue_temp, 0, 8);
         double temp_Value = dmf->m_btemp * 0.00390625;
         temp_Value += dmf->m_atemp;
-        sprintf(tValue_temp, "%.1f", temp_Value);
+        sprintf(tValue_temp, "%.2f", temp_Value);  //改变温度数值精度
         cJSON_AddStringToObject(data_json, "tempValue", tValue_temp);
         //cJSON_AddItemToArray(phase_array, data_json);
 
