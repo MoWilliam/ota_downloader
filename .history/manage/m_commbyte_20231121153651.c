@@ -55,7 +55,7 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                 dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;
                 dmf.m_deviceType = pstPreCtrFrameDef->m_deviceType;
                 dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
-                /*if(pstPreCtrFrameDef->m_msgType == emUartMsgTypeDown)  //发送下行命令（控制设备）
+                if(pstPreCtrFrameDef->m_msgType == emUartMsgTypeDown)  //发送下行命令（控制设备）
                 {
                     if(pstPreCtrFrameDef->m_deviceType == emDevicePressControlSensor)  //是否为压力控制器部分
                     {
@@ -64,10 +64,7 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                         ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
                     }
 
-                }*/  //设备通电直接发送心跳包的方式
-                dmf.m_msgType = 0;
-                dmf.m_deviceType = 3;
-                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
+                }
                 get_STM32_uid(dmf.m_deviceId);
 
                 print_heartbeat_info(pstPreCtrFrameDef);  //调试口打印心跳包信息
@@ -102,13 +99,12 @@ void commbyte_prectrheartBeat(void)     //创建线程
 //心跳包信息的打印
 void print_heartbeat_info(PreCtrFrameDef *dmf)
 {
-    get_STM32_uid(dmf->m_deviceId);
-
     //LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    rt_kprintf("Message ID: %u, Message Type: %u, pressure Id: 0x%02X, Device Type: %u,  Cmd Type: %u, dmf->m_deviceId: %s\n",
-                    dmf->msgID, dmf->m_msgType, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType, dmf->m_deviceId);
-    //rt_kprintf("dmf->m_deviceId: %s", dmf->m_deviceId);
+    rt_kprintf("Message ID: %u, Message Type: %u, pressure Id: 0x%02X, Device Type: %u,  Cmd Type: %u, divice Id: %X\n",
+                    dmf->msgID, dmf->m_msgType, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType,dmf->m_deviceId);
 }
+
+
 
 void manage_commbyte_init(void)
 {
