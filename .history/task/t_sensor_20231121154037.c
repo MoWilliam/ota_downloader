@@ -14,8 +14,6 @@
 void task_thread_max30205_recv(void *ptr)
 {
     //int cnt_recv_tmp = 0;
-    SdInt16 last_m_atemp ;   //上次获得温度的整数有效值。
-    SdInt16 last_m_btemp ;   //上次获得温度的小数有效值。
     rt_kprintf("task_thread_temp_recv thread run\n");
     if(SD_NULL != ptr)
     {
@@ -27,17 +25,11 @@ void task_thread_max30205_recv(void *ptr)
             SensorDataFrameDef dmf;  //2023.9.27
             dmf.m_atemp = 0;
             dmf.m_btemp = 0;
-            last_m_atemp = 0;
-            last_m_btemp = 0;
             bsp_max30205_get(&dmf);
-            if(dmf.m_atemp>10 || dmf.m_atemp<50)  //去除温度显示过程中的极端异常值
+            if(dmf.m_atemp > 50)
             {
-                last_m_atemp = dmf.m_atemp;
-                last_m_btemp = dmf.m_btemp;
-            }else if(dmf.m_atemp<10 || dmf.m_atemp>50)
-            {
-                dmf.m_atemp = last_m_atemp;
-                dmf.m_btemp = last_m_btemp;
+                dmf.m_atemp = 0;
+                dmf.m_btemp = 0;
                 rt_kprintf("max3025 %d %d",dmf.m_atemp,dmf.m_btemp);
                 ut_msg_send(pstMqueueObject->MMqueue_msg,1,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
             }else{
@@ -46,6 +38,7 @@ void task_thread_max30205_recv(void *ptr)
             }
            // rt_kprintf("[Task Module]->task temp thread run\n");
             rt_thread_mdelay(1000);
+            //rt_thread_mdelay(2000);  //2023.9.26，增加发送的时间间隔
             //cnt_recv_tmp ++;
             //rt_kprintf("****cnt_recv_tmp:%d\n", cnt_recv_tmp);  //2023.9.27.打印发送tmp计数
         }
