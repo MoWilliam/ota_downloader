@@ -144,7 +144,7 @@ void get_STM32_uid(char * deviceid)
     {
         memset(deviceid ,0 ,DEVICE_LENGTH);
         strcpy(deviceid ,STM32_DEVICEID);
-        rt_kprintf("deviceId: %s\n", deviceid);
+        //rt_kprintf("deviceId: %s\n", deviceid);
     }
 }
 
