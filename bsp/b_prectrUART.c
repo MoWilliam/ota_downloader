@@ -103,7 +103,7 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
         }
     }
 
-    //rt_thread_mdelay(50);
+    rt_thread_mdelay(50);
 }
 
 void bsp_uart_send(PreCtrFrameDef *dmf){
@@ -117,10 +117,11 @@ void bsp_uart_send(PreCtrFrameDef *dmf){
 
         //判断队列是否接收到消息
         if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER) == RT_EOK){
+            //if()
             rt_device_write(serial_4, 0, &dmf, 14);
             //rt_kprintf("***divice Id: %s\n",dmf.m_deviceId);
         }
-        rt_thread_mdelay(1000*2);
+        rt_thread_mdelay(50);
     }
 
 }
