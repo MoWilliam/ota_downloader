@@ -49,6 +49,10 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
                 {
                     bsp_PreCtr_GPIO_stop(pstPreCtrFrameDef->m_pressureid);
                     rt_kprintf("  /m_prectr.c/ stop PressureSensor1\n");   //添加输出打印
+                }else if (pstPreCtrFrameDef->m_cmdType == emUartCmdHoldPress && flag == emPrectrEmerstop_FlagOff)
+                {                    
+                    bsp_PreCtr_GPIO_hold(pstPreCtrFrameDef->m_pressureid);
+                    rt_kprintf("  /m_prectr.c/ hold PressureSensor1\n");   //添加输出打印
                 }
             }
             else if (strcmp(pstPreCtrFrameDef->m_pressureid, PressureSensor2) == 0)
@@ -63,6 +67,10 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
                 {
                     bsp_PreCtr_GPIO_stop(pstPreCtrFrameDef->m_pressureid);
                     rt_kprintf("  /m_prectr.c/ stop PressureSensor2\n");   //添加输出打印
+                }else if (pstPreCtrFrameDef->m_cmdType == emUartCmdHoldPress && flag == emPrectrEmerstop_FlagOff)
+                {
+                    bsp_PreCtr_GPIO_hold(pstPreCtrFrameDef->m_pressureid);
+                    rt_kprintf("  /m_prectr.c/ hold PressureSensor2\n");   //添加输出打印
                 }
             }
             else if (strcmp(pstPreCtrFrameDef->m_pressureid, PressureSensor3) == 0)
@@ -77,6 +85,10 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
                 {
                     bsp_PreCtr_GPIO_stop(pstPreCtrFrameDef->m_pressureid);
                     rt_kprintf("  /m_prectr.c/ stop PressureSensor3\n");   //添加输出打印
+                }else if (pstPreCtrFrameDef->m_cmdType == emUartCmdHoldPress && flag == emPrectrEmerstop_FlagOff)
+                {
+                    bsp_PreCtr_GPIO_hold(pstPreCtrFrameDef->m_pressureid);
+                    rt_kprintf("  /m_prectr.c/ hold PressureSensor3\n");   //添加输出打印
                 }
             }
             else if (strcmp(pstPreCtrFrameDef->m_pressureid, PressureSensor4) == 0)
@@ -91,6 +103,10 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
                 {
                     bsp_PreCtr_GPIO_stop(pstPreCtrFrameDef->m_pressureid);
                     rt_kprintf("  /m_prectr.c/ stop PressureSensor4\n");   //添加输出打印
+                }else if (pstPreCtrFrameDef->m_cmdType == emUartCmdHoldPress && flag == emPrectrEmerstop_FlagOff)
+                {
+                    bsp_PreCtr_GPIO_hold(pstPreCtrFrameDef->m_pressureid);
+                    rt_kprintf("  /m_prectr.c/ hold PressureSensor4\n");   //添加输出打印
                 }
             }
             else if (strcmp(pstPreCtrFrameDef->m_pressureid, PressureSensor5) == 0)
@@ -105,6 +121,10 @@ void prectr_recv_thread_entry(void *ptr)    //线程任务
                 {
                     bsp_PreCtr_GPIO_stop(pstPreCtrFrameDef->m_pressureid);
                     rt_kprintf("  /m_prectr.c/ stop PressureSensor5\n");   //添加输出打印
+                }else if (pstPreCtrFrameDef->m_cmdType == emUartCmdHoldPress && flag == emPrectrEmerstop_FlagOff)
+                {
+                    bsp_PreCtr_GPIO_hold(pstPreCtrFrameDef->m_pressureid);
+                    rt_kprintf("  /m_prectr.c/ hold PressureSensor5\n");   //添加输出打印
                 }
             }
 

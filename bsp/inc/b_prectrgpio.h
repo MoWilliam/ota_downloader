@@ -70,6 +70,6 @@
 void bsp_PreCtr_GPIO_Init(void);
 void bsp_PreCtr_GPIO_start(int device_id);
 void bsp_PreCtr_GPIO_stop(int device_id);
-
+void bsp_PreCtr_GPIO_hold(int device_id);
 
 #endif /* BSP_INC_B_B_PRECTRGPIO_H_ */

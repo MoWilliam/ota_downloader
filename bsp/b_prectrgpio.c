@@ -183,6 +183,14 @@ void bsp_PreCtr_GPIO_start(int device_id)
 
 }
 
+//停止加压功能
+void bsp_PreCtr_GPIO_hold(int device_id)  
+{
+    PUMP_off(device_id);
+    VALVE_off(device_id);
+
+}
+
 //泄压功能
 void bsp_PreCtr_GPIO_stop(int device_id)
 {
