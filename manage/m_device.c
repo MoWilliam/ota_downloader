@@ -185,3 +185,16 @@ void set_esp8266_mac(rt_uint32_t mac0,rt_uint32_t mac1,rt_uint32_t mac2)
         strcpy(pstDeviceObject->m_deviceId,uid);
     }
 }
+
+SdUInt8 calcCRC(SdUInt8 *data,SdUInt32 len)  //计算CRC码
+{
+	SdUInt8 crc8 = 0;
+
+    while (len --)
+    {
+        crc8 = crc8Table[crc8 ^ (*data++)];
+        
+    }
+
+    return crc8;
+}

@@ -116,7 +116,7 @@ void bsp_uart_send(PreCtrFrameDef *dmf){
 
         //判断队列是否接收到消息
         if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK){
-            rt_device_write(serial_4, 0, &dmf, 8);
+            rt_device_write(serial_4, 0, &dmf, 9);
 
             //rt_kprintf("***divice Id: %s\n",dmf.m_deviceId);
         }
