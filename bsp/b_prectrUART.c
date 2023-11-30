@@ -13,6 +13,7 @@
 #include "string.h"
 #include <stdlib.h>
 #include "inc/b_prectrUART.h"
+#include "manage/inc/m_device.h"
 #include <rtdevice.h>
 
 struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // UART 设备参数配置
@@ -88,8 +89,6 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
                     pstPreCtrFrameDef->m_cmdType = rx_data[4];
 
 
-
-
                 }else{
                     rt_kprintf("UART4 Recv failed!!!\n");
                 }
@@ -108,7 +107,7 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
 
 void bsp_uart_send(PreCtrFrameDef *dmf){
 
-    //rt_size_t i;
+
     LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
     LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
     while(1){
@@ -116,9 +115,9 @@ void bsp_uart_send(PreCtrFrameDef *dmf){
         rt_memset(&dmf, 0, sizeof(dmf));
 
         //判断队列是否接收到消息
-        if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_FOREVER) == RT_EOK){
-            //if()
-            rt_device_write(serial_4, 0, &dmf, 14);
+        if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK){
+            rt_device_write(serial_4, 0, &dmf, 8);
+
             //rt_kprintf("***divice Id: %s\n",dmf.m_deviceId);
         }
         rt_thread_mdelay(50);

@@ -9,10 +9,11 @@
  */
 #ifndef MANAGER_M_DEVICE_H_
 #define MANAGER_M_DEVICE_H_
-
+#include "stdint.h"
 #include "application.h"
 
 #define DEVICE_LENGTH 32
+#define DEVICE_LENGTH1 2
 
 typedef enum TagMCUTypedef{
   STM32F0,
@@ -83,10 +84,13 @@ typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队�
 {
     SdUInt16 msgID;
     SdUInt8 m_msgType;         //信息的下行或上传
-    SdUInt8 m_pressureid;         //
+    /*
+    char m_deviceId[DEVICE_LENGTH];
+    */
+    SdUInt8 m_deviceId[DEVICE_LENGTH1];
     SdUInt8 m_deviceType;     //设备类型
     SdUInt8 m_cmdType;       //命令类型
-    char m_deviceId[DEVICE_LENGTH];
+    SdUInt8 m_pressureid;     //
 
     //SdUInt8 m_deviceStatus;    //设备工作状态
 
@@ -104,7 +108,7 @@ LPDeviceObjectDef device_ctrl_object_get(void);
 
 /*STM32 uid*/
 
-void get_STM32_uid(char * deviceid);
+uint32_t get_STM32_uid(SdUInt8 * deviceid);
 void get_esp8266_mac(char *macAddr);
 void set_esp8266_mac(rt_uint32_t mac0,rt_uint32_t mac1,rt_uint32_t mac2);
 

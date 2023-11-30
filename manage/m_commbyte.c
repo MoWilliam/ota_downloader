@@ -32,12 +32,13 @@ void print_heartbeat_info(PreCtrFrameDef *dmf);
 static SdULong g_msgId_hearBeat;
 #define LITTLE_TO_BIG_ENDIAN_16(x) ((uint16_t)((((x) & 0xFF) << 8) | (((x) >> 8) & 0xFF)))  //大端形式
 
+
 void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳包发送给主控终端
 {
     rt_kprintf("thread_prectrheartbeat thread run\n");
     if (SD_NULL != ptr)
     {
-        int result;
+        
         LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
         LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
@@ -49,6 +50,7 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                 PreCtrFrameDef dmf;
 
                 dmf.msgID = LITTLE_TO_BIG_ENDIAN_16(pstPreCtrFrameDef->msgID);
+
                 pstPreCtrFrameDef->msgID = 0;
                 pstPreCtrFrameDef->msgID = g_msgId_hearBeat++;
                 dmf.m_msgType = pstPreCtrFrameDef->m_msgType;
@@ -67,8 +69,10 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
                 }*/  //设备通电直接发送心跳包的方式
                 dmf.m_msgType = 0;
                 dmf.m_deviceType = 3;
-                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
                 get_STM32_uid(dmf.m_deviceId);
+                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
+                rt_thread_mdelay(50);
+                //get_STM32_uid(dmf.m_deviceId);
 
                 print_heartbeat_info(pstPreCtrFrameDef);  //调试口打印心跳包信息
 
@@ -102,11 +106,12 @@ void commbyte_prectrheartBeat(void)     //创建线程
 //心跳包信息的打印
 void print_heartbeat_info(PreCtrFrameDef *dmf)
 {
-    get_STM32_uid(dmf->m_deviceId);
 
-    //LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    rt_kprintf("Message ID: %u, Message Type: %u, pressure Id: 0x%02X, Device Type: %u,  Cmd Type: %u, dmf->m_deviceId: %s\n",
-                    dmf->msgID, dmf->m_msgType, dmf->m_pressureid, dmf->m_deviceType, dmf->m_cmdType, dmf->m_deviceId);
+    uint32_t deviceid = get_STM32_uid(dmf->m_deviceId);
+
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    rt_kprintf("Message ID: %u, Message Type: %u, dmf->m_deviceId: 0X%08x, Device Type: %u,  pressure Id: 0x%02X, Cmd Type: %u\n",
+                    dmf->msgID, dmf->m_msgType, deviceid, dmf->m_deviceType, dmf->m_pressureid, dmf->m_cmdType);
     //rt_kprintf("dmf->m_deviceId: %s", dmf->m_deviceId);
 }
 

@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2023-01-04     Administrator       the first version
  */
-#include "stdint.h"
+//#include "stdint.h"
 #include "inc/m_device.h"
 
 #define MAX30205_DEVICEID    "max30205"
@@ -129,23 +129,36 @@ int afe4300_deviceStatus(void)
     return 1;
 }
 
-void get_STM32_uid(char * deviceid)
+uint32_t get_STM32_uid(SdUInt8 * deviceid)
 {
+    uint8_t i = 0;
     uint32_t id[3];
     MCUTypedef type = STM32F4;
     id[0]=*(uint32_t*)(idAddr[type]);
     id[1]=*(uint32_t*)(idAddr[type]+4);
     id[2]=*(uint32_t*)(idAddr[type]+8);
-    char STM32_DEVICEID[DEVICE_LENGTH];
-    memset(STM32_DEVICEID ,0 ,DEVICE_LENGTH);
+#if DeBug
+    rt_kprintf("ID: %08X-%08X-%08X\n",id[0],id[1],id[2]);
+#endif
+    //char STM32_DEVICEID[6];
+    //memset(STM32_DEVICEID ,0 ,6);
     //itoa(id[2],STM32_DEVICEID,10);    //该函数的含义将整数转换为字符串
-    sprintf(STM32_DEVICEID, "%X", id[2]);
-    if ( deviceid != SD_NULL)
+    //sprintf(STM32_DEVICEID, "%X", id[0]); //将整数格式化为十六进制字符串，并存储到指定的字符数组中
+    if( deviceid != SD_NULL)
     {
-        memset(deviceid ,0 ,DEVICE_LENGTH);
-        strcpy(deviceid ,STM32_DEVICEID);
+        deviceid[0] = (id[0] >> 16) & 0xFF; // 获取高字节
+        deviceid[1] = id[0] & 0xFF; // 获取低字节
+       // deviceid = STM32_DEVICEID & 0xFFFF;
+        //memset(deviceid ,0 ,DEVICE_LENGTH1);
+        //memcpy(deviceid, (SdUInt8 *)STM32_DEVICEID, 4);
         //rt_kprintf("deviceId: %s\n", deviceid);
+        
+    }else
+    {
+        // 数组长度不够，进行错误处理
+        rt_kprintf("Device ID array small!\n");
     }
+    return id[0];
 }
 
 
