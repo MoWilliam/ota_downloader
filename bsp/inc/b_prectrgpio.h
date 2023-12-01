@@ -45,6 +45,9 @@
 #define valve5_Pin GPIO_PIN_2
 //#define valve5_GPIO_Port GPIOE
 
+//LED引脚
+#define LED_GPIO_Port   GPIOC
+#define LED_Pin         GPIO_PIN_5
 
 #define NUM_PINS 5
 #define EmerStop_key1             GET_PIN(D, 9)   //急停按钮的引脚编号
@@ -68,6 +71,7 @@
 
 
 void bsp_PreCtr_GPIO_Init(void);
+//void LED_on(void);
 void bsp_PreCtr_GPIO_start(int device_id);
 void bsp_PreCtr_GPIO_stop(int device_id);
 void bsp_PreCtr_GPIO_hold(int device_id);

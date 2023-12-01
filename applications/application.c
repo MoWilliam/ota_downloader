@@ -263,6 +263,7 @@ void bsp_module_init(void)
     bsp_afe4300_init();
 #endif
 #if PRESS_CONTROL_FLAG
+    LED_on();
     bsp_PreCtr_GPIO_Init();
     bsp_uart_init();
 #endif
@@ -438,3 +439,5 @@ SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
     }
 	return 0;
 }
+
+
