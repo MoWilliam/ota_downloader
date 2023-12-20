@@ -129,11 +129,11 @@ int afe4300_deviceStatus(void)
     return 1;
 }
 
-uint32_t get_STM32_uid(SdUInt8 * deviceid)
+/*uint32_t get_STM32_uid(SdUInt8 * deviceid)
 {
     uint8_t i = 0;
     uint32_t id[3];
-    MCUTypedef type = STM32F4;
+    MCUTypedef type = STM32f4;
     id[0]=*(uint32_t*)(idAddr[type]);
     id[1]=*(uint32_t*)(idAddr[type]+4);
     id[2]=*(uint32_t*)(idAddr[type]+8);
@@ -159,7 +159,26 @@ uint32_t get_STM32_uid(SdUInt8 * deviceid)
         rt_kprintf("Device ID array small!\n");
     }
     return id[0];
+}*/
+
+
+uint32_t get_STM32_uid(SdUInt16 * deviceid)
+{
+    uint8_t i = 0;
+    uint32_t id[3];
+    MCUTypedef type = STM32f4;
+    id[0]=*(uint32_t*)(idAddr[type]);
+    id[1]=*(uint32_t*)(idAddr[type]+4);
+    id[2]=*(uint32_t*)(idAddr[type]+8);
+#if DeBug
+    rt_kprintf("ID: %08X-%08X-%08X\n",id[0],id[1],id[2]);
+#endif
+    
+    deviceid = (SdUInt16) ((id[0] >> 8) & 0xFFFF) | (id[0] & 0xFFFF);
+
+    return deviceid;
 }
+
 
 
 
@@ -197,4 +216,20 @@ SdUInt8 calcCRC(SdUInt8 *data,SdUInt32 len)  //计算CRC码
     }
 
     return crc8;
+}
+
+SdUInt8 get_DEVSoftEdition(void){
+#if COMPOSITE_CONTROL_FLAG
+SdUInt8 ComSorVersion[4] = ComSorVer;   //当前综采软件版本号
+
+return PreCtrVersion;
+#endif
+
+#if PRESS_CONTROL_FLAG
+SdUInt8 PreCtrVersion[4] = PreCtrVer;  //当前气动单元软件版本号
+
+return PreCtrVersion;
+#endif
+
+
 }

@@ -15,12 +15,15 @@
 #define DEVICE_LENGTH 32
 #define DEVICE_LENGTH1 2
 
+#define ComSorVer   "V1.4"
+#define PreCtrVer   "V1.2"
+
 typedef enum TagMCUTypedef{
   STM32F0,
   STM32F1,
   STM32F2,
   STM32F3,
-  STM32F4,
+  STM32f4,
   STM32F7,
   STM32L0,
   STM32L1,
@@ -94,27 +97,35 @@ typedef struct TagDeviceObjectDef
     SdUInt16 m_check_acupointId;
     SdInt8 m_mqtt_client_isStart;
     SdInt8 m_device_collect;        //0:未采集，1:采集（根据血氧数据来判断）
-    SdUInt8 m__ComCtr_CRC8;         //校验位
 
 }DeviceObjectDef,*LPDeviceObjectDef;
 
 
 
+//#pragma pack(push, 1)   //
+//#pragma pack(1)
 typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
 {
     SdUInt16 msgID;
     SdUInt8 m_msgType;           //信息的下行或上传
-    /*
-    char m_deviceId[DEVICE_LENGTH];
-    */
-    SdUInt8 m_deviceId[DEVICE_LENGTH1];
+    SdUInt16 m_deviceId; //[DEVICE_LENGTH1]
+    
     SdUInt8 m_deviceType;        //设备类型
-    SdUInt8 m_cmdType;           //命令类型
-    SdUInt8 m_pressureid;     
-    SdUInt8 m_PreCtr_CRC8;       //校验位
+    
+    //SdUInt8 m_123;           //信息的下行或上传
+    
+    SdUInt8 m_cmdType;
+    SdUInt8 m_pressureid;
+    SdUInt8 m_Ack;//命令类型
+    
+
     //SdUInt8 m_deviceStatus;    //设备工作状态
 
 }PreCtrFrameDef,*LPPreCtrFrameDef;
+//#pragma pack ()
+//#pragma pack(pop)
+
+
 
 typedef enum TagPrectrDevList { 
     PressureSensor1, 
@@ -128,7 +139,7 @@ LPDeviceObjectDef device_ctrl_object_get(void);
 
 /*STM32 uid*/
 
-uint32_t get_STM32_uid(SdUInt8 * deviceid);
+uint32_t get_STM32_uid(SdUInt16 * deviceid);
 void get_esp8266_mac(char *macAddr);
 void set_esp8266_mac(rt_uint32_t mac0,rt_uint32_t mac1,rt_uint32_t mac2);
 SdUInt8 calcCRC(unsigned char *data,unsigned int len);

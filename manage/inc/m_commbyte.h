@@ -30,9 +30,14 @@ typedef enum TagUartCmdDef
     emUartCmdStartPress,
     emUartCmdStopPress,
     emUartCmdHoldPress,
+    emUartCmdSetting,
+    emUartCmdDataup,
+    emUartCmdFirmwareVersion,
+
+
 }enUartCmdDef;
 
-typedef enum TagUartMsgTypeDef
+typedef enum  
 {
     emUartMsgTypeUnknown = -1,
     emUartMsgTypeUp,
@@ -54,5 +59,8 @@ typedef enum TagUartConnectStatusDef
 void manage_commbyte_init(void);
 void manage_commbyte_start(void);
 void manage_commbyte_stop(void);
+void manage_commbytecmd_init(void);
+void manage_commbytecmd_start(void);
+void manage_commbytecmd_stop(void);
 
 #endif /* MANAGE_INC_M_COMMBYTE_H_ */

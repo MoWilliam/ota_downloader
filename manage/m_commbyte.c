@@ -30,11 +30,13 @@ PressureSensorId：控制的压力传感器设备 0x10 0x11 0x12 0x13 0x14
 
 void print_heartbeat_info(PreCtrFrameDef *dmf);
 static SdULong g_msgId_hearBeat;
-#define LITTLE_TO_BIG_ENDIAN_16(x) ((uint16_t)((((x) & 0xFF) << 8) | (((x) >> 8) & 0xFF)))  //大端形式
+#define LITTLE_TO_BIG_ENDIAN_16(x) ((uint16_t)((((x) & 0xFF) << 8) | (((x) >> 8) & 0xFF)))  //交换高低字节
+rt_int32_t PreCtr_Flag;
+extern rt_int32_t PreCtr_WriteFlag;  //控制命令标志位
 
-
-void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳包发送给主控终端
+/*void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳包发送给主控终端
 {
+    
     rt_kprintf("thread_prectrheartbeat thread run\n");
     if (SD_NULL != ptr)
     {
@@ -48,42 +50,157 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
             if (pstPreCtrFrameDef)
             {
                 PreCtrFrameDef dmf;
-
                 dmf.msgID = LITTLE_TO_BIG_ENDIAN_16(pstPreCtrFrameDef->msgID);
-
-                pstPreCtrFrameDef->msgID = 0;
                 pstPreCtrFrameDef->msgID = g_msgId_hearBeat++;
-                dmf.m_msgType = pstPreCtrFrameDef->m_msgType;
-                dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;
-                dmf.m_deviceType = pstPreCtrFrameDef->m_deviceType;
+                dmf.m_msgType = 0x00;
+                dmf.m_deviceType = 0x03;
+                //dmf.m_cmdType = 0x00;
                 dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
-                /*if(pstPreCtrFrameDef->m_msgType == emUartMsgTypeDown)  //发送下行命令（控制设备）
-                {
-                    if(pstPreCtrFrameDef->m_deviceType == emDevicePressControlSensor)  //是否为压力控制器部分
-                    {
-                        //g_msgId_hearBeat = 0;
-                        dmf.m_msgType = 0;
-                        ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
-                    }
+                dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;
+                dmf.m_Ack = pstPreCtrFrameDef->m_Ack;
+                dmf.m_deviceId = get_STM32_uid(dmf.m_deviceId);
+                
+                //PreCtr_Flag = 0;
+                if(dmf.m_cmdType==0x00 ){
+                    //dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
+                    ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
+                    rt_kprintf("111\n");
+                    PreCtr_Flag = 0;
+                    rt_thread_mdelay(50);
+                            
+                }else if(dmf.m_cmdType==0x01 || dmf.m_cmdType==0x02 || dmf.m_cmdType==0x03 ){
+                    dmf.m_cmdType = 0x05;
+                    ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
+                    
+                    PreCtr_Flag = 1;
 
-                }*/  //设备通电直接发送心跳包的方式
-                dmf.m_msgType = 0;
-                dmf.m_deviceType = 3;
-                get_STM32_uid(dmf.m_deviceId);
-                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
-                rt_thread_mdelay(50);
-                //get_STM32_uid(dmf.m_deviceId);
+                    pstPreCtrFrameDef->m_cmdType = 0x00;
 
+                    //dmf.m_cmdType = 0x00;
+
+                    //PreCtr_Flag = 0;
+                    rt_kprintf("222\n");
+                    rt_thread_mdelay(50);
+                    
+
+
+                }
+
+                
                 print_heartbeat_info(pstPreCtrFrameDef);  //调试口打印心跳包信息
-
             }
 
-            rt_thread_mdelay(1000*2);   //每隔10s发送一个心跳包，确保设备在线
+            rt_thread_mdelay(1000*5);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[Thread Module] thread exit\n");
         ut_thread_exit(pstPressControlObject->Thead_prectrheartBeat);
 
     }
+}*/
+
+void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳包发送给主控终端
+{
+    
+    rt_kprintf("thread_prectrheartbeat thread run\n");
+    if (SD_NULL != ptr)
+    {
+        
+        LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+        LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
+        LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
+        
+        while (pstPressControlObject->brun_prectrheartBeat)
+        {
+            if (pstPreCtrFrameDef)
+            {
+                PreCtrFrameDef dmf;
+                dmf.msgID = LITTLE_TO_BIG_ENDIAN_16(pstPreCtrFrameDef->msgID);
+                //dmf.msgID = pstPreCtrFrameDef->msgID;
+                pstPreCtrFrameDef->msgID = g_msgId_hearBeat++;
+                dmf.m_msgType = 0x00;
+                dmf.m_deviceType = 0x03;
+                //dmf.m_cmdType = 0x00;
+                dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
+                //dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;  //注释 20231220
+                //dmf.m_Ack = pstPreCtrFrameDef->m_Ack;    //注释20231220
+                dmf.m_deviceId = get_STM32_uid(dmf.m_deviceId); //获取deviceid
+                dmf.m_deviceId = LITTLE_TO_BIG_ENDIAN_16(dmf.m_deviceId);  //交换高低字节，依据小端模式
+                dmf.m_cmdType = 0x00;
+                //PreCtr_Flag = 0;
+                //rt_thread_mdelay(50);
+                    //dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
+                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
+                PreCtr_Flag = 0;
+                            
+                print_heartbeat_info(pstPreCtrFrameDef);  //调试口打印心跳包信息
+            }
+
+            rt_thread_mdelay(1000*5);   //每隔10s发送一个心跳包，确保设备在线
+        }
+        rt_kprintf("[Thread Module] thread exit\n");
+        ut_thread_exit(pstPressControlObject->Thead_prectrheartBeat);
+
+    }
+}
+
+void thread_prectr_cmd(void *ptr)   //建立一个控制命令的函数
+{
+    
+    rt_kprintf("thread_prectr_cmd thread run\n");
+    if (SD_NULL != ptr)
+    {
+        
+        LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+        LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
+        LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
+        
+        while (pstPressControlObject->brun_prectr_cmd)
+        {
+            if (PreCtr_WriteFlag==1)
+            {
+                PreCtrFrameDef dmf;
+                
+                //PreCtr_Flag = 0;
+                //if(PreCtr_WriteFlag==1 ){
+                dmf.msgID = pstPreCtrFrameDef->msgID;
+                dmf.m_deviceId = pstPreCtrFrameDef->m_deviceId;
+                dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;
+                dmf.m_deviceType = 0x03;
+                dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
+                dmf.m_Ack = pstPreCtrFrameDef->m_Ack;
+                
+                rt_thread_mdelay(1000*0.5);
+
+                //dmf.m_cmdType = 0x05;
+                PreCtr_Flag = 1;
+                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
+
+                PreCtr_WriteFlag = 0;
+                pstPreCtrFrameDef->m_cmdType = 0x00;
+
+                //}
+
+            }
+
+            rt_thread_mdelay(1000*1);   //每隔0.5s检测是否游命令下达
+        }
+        rt_kprintf("[Thread Module] thread exit\n");
+        ut_thread_exit(pstPressControlObject->Thead_prectr_cmd);
+
+    }
+}
+
+//心跳包信息的打印
+void print_heartbeat_info(PreCtrFrameDef *dmf)
+{
+
+    uint32_t deviceid = get_STM32_uid(dmf->m_deviceId);
+
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    dmf->m_deviceType = emDevicePressControlSensor;
+    rt_kprintf("Message ID: %u, Message Type: %u, Device Id: 0X%04x, Device Type: %u, Cmd Type: %u, Pressure Id: %02x\n",
+                    dmf->msgID, dmf->m_msgType, deviceid, dmf->m_deviceType, dmf->m_cmdType, dmf->m_pressureid);
+    //rt_kprintf("dmf->m_deviceId: %s", dmf->m_deviceId);
 }
 
 void commbyte_prectrheartBeat(void)     //创建线程
@@ -103,17 +220,9 @@ void commbyte_prectrheartBeat(void)     //创建线程
     }
 }
 
-//心跳包信息的打印
-void print_heartbeat_info(PreCtrFrameDef *dmf)
-{
 
-    uint32_t deviceid = get_STM32_uid(dmf->m_deviceId);
 
-    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    rt_kprintf("Message ID: %u, Message Type: %u, dmf->m_deviceId: 0X%08x, Device Type: %u,  pressure Id: 0x%02X, Cmd Type: %u\n",
-                    dmf->msgID, dmf->m_msgType, deviceid, dmf->m_deviceType, dmf->m_pressureid, dmf->m_cmdType);
-    //rt_kprintf("dmf->m_deviceId: %s", dmf->m_deviceId);
-}
+
 
 void manage_commbyte_init(void)
 {
@@ -137,44 +246,45 @@ void manage_commbyte_stop(void)
     
 }
 
-
-//连接状态的状态标明
-/*
-SdInt commbyte_status(int connectStatus)
+void commbyte_prectr_cmd(void)     //创建线程
 {
-    LPPreCtrFrameDef pstPreCtrFrameDef = device_ctrl_object_get();
-    switch (connectStatus) {
-        case emUartConnectOk:
-            {
-                if ( pstPreCtrFrameDef)
-                {
-                    pstPreCtrFrameDef->m_deviceStatus = 2;
-                    rt_kprintf("UART SERVIER STATUS CONNECTED\n");
-                }
-            }
-            break;
-        case emUartConnectOnline:
-            {
-                if ( pstPreCtrFrameDef)
-                {
-                    pstPreCtrFrameDef->m_deviceStatus = 1;
-                    rt_kprintf("UART SERVIER STATUS Start\n");
-                }
-            }
-            break;
-
-        case emUartConnectOffline:
-            {
-                if ( pstPreCtrFrameDef)
-                {
-                    pstPreCtrFrameDef->m_deviceStatus = 0;
-                    rt_kprintf("UART SERVIER STATUS Stop\n");
-                }
-            }
-            break;
-
-        default:
-            break;
+    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
+    if(SD_NULL != pstPressControlObject)
+    {
+        if ( pstPressControlObject->brun_prectr_cmd == SD_FALSE)   //检测线程是否存在，若不存在
+        {
+            pstPressControlObject->brun_prectr_cmd = SD_TRUE;
+            ut_thread_create(pstPressControlObject->Thead_prectr_cmd,"PRECTR_CMD_THREAD",    //这边优先级的设置情况
+                            UT_THREAD_STACK_SIZE_LARGE,
+                            UT_THREAD_PRIORITY_DEFAULT,
+                            UT_THREAD_TICK_DEFAULT,
+                            thread_prectr_cmd,pstPressControlObject);
+        }
     }
-    return 0;
-}*/
+}
+
+
+
+
+
+void manage_commbytecmd_init(void)
+{
+    g_msgId_hearBeat = 0;
+
+}
+
+void manage_commbytecmd_start(void) 
+{  
+    commbyte_prectr_cmd();
+}
+
+
+void manage_commbytecmd_stop(void)
+{
+    
+    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
+    pstPressControlObject->brun_prectr_cmd = SD_FALSE;  // 设置标志位，停止心跳包线程
+    rt_thread_delay(1000);  
+    ut_thread_exit(pstPressControlObject->Thead_prectr_cmd);
+    
+}

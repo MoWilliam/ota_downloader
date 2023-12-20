@@ -16,8 +16,10 @@
 #include "ut/inc/ut_thread.h"
 #include "manage/inc/m_device.h"
 
-#define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
-#define PRESS_CONTROL_FLAG 0  // 压力控制器
+#define DeBug 1   //调试窗口
+
+#define COMPOSITE_CONTROL_FLAG 0 // 综合传感器，
+#define PRESS_CONTROL_FLAG 1  // 压力控制器
 
 
 
@@ -84,6 +86,8 @@ typedef struct TagPressControlObjectDef
 {
     UtThread*  Thead_prectrheartBeat;   //心跳包线程以及标志位
     SdBool    brun_prectrheartBeat;
+    UtThread*  Thead_prectr_cmd;   //控制命令线程以及标志位
+    SdBool    brun_prectr_cmd;
     UtThread*  Thead_preControl;   //压力控制以及标志位
     SdBool    brun_preControl;
 

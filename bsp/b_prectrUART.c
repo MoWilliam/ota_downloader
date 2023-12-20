@@ -19,9 +19,10 @@
 struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // UART 设备参数配置
 
 uint8_t rx_rwflag = 0;
-#define rx_rwflag_num 7
+#define rx_rwflag_num 8
 uint8_t rx_data[128] = {0};
-
+extern rt_int32_t PreCtr_Flag;  //控制命令标志位
+rt_int32_t PreCtr_WriteFlag;
 
 static rt_err_t uart4_rx_callback(rt_device_t dev, rt_size_t size)
 {
@@ -65,34 +66,40 @@ void bsp_uart_init(void)
 
 
 
+
 void bsp_uart_get(PreCtrFrameDef *dmf)
 {
     char ch;
-    
+
     LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
     //PreCtrFrameDef dmf;
+
     while (1) {
         // 尝试从串口读取一个字节的数据
+
         rt_size_t read_count = rt_device_read(serial_4, 0, &ch, 1);
 
         if (read_count > 0) {
-            
+
             rx_data[rx_rwflag++] = ch;
             if (rx_rwflag >= rx_rwflag_num)
             {
-                if(rx_data[0] == 0x00 && rx_data[rx_rwflag_num-2] == 0x01 && rx_data[rx_rwflag_num-1] == 0x01)  //设立校验帧
-                {
+                PreCtr_WriteFlag = 1;  //表明有数据写入
+                rt_kprintf("PreCtr_WriteFlag: %d\n", PreCtr_WriteFlag);
+                pstPreCtrFrameDef->msgID = (SdUInt16) ((rx_data[0] << 8) & 0xFFFF) | (rx_data[1] & 0xFFFF);  //msgid
+                pstPreCtrFrameDef->m_msgType = rx_data[2];
+                pstPreCtrFrameDef->m_deviceId = (SdUInt16) ((rx_data[3] << 8) & 0xFFFF) | (rx_data[4] & 0xFFFF);  //deviceid
 
-                    pstPreCtrFrameDef->m_msgType = rx_data[1];
-                    pstPreCtrFrameDef->m_pressureid = rx_data[2];
-                    pstPreCtrFrameDef->m_deviceType = rx_data[3];
-                    pstPreCtrFrameDef->m_cmdType = rx_data[4];
+                pstPreCtrFrameDef->m_deviceType = rx_data[5];
+                pstPreCtrFrameDef->m_cmdType = rx_data[6];
+                pstPreCtrFrameDef->m_pressureid = rx_data[7];
 
-
-                }else{
-                    rt_kprintf("UART4 Recv failed!!!\n");
-                }
                 rx_rwflag = 0;
+                #if DeBug
+                rt_kprintf("***recive_pressureid: %d\n",pstPreCtrFrameDef->m_pressureid);
+                rt_kprintf("***recive_cmdtype: %d\n",pstPreCtrFrameDef->m_cmdType);
+
+                #endif
 
             }
 
@@ -105,7 +112,9 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
     rt_thread_mdelay(50);
 }
 
-void bsp_uart_send(PreCtrFrameDef *dmf){
+
+
+/*void bsp_uart_send(PreCtrFrameDef *dmf){
 
 
     LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
@@ -116,13 +125,54 @@ void bsp_uart_send(PreCtrFrameDef *dmf){
 
         //判断队列是否接收到消息
         if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK){
-            rt_device_write(serial_4, 0, &dmf, 9);
+            if(PreCtr_Flag == 0){   //心跳信息
+                rt_device_write(serial_4, 0, &dmf, 8);
+                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
+            }else if (PreCtr_Flag == 1){   //控制命令返回信息（数据上传）
+                rt_device_write(serial_4, 0, &dmf, sizeof(dmf));
 
-            //rt_kprintf("***divice Id: %s\n",dmf.m_deviceId);
+                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
+            }else{
+                rt_kprintf("UART Send is failed\n");
+            }
+
+
+
         }
         rt_thread_mdelay(50);
     }
 
+}*/
+
+void bsp_uart_send(){
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get(); //消息队列
+    PreCtrFrameDef dmf;
+    rt_memset(&dmf, 0, sizeof(dmf));
+    //判断队列是否接收到消息
+    if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK)
+    {
+        if(PreCtr_Flag == 0)  //心跳
+        {
+            rt_device_write(serial_4, 0, &dmf, 8);
+            rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
+        }
+        else if (PreCtr_Flag == 1)
+        {
+            rt_device_write(serial_4, 0, &dmf, sizeof(dmf));
+            rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
+#if DeBug
+            rt_kprintf("***send_pressureid: %d\n",dmf.m_pressureid);
+            rt_kprintf("***send_cmdtype: %d\n",dmf.m_cmdType);
+            rt_kprintf("***send_Ack: %d\n",dmf.m_Ack);
+#endif
+        }
+        else
+        {
+            rt_kprintf("UART Send is failed\n");
+        }
+
+    }
 }
 
 

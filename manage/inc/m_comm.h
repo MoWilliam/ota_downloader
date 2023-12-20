@@ -25,8 +25,8 @@ typedef enum TagMqttCmdDef
     emMqttCmdStop,
     emMqttCmdSetting,
     emMqttCmdData,
-    emMqttCmdStartPress,
-    emMqttCmdStopPress
+    emUartCmdFirmwareVersion,
+    
 
 }enMqttCmdDef;
 

@@ -158,7 +158,7 @@ void task_module_init(void)
     task_monitor_init();
     //task_power_init();
 #if PRESS_CONTROL_FLAG
-    task_uart4_recv_init();
+    //task_uart4_recv_init();  //注释  20231220
     task_uart4_send_init();
 #endif
 }
@@ -173,7 +173,7 @@ void task_module_start(void)
     task_monitor_start();
     //task_power_start();
 #if PRESS_CONTROL_FLAG
-    task_uart4_recv_start();
+    //task_uart4_recv_start();  //注释 20231220
     task_uart4_send_start();
 #endif
 }
@@ -188,7 +188,7 @@ void task_module_uninit(void)
     task_monitor_stop();
     //task_power_stop();
 #if PRESS_CONTROL_FLAG
-    task_uart4_recv_stop();
+    //task_uart4_recv_stop();   //注释 202231220
     task_uart4_send_stop();
 #endif
 }
@@ -209,6 +209,7 @@ void manage_module_init(void)
 
 #if PRESS_CONTROL_FLAG
     manage_commbyte_init();
+    manage_commbytecmd_init();
     manage_prectrdevice_init();
     
     manage_prectr_init();
@@ -227,6 +228,7 @@ void manage_module_start(void)
 
 #if PRESS_CONTROL_FLAG
     manage_commbyte_start();
+    manage_commbytecmd_start();
     manage_prectrdevice_start();
     manage_prectr_start();
 
@@ -242,7 +244,8 @@ void manage_module_uninit(void)
     manage_platform_stop();
 #endif
 #if PRESS_CONTROL_FLAG
-    manage_commbyte_stop();   
+    manage_commbyte_stop();  
+    manage_commbytecmd_stop(); 
     manage_prectrdevice_stop();
     manage_prectr_stop();
 

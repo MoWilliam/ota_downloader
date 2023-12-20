@@ -25,8 +25,8 @@ void task_thread_max30205_recv(void *ptr)
         {
             //DataFrameDef dmf;
             SensorDataFrameDef dmf;  //2023.9.27
-            dmf.m_atemp = 0;
-            dmf.m_btemp = 0;
+            //dmf.m_atemp = 0;
+            //dmf.m_btemp = 0;
             last_m_atemp = 0;
             last_m_btemp = 0;
             bsp_max30205_get(&dmf);
@@ -36,7 +36,7 @@ void task_thread_max30205_recv(void *ptr)
                 last_m_btemp = dmf.m_btemp;
                 rt_kprintf("max3025 %d %d",dmf.m_atemp,dmf.m_btemp);
                 ut_msg_send(pstMqueueObject->MMqueue_msg,1,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
-            }else if(dmf.m_atemp<10 || dmf.m_atemp>50)
+            }else if(dmf.m_atemp<10 || dmf.m_atemp>50 || (dmf.m_atemp==0 && dmf.m_btemp==0))
             {
                 dmf.m_atemp = last_m_atemp;
                 dmf.m_btemp = last_m_btemp;

@@ -57,11 +57,12 @@
 #define EmerStop_key5             GET_PIN(D, 13) 
 
 
-#define PressureSensor1     0x10
-#define PressureSensor2     0x11
-#define PressureSensor3     0x12
-#define PressureSensor4     0x13
-#define PressureSensor5     0x14
+#define PressureSensor1     0x00
+#define PressureSensor2     0x01
+#define PressureSensor3     0x02
+#define PressureSensor4     0x03
+#define PressureSensor5     0x04
+#define AllPressureSensor   0x05
 //#define MAX_KEY_NUM         5
 
 
@@ -75,5 +76,6 @@ void bsp_PreCtr_GPIO_Init(void);
 void bsp_PreCtr_GPIO_start(int device_id);
 void bsp_PreCtr_GPIO_stop(int device_id);
 void bsp_PreCtr_GPIO_hold(int device_id);
+void bsp_PreCtr_GPIO_stopall(void);
 
 #endif /* BSP_INC_B_B_PRECTRGPIO_H_ */

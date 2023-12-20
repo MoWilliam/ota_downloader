@@ -12,6 +12,7 @@
 #include "string.h"
 #include "bsp/inc/b_jfh141.h"
 #include <rtdevice.h>
+#include "manage/inc/m_device.h"
 
  // 串口设备名称 不能使用UART2 ,需要重新分配
 
@@ -105,6 +106,14 @@ void bsp_jfh141_init(void)
 //void bsp_jfh141_get(Spo2FrameDef* dmf)
 void bsp_jfh141_get(SensorDataFrameDef* dmf) //2023.9.27
 {
+#if DeBug
+    rt_kprintf("***1111****\n");
+    char STM32_DEVICEID[DEVICE_LENGTH];
+    memset(STM32_DEVICEID ,0 ,DEVICE_LENGTH);
+    get_STM32_uid(STM32_DEVICEID);
+    rt_kprintf("***deviceid*** %s\n",STM32_DEVICEID);
+#endif
+
     char ch;
     SdInt16 last_m_spo2 ;   //上次血氧获得的有效值。
     SdInt16 last_m_bk ;     //上次微循环获得的有效值。
