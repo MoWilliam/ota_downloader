@@ -144,35 +144,87 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
 
 }*/
 
-void bsp_uart_send(){
-    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get(); //消息队列
-    PreCtrFrameDef dmf;
-    rt_memset(&dmf, 0, sizeof(dmf));
-    //判断队列是否接收到消息
-    if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK)
-    {
-        if(PreCtr_Flag == 0)  //心跳
-        {
-            rt_device_write(serial_4, 0, &dmf, 8);
-            rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
-        }
-        else if (PreCtr_Flag == 1)
-        {
-            rt_device_write(serial_4, 0, &dmf, sizeof(dmf));
-            rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
-#if DeBug
-            rt_kprintf("***send_pressureid: %d\n",dmf.m_pressureid);
-            rt_kprintf("***send_cmdtype: %d\n",dmf.m_cmdType);
-            rt_kprintf("***send_Ack: %d\n",dmf.m_Ack);
-#endif
-        }
-        else
-        {
-            rt_kprintf("UART Send is failed\n");
-        }
+void bsp_uart_send(PreCtrFrameDef *dmf){
 
+
+    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
+    while(1)
+    {
+        int i =0;
+        char hx_buf[256] = {0};
+        char hx_data[3] = {0};
+        PreCtrFrameDef dmf;
+        rt_memset(&dmf, 0, sizeof(dmf));
+
+        //判断队列是否接收到消息
+        if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK){
+            if(PreCtr_Flag == 0)
+            {   //心跳信息
+
+                char serial_data[8];
+                serial_data[0] = (dmf.msgID >> 8) & 0xFF;
+                serial_data[1] = dmf.msgID & 0xFF;
+                serial_data[2] = dmf.m_msgType;
+                serial_data[3] = 0x20; // 对齐位
+                serial_data[4] = (dmf.m_deviceId >> 8) & 0xFF;
+                serial_data[5] = dmf.m_deviceId & 0xFF;
+                serial_data[6] = dmf.m_deviceType;
+                serial_data[7] = dmf.m_cmdType;
+
+                rt_device_write(serial_4, 0, serial_data, 8);
+
+
+                memset(hx_buf,0 ,sizeof(hx_buf));
+                memset(hx_data,0 ,sizeof(hx_data));
+                for (i = 0; i < 8; i++)
+                {
+                    sprintf(hx_data,"%02x ", serial_data[i]);
+                    memcpy ( hx_buf + i*3,hx_data,3);
+                }
+                rt_kprintf("***********PreCtr_Heart: %s\n", hx_buf);
+
+                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
+            }
+            else if (PreCtr_Flag == 1)
+            {   //控制命令返回信息（数据上传）
+
+                char serial_data[10];
+                serial_data[0] = (dmf.msgID >> 8) & 0xFF;
+                serial_data[1] = dmf.msgID & 0xFF;
+                serial_data[2] = dmf.m_msgType;
+                serial_data[3] = 0x20;// 对齐位
+                serial_data[4] = (dmf.m_deviceId >> 8) & 0xFF;
+                serial_data[5] = dmf.m_deviceId & 0xFF;
+                serial_data[6] = dmf.m_deviceType;
+                serial_data[7] = dmf.m_cmdType;
+                serial_data[8] = dmf.m_pressureid;
+                serial_data[9] = dmf.m_Ack;
+
+                rt_device_write(serial_4, 0, serial_data, 10);
+
+                memset(hx_buf,0 ,sizeof(hx_buf));
+                memset(hx_data,0 ,sizeof(hx_data));
+                for (i = 0; i < 10; i++)
+                {
+                    sprintf(hx_data,"%02x ", serial_data[i]);
+                    memcpy ( hx_buf + i*3,hx_data,3);
+                }
+                rt_kprintf("***********PreCtr_ACK: %s\n", hx_buf);
+
+                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
+            }
+            else
+            {
+                rt_kprintf("UART Send is failed\n");
+            }
+
+
+
+        }
+        rt_thread_mdelay(50);
     }
+
 }
 
 
