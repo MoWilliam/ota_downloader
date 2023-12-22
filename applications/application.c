@@ -158,7 +158,7 @@ void task_module_init(void)
     task_monitor_init();
     //task_power_init();
 #if PRESS_CONTROL_FLAG
-    //task_uart4_recv_init();  //注释  20231220
+    task_uart4_recv_init();  //注释  20231220
     task_uart4_send_init();
 #endif
 }
@@ -173,7 +173,7 @@ void task_module_start(void)
     task_monitor_start();
     //task_power_start();
 #if PRESS_CONTROL_FLAG
-    //task_uart4_recv_start();  //注释 20231220
+    task_uart4_recv_start();  //注释 20231220
     task_uart4_send_start();
 #endif
 }
@@ -188,7 +188,7 @@ void task_module_uninit(void)
     task_monitor_stop();
     //task_power_stop();
 #if PRESS_CONTROL_FLAG
-    //task_uart4_recv_stop();   //注释 202231220
+    task_uart4_recv_stop();   //注释 202231220
     task_uart4_send_stop();
 #endif
 }

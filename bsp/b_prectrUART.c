@@ -67,11 +67,13 @@ void bsp_uart_init(void)
 
 
 
+
+
 void bsp_uart_get(PreCtrFrameDef *dmf)
 {
     char ch;
 
-    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
+    LPPreCtrRecvFrameDef pstPreCtrRecvFrameDef = device_prectrlrecv_object_get();
     //PreCtrFrameDef dmf;
 
     while (1) {
@@ -86,20 +88,15 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
             {
                 PreCtr_WriteFlag = 1;  //表明有数据写入
                 rt_kprintf("PreCtr_WriteFlag: %d\n", PreCtr_WriteFlag);
-                pstPreCtrFrameDef->msgID = (SdUInt16) ((rx_data[0] << 8) & 0xFFFF) | (rx_data[1] & 0xFFFF);  //msgid
-                pstPreCtrFrameDef->m_msgType = rx_data[2];
-                pstPreCtrFrameDef->m_deviceId = (SdUInt16) ((rx_data[3] << 8) & 0xFFFF) | (rx_data[4] & 0xFFFF);  //deviceid
+                pstPreCtrRecvFrameDef->msgID = (SdUInt16) ((rx_data[0] << 8) & 0xFFFF) | (rx_data[1] & 0xFFFF);  //msgid
+                pstPreCtrRecvFrameDef->m_msgType = rx_data[2];
+                pstPreCtrRecvFrameDef->m_deviceId = (SdUInt16) (rx_data[3] & 0xFFFF) | ((rx_data[4]<< 8) & 0xFFFF);  //deviceid
 
-                pstPreCtrFrameDef->m_deviceType = rx_data[5];
-                pstPreCtrFrameDef->m_cmdType = rx_data[6];
-                pstPreCtrFrameDef->m_pressureid = rx_data[7];
+                pstPreCtrRecvFrameDef->m_deviceType = rx_data[5];
+                pstPreCtrRecvFrameDef->m_cmdType = rx_data[6];
+                pstPreCtrRecvFrameDef->m_pressureid = rx_data[7];
 
                 rx_rwflag = 0;
-                #if DeBug
-                rt_kprintf("***recive_pressureid: %d\n",pstPreCtrFrameDef->m_pressureid);
-                rt_kprintf("***recive_cmdtype: %d\n",pstPreCtrFrameDef->m_cmdType);
-
-                #endif
 
             }
 
@@ -109,40 +106,7 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
         }
     }
 
-    rt_thread_mdelay(50);
 }
-
-
-
-/*void bsp_uart_send(PreCtrFrameDef *dmf){
-
-
-    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
-    while(1){
-        PreCtrFrameDef dmf;
-        rt_memset(&dmf, 0, sizeof(dmf));
-
-        //判断队列是否接收到消息
-        if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK){
-            if(PreCtr_Flag == 0){   //心跳信息
-                rt_device_write(serial_4, 0, &dmf, 8);
-                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
-            }else if (PreCtr_Flag == 1){   //控制命令返回信息（数据上传）
-                rt_device_write(serial_4, 0, &dmf, sizeof(dmf));
-
-                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
-            }else{
-                rt_kprintf("UART Send is failed\n");
-            }
-
-
-
-        }
-        rt_thread_mdelay(50);
-    }
-
-}*/
 
 void bsp_uart_send(PreCtrFrameDef *dmf){
 
@@ -226,5 +190,6 @@ void bsp_uart_send(PreCtrFrameDef *dmf){
     }
 
 }
+
 
 

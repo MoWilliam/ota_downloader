@@ -16,6 +16,7 @@
 
 static DeviceObjectDef g_DeviceObject;
 static PreCtrFrameDef g_PreCtrFrame;
+static PreCtrRecvFrameDef g_PreCtrRecvFrame;  //发送消息结构体
 
 uint32_t idAddr[]={
         0x1FFFF7AC,
@@ -37,6 +38,11 @@ LPDeviceObjectDef device_ctrl_object_get(void)
 LPPreCtrFrameDef device_prectrl_object_get(void)
 {
     return &g_PreCtrFrame;
+}
+
+LPPreCtrRecvFrameDef device_prectrlrecv_object_get(void)
+{
+    return &g_PreCtrRecvFrame;
 }
 
 void manage_device_init(void)
@@ -218,7 +224,7 @@ SdUInt8 calcCRC(SdUInt8 *data,SdUInt32 len)  //计算CRC码
     return crc8;
 }
 
-SdUInt8 get_DEVSoftEdition(void){
+/*SdUInt8 get_DEVSoftEdition(void){
 #if COMPOSITE_CONTROL_FLAG
 SdUInt8 ComSorVersion[4] = ComSorVer;   //当前综采软件版本号
 
@@ -232,4 +238,4 @@ return PreCtrVersion;
 #endif
 
 
-}
+}*/

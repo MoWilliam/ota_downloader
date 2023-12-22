@@ -101,9 +101,6 @@ typedef struct TagDeviceObjectDef
 }DeviceObjectDef,*LPDeviceObjectDef;
 
 
-
-//#pragma pack(push, 1)   //
-//#pragma pack(1)
 typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队列
 {
     SdUInt16 msgID;
@@ -122,8 +119,21 @@ typedef struct TagPreCtrFrameDef   //心跳包消息队列,uart发送消息队�
     //SdUInt8 m_deviceStatus;    //设备工作状态
 
 }PreCtrFrameDef,*LPPreCtrFrameDef;
-//#pragma pack ()
-//#pragma pack(pop)
+
+typedef struct TagPreCtrRecvFrameDef   //发送消息队列,uart发送消息队列
+{
+    SdUInt16 msgID;
+    SdUInt8 m_msgType;           //信息的下行或上传
+    SdUInt16 m_deviceId; //[DEVICE_LENGTH1]
+
+    SdUInt8 m_deviceType;        //设备类型
+
+    SdUInt8 m_cmdType;
+    SdUInt8 m_pressureid;
+    //SdUInt8 m_Ack;//命令类型
+
+
+}PreCtrRecvFrameDef,*LPPreCtrRecvFrameDef;
 
 
 

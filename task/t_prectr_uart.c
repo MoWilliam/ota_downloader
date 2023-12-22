@@ -14,7 +14,7 @@
 #include "bsp/inc/b_prectrUART.h"
 #include "inc/t_prectr_uart.h"
 
-/*void task_thread_uart4_recv(void *ptr)
+void task_thread_uart4_recv(void *ptr)
 {
     rt_kprintf("t_thread_uart4_recv thread run\n");
     if(SD_NULL != ptr)
@@ -31,7 +31,7 @@
         rt_kprintf("[TASK Module] uart4_recv thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_prectrUart_Recv);
     }
-}*/
+}
 
 void task_thread_uart4_send(void *ptr)
 {
@@ -53,7 +53,7 @@ void task_thread_uart4_send(void *ptr)
     }
 }
 
-/*void task_uart4_recv_init(void)
+void task_uart4_recv_init(void)
 {
     LPTaskObjectDef pstTaskObject = task_ctrl_object_get();
     pstTaskObject->brun_prectrUart_Recv = SD_FALSE;
@@ -80,7 +80,7 @@ void task_uart4_recv_stop(void)
 {
     LPTaskObjectDef pstTaskObject = task_ctrl_object_get();
     pstTaskObject->brun_prectrUart_Recv = SD_FALSE;
-}*/
+}
 
 void task_uart4_send_init(void)
 {
