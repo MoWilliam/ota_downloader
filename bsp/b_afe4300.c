@@ -36,7 +36,7 @@ static double x_last = 0;
 #define e27a6d 0
 
 //wifi:mFi-14C96B   山东设备
-#define e22635 1
+#define e22635 0
 #define e22bb7 0
 #define e22a8a 0
 #define e271fd 0
@@ -46,6 +46,23 @@ static double x_last = 0;
 #define e2336c 0
 #define e1ee32 0
 #define e2b8d6 0  //
+
+
+
+#define mFi_ZJ01 0
+#define mFi_ZJ02 0
+#define mFi_ZJ03 0
+#define mFi_ZJ04 0
+#define mFi_ZJ05 0
+#define mFi_ZJ06 0
+#define mFi_ZJ07 0
+#define mFi_ZJ08 0
+#define mFi_ZJ09 0
+#define mFi_ZJ10 0
+#define mFi_ZJ11 0
+#define mFi_ZJ12 0
+
+
 
 
 //过程噪音
@@ -472,6 +489,55 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
     z= 1.08 * z + 0.18;
 
 #endif
+
+#if mFi_ZJ01
+    z= z +8;
+#endif
+
+#if mFi_ZJ02
+    z= z +6;
+#endif
+
+#if mFi_ZJ03
+    z= z +4;
+#endif
+
+#if mFi_ZJ04
+    z= z +3;
+#endif
+
+#if mFi_ZJ05
+    z= z +2;
+#endif
+
+#if mFi_ZJ06
+    z= z ;
+#endif
+
+#if mFi_ZJ07
+    z= z ;
+#endif
+
+#if mFi_ZJ08
+    z= z - 1 ;
+#endif
+
+#if mFi_ZJ09
+    z= z - 2 ;
+#endif
+
+#if mFi_ZJ10
+    z= z - 3 ;
+#endif
+
+#if mFi_ZJ11
+    z= z - 4 ;
+#endif
+
+#if mFi_ZJ12
+    z= z - 6 ;
+#endif
+
 
 
     //rt_kprintf("z=%f\r\n", z);
