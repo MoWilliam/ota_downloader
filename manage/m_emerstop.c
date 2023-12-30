@@ -17,7 +17,7 @@
 #include "inc/m_device.h"
 #include "inc/m_emerstop.h"
 
-static rt_timer_t emerstop_timer = RT_NULL; 
+/*static rt_timer_t emerstop_timer = RT_NULL; 
 
 rt_base_t pins[NUM_PINS] = {EmerStop_key1, EmerStop_key2, EmerStop_key3, EmerStop_key4, EmerStop_key5};
 rt_uint8_t key_pressed_flags[NUM_PINS] = {0};    //储存每个急停按钮的状态标志位，松开后状态位置0
@@ -145,6 +145,51 @@ void manage_emerstop_init(void)
     }
     else
     {
+        rt_kprintf("Failed to create emerstop timer\n");
+    }
+}*/
+
+rt_uint8_t key_pressed_flags = 0; // 仅追踪一个按键状态的变量
+rt_timer_t emerstop_timer = RT_NULL; // 定时器变量
+
+// 读取按键状态
+KEY_Action_TypeDef KEY_ReadPin(rt_base_t pin) {
+    return (KEY_Action_TypeDef)rt_pin_read(pin);
+}
+
+// 设置按键状态的函数
+void set_key_pressed_flags(int flag) {
+    // 设置按键状态
+    key_pressed_flags = flag;
+}
+
+// 获取按键状态的函数
+rt_uint8_t get_key_pressed_flags(void) {
+    return key_pressed_flags;
+}
+
+void emerstop_timer_callback(void *parameter) {
+    // 读取按键状态
+    KEY_Action_TypeDef curr_status = KEY_ReadPin(EmerStop_key);
+
+    if (curr_status == KEY_Action_Press) {
+        set_key_pressed_flags(1);  // 按下状态，将状态置为1
+        rt_kprintf("emerstop is start\n");
+    } else {
+        set_key_pressed_flags(0);  // 松开状态，将状态置为0
+    }
+}
+
+void manage_emerstop_init(void) {
+    rt_pin_mode(EmerStop_key, PIN_MODE_INPUT);
+
+    // 创建定时器，定时周期为 1000 毫秒
+    emerstop_timer = rt_timer_create("emerstop_timer", emerstop_timer_callback, RT_NULL, 1000, RT_TIMER_FLAG_PERIODIC);
+
+    if (emerstop_timer != RT_NULL) {
+        // 启动定时器
+        rt_timer_start(emerstop_timer);
+    } else {
         rt_kprintf("Failed to create emerstop timer\n");
     }
 }

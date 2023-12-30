@@ -95,6 +95,7 @@ void bsp_uart_get(PreCtrFrameDef *dmf)
                 pstPreCtrRecvFrameDef->m_deviceType = rx_data[5];
                 pstPreCtrRecvFrameDef->m_cmdType = rx_data[6];
                 pstPreCtrRecvFrameDef->m_pressureid = rx_data[7];
+                pstPreCtrRecvFrameDef->m_stopFlag = 1;
 
                 rx_rwflag = 0;
 

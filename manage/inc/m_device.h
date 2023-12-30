@@ -130,6 +130,7 @@ typedef struct TagPreCtrRecvFrameDef   //发送消息队列,uart发送消息队�
 
     SdUInt8 m_cmdType;
     SdUInt8 m_pressureid;
+    SdUInt8 m_stopFlag;
     //SdUInt8 m_Ack;//命令类型
 
 

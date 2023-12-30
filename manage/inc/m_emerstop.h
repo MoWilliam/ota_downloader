@@ -32,11 +32,8 @@ typedef enum TagPrectrEmerstopDef
 
 }enPrectrCmdDef;
 
-
-void debounce_handler(void *param);
-KEY_Action_TypeDef KEY_ReadPin(rt_base_t pin);
-
-rt_uint8_t set_key_pressed_flags(int idx ,int flag);
-rt_uint8_t get_key_pressed_flags(int idx);
+void set_key_pressed_flags(int flag);
+rt_uint8_t get_key_pressed_flags(void);
+void manage_emerstop_init(void);
 
 #endif /* MANAGE_INC_M_EMERSTOP_H_ */

@@ -98,6 +98,7 @@ void PUMP_on(int device_id)  //气泵的打开，变高电平
 		break;
 		case PressureSensor4:
 		HAL_GPIO_WritePin(pump_GPIO_Port, pump4_Pin, GPIO_PIN_SET);
+		break;
         case PressureSensor5:
 		HAL_GPIO_WritePin(pump5_GPIO_Port, pump5_Pin, GPIO_PIN_SET);
 		break;
@@ -123,6 +124,7 @@ void PUMP_off(int device_id)  //气泵的关闭，停止工作，变低电平
 		break;
 		case PressureSensor4:
 		HAL_GPIO_WritePin(pump_GPIO_Port, pump4_Pin, GPIO_PIN_RESET);
+		break;
         case PressureSensor5:
 		HAL_GPIO_WritePin(pump5_GPIO_Port, pump5_Pin, GPIO_PIN_RESET);
 		break;
@@ -157,6 +159,7 @@ void VALVE_on(int device_id)
 		break;
 		case PressureSensor4:
 		HAL_GPIO_WritePin(valve_GPIO_Port, valve4_Pin, GPIO_PIN_SET);
+		break;
         case PressureSensor5:
 		HAL_GPIO_WritePin(valve_GPIO_Port, valve5_Pin, GPIO_PIN_SET);
 		break;
@@ -192,6 +195,7 @@ void VALVE_off(int device_id)
 		break;
 		case PressureSensor4:
 		HAL_GPIO_WritePin(valve_GPIO_Port, valve4_Pin, GPIO_PIN_RESET);
+		break;
         case PressureSensor5:
 		HAL_GPIO_WritePin(valve_GPIO_Port, valve5_Pin, GPIO_PIN_RESET);
 		break;

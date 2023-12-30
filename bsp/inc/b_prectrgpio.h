@@ -49,12 +49,8 @@
 #define LED_GPIO_Port   GPIOC
 #define LED_Pin         GPIO_PIN_5
 
-#define NUM_PINS 5
-#define EmerStop_key1             GET_PIN(D, 9)   //急停按钮的引脚编号
-#define EmerStop_key2             GET_PIN(D, 10)   
-#define EmerStop_key3             GET_PIN(D, 11)   
-#define EmerStop_key4             GET_PIN(D, 12)   
-#define EmerStop_key5             GET_PIN(D, 13) 
+
+#define EmerStop_key             GET_PIN(D, 13)
 
 
 #define PressureSensor1     0x00

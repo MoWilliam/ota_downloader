@@ -16,7 +16,7 @@
 #include "ut/inc/ut_thread.h"
 #include "manage/inc/m_device.h"
 
-#define DeBug 1   //调试窗口
+#define DeBug 0   //调试窗口
 
 #define COMPOSITE_CONTROL_FLAG 0 // 综合传感器，
 #define PRESS_CONTROL_FLAG 1  // 压力控制器

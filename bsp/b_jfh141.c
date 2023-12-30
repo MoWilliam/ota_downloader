@@ -138,7 +138,7 @@ void bsp_jfh141_get(SensorDataFrameDef* dmf) //2023.9.27
 
                 //判断血氧传感器是否进行检测物体
                 if (data[1] != 0xC4 && data[63] != 0xC4){
-                    //rt_kprintf("111111");
+                    
                     if( data[66] > 0 && data[66] < 101 ){
                         
                         //dmf->m_object_spo2_detected = RT_TRUE;  //表明血氧传感器在工作
