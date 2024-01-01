@@ -64,132 +64,73 @@ void bsp_uart_init(void)
 
 }
 
-
-
-
-
-
-void bsp_uart_get(PreCtrFrameDef *dmf)
+void bsp_uart_get(PreCtrRecvFrameDef *dmf)
 {
-    char ch;
+    uint8_t rx_data[8];
+    int i =0;
+    char hx_buf[256] = {0};
+    char hx_data[3] = {0};
 
-    LPPreCtrRecvFrameDef pstPreCtrRecvFrameDef = device_prectrlrecv_object_get();
-    //PreCtrFrameDef dmf;
+    rt_size_t read_count = rt_device_read(serial_4, 0, &rx_data, 8);
+    if (read_count > 0)
+    {
+        PreCtr_WriteFlag = 1;  //表明有数据写入
+        rt_kprintf("PreCtr_WriteFlag: %d\n", PreCtr_WriteFlag);
+        dmf->msgID = (SdUInt16) ((rx_data[0] << 8) & 0xFFFF) | (rx_data[1] & 0xFFFF);  //msgid
+        dmf->m_msgType = rx_data[2];
+        dmf->m_deviceId = (SdUInt16) (rx_data[3] & 0xFFFF) | ((rx_data[4]<< 8) & 0xFFFF);  //deviceid
 
-    while (1) {
-        // 尝试从串口读取一个字节的数据
+        dmf->m_deviceType = rx_data[5];
+        dmf->m_cmdType = rx_data[6];
+        dmf->m_pressureid = rx_data[7];
+        dmf->m_stopFlag = 1;
 
-        rt_size_t read_count = rt_device_read(serial_4, 0, &ch, 1);
-
-        if (read_count > 0) {
-
-            rx_data[rx_rwflag++] = ch;
-            if (rx_rwflag >= rx_rwflag_num)
-            {
-                PreCtr_WriteFlag = 1;  //表明有数据写入
-                rt_kprintf("PreCtr_WriteFlag: %d\n", PreCtr_WriteFlag);
-                pstPreCtrRecvFrameDef->msgID = (SdUInt16) ((rx_data[0] << 8) & 0xFFFF) | (rx_data[1] & 0xFFFF);  //msgid
-                pstPreCtrRecvFrameDef->m_msgType = rx_data[2];
-                pstPreCtrRecvFrameDef->m_deviceId = (SdUInt16) (rx_data[3] & 0xFFFF) | ((rx_data[4]<< 8) & 0xFFFF);  //deviceid
-
-                pstPreCtrRecvFrameDef->m_deviceType = rx_data[5];
-                pstPreCtrRecvFrameDef->m_cmdType = rx_data[6];
-                pstPreCtrRecvFrameDef->m_pressureid = rx_data[7];
-                pstPreCtrRecvFrameDef->m_stopFlag = 1;
-
-                rx_rwflag = 0;
-
-            }
-
-        } else {
-            // 如果未成功读取到数据，等待信号量释放
-            rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
+        memset(hx_buf,0 ,sizeof(hx_buf));
+        memset(hx_data,0 ,sizeof(hx_data));
+        for (i = 0; i < 8; i++)
+        {
+            sprintf(hx_data,"%02x ", rx_data[i]);
+            memcpy ( hx_buf + i*3,hx_data,3);
         }
-    }
+        rt_kprintf("***********PreCtr_rev: %s\n", hx_buf);
 
+    }
+    else
+    {
+        // 如果未成功读取到数据，等待信号量释放
+        rt_sem_take(&rx_sem_4, RT_WAITING_FOREVER);
+    }
 }
 
-void bsp_uart_send(PreCtrFrameDef *dmf){
+void bsp_uart_send(PreCtrFrameDef *dmf)
+{
+    int i =0;
+    char hx_buf[256] = {0};
+    char hx_data[3] = {0};
+
+    char serial_data[8];
+    serial_data[0] = (dmf->msgID >> 8) & 0xFF;
+    serial_data[1] = dmf->msgID & 0xFF;
+    serial_data[2] = dmf->m_msgType;
+    serial_data[3] = 0x20; // 对齐位
+    serial_data[4] = (dmf->m_deviceId >> 8) & 0xFF;
+    serial_data[5] = dmf->m_deviceId & 0xFF;
+    serial_data[6] = dmf->m_deviceType;
+    serial_data[7] = dmf->m_cmdType;
+
+    rt_device_write(serial_4, 0, serial_data, 8);
 
 
-    LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-    LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
-    while(1)
+    memset(hx_buf,0 ,sizeof(hx_buf));
+    memset(hx_data,0 ,sizeof(hx_data));
+    for (i = 0; i < 8; i++)
     {
-        int i =0;
-        char hx_buf[256] = {0};
-        char hx_data[3] = {0};
-        PreCtrFrameDef dmf;
-        rt_memset(&dmf, 0, sizeof(dmf));
-
-        //判断队列是否接收到消息
-        if(ut_mqueue_recv(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf),RT_WAITING_NO) == RT_EOK){
-            if(PreCtr_Flag == 0)
-            {   //心跳信息
-
-                char serial_data[8];
-                serial_data[0] = (dmf.msgID >> 8) & 0xFF;
-                serial_data[1] = dmf.msgID & 0xFF;
-                serial_data[2] = dmf.m_msgType;
-                serial_data[3] = 0x20; // 对齐位
-                serial_data[4] = (dmf.m_deviceId >> 8) & 0xFF;
-                serial_data[5] = dmf.m_deviceId & 0xFF;
-                serial_data[6] = dmf.m_deviceType;
-                serial_data[7] = dmf.m_cmdType;
-
-                rt_device_write(serial_4, 0, serial_data, 8);
-
-
-                memset(hx_buf,0 ,sizeof(hx_buf));
-                memset(hx_data,0 ,sizeof(hx_data));
-                for (i = 0; i < 8; i++)
-                {
-                    sprintf(hx_data,"%02x ", serial_data[i]);
-                    memcpy ( hx_buf + i*3,hx_data,3);
-                }
-                rt_kprintf("***********PreCtr_Heart: %s\n", hx_buf);
-
-                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
-            }
-            else if (PreCtr_Flag == 1)
-            {   //控制命令返回信息（数据上传）
-
-                char serial_data[10];
-                serial_data[0] = (dmf.msgID >> 8) & 0xFF;
-                serial_data[1] = dmf.msgID & 0xFF;
-                serial_data[2] = dmf.m_msgType;
-                serial_data[3] = 0x20;// 对齐位
-                serial_data[4] = (dmf.m_deviceId >> 8) & 0xFF;
-                serial_data[5] = dmf.m_deviceId & 0xFF;
-                serial_data[6] = dmf.m_deviceType;
-                serial_data[7] = dmf.m_cmdType;
-                serial_data[8] = dmf.m_pressureid;
-                serial_data[9] = dmf.m_Ack;
-
-                rt_device_write(serial_4, 0, serial_data, 10);
-
-                memset(hx_buf,0 ,sizeof(hx_buf));
-                memset(hx_data,0 ,sizeof(hx_data));
-                for (i = 0; i < 10; i++)
-                {
-                    sprintf(hx_data,"%02x ", serial_data[i]);
-                    memcpy ( hx_buf + i*3,hx_data,3);
-                }
-                rt_kprintf("***********PreCtr_ACK: %s\n", hx_buf);
-
-                rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
-            }
-            else
-            {
-                rt_kprintf("UART Send is failed\n");
-            }
-
-
-
-        }
-        rt_thread_mdelay(50);
+        sprintf(hx_data,"%02x ", serial_data[i]);
+        memcpy ( hx_buf + i*3,hx_data,3);
     }
+    rt_kprintf("***********PreCtr_Heart: %s\n", hx_buf);
 
+    //rt_kprintf("PreCtr_Flag: %d\n", PreCtr_Flag);
 }
 
 

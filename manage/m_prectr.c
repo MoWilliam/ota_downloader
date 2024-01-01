@@ -22,111 +22,108 @@
 #include "inc/m_prectr.h"
 #include "inc/m_emerstop.h"
 
-extern rt_int32_t PreCtr_Flag;  //控制命令标志位
 
-void prectr_recv_thread_entry(void *ptr)    //线程任务
+void prectr_recv_entry(PreCtrRecvFrameDef *dmf)
 {
-    rt_err_t uartRecvRet = RT_EOK;
-    rt_uint8_t flag = 0;      //用来存储急停按键的按键状态
 
-    if(SD_NULL != ptr)
+     if ( dmf->m_stopFlag == 1)
     {
-
-        LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
-        LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-        LPPreCtrRecvFrameDef pstPreCtrRecvFrameDef = device_prectrlrecv_object_get();
-
-        while(pstPressControlObject->brun_preControl )
+        if (dmf->m_pressureid == PressureSensor1)
         {
-            // 根据设备ID选择设备，并根据命令类型确定设备的开关状态
-
-
-            if(get_key_pressed_flags() == emUARTCmdStopPress_FlagOn)
+            if (dmf->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
             {
-                
-                PreCtr_Flag = 1;
-
-                bsp_PreCtr_GPIO_stopall();
-                
-                set_key_pressed_flags(0);
-                pstPreCtrRecvFrameDef->m_stopFlag = 0;
-
-                rt_kprintf("  /m_prectr.c/ emerstop PressureSensor\n");   //添加输出打印
+                bsp_PreCtr_GPIO_start(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ start PressureSensor1\n");   //添加输出打印
             }
-            else if ( pstPreCtrRecvFrameDef->m_stopFlag == 1)
+            else if (dmf->m_cmdType == emUartCmdStopPress )
             {
-                if (strcmp(pstPreCtrRecvFrameDef->m_pressureid, PressureSensor1) == 0)
-                    {
-                        if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
-                        {
-                            bsp_PreCtr_GPIO_start(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ start PressureSensor1\n");   //添加输出打印
-                        }
-                        else if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStopPress )
-                        {
-                            bsp_PreCtr_GPIO_stop(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ stop PressureSensor1\n");   //添加输出打印
-                        }
-                    }else if (strcmp(pstPreCtrRecvFrameDef->m_pressureid, PressureSensor2) == 0)
-                    {
-                        if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
-                        {
-                            bsp_PreCtr_GPIO_start(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ start PressureSensor2\n");   //添加输出打印
-                        }
-                        else if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStopPress )
-                        {
-                            bsp_PreCtr_GPIO_stop(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ stop PressureSensor2\n");   //添加输出打印
-                        }
-                    }else if (strcmp(pstPreCtrRecvFrameDef->m_pressureid, PressureSensor3) == 0)
-                    {
-                        if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
-                        {
-                            bsp_PreCtr_GPIO_start(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ start PressureSensor3\n");   //添加输出打印
-                        }
-                        else if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStopPress )
-                        {
-                            bsp_PreCtr_GPIO_stop(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ stop PressureSensor3\n");   //添加输出打印
-                        }
-                    }else if (strcmp(pstPreCtrRecvFrameDef->m_pressureid, PressureSensor4) == 0)
-                    {
-                        if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
-                        {
-                            bsp_PreCtr_GPIO_start(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ start PressureSensor4\n");   //添加输出打印
-                        }
-                        else if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStopPress )
-                        {
-                            bsp_PreCtr_GPIO_stop(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ stop PressureSensor4\n");   //添加输出打印
-                        }
-                    }else if (strcmp(pstPreCtrRecvFrameDef->m_pressureid, PressureSensor5) == 0)
-                    {
-                        if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
-                        {
-                            bsp_PreCtr_GPIO_start(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ start PressureSensor5\n");   //添加输出打印
-                        }
-                        else if (pstPreCtrRecvFrameDef->m_cmdType == emUartCmdStopPress )
-                        {
-                            bsp_PreCtr_GPIO_stop(pstPreCtrRecvFrameDef->m_pressureid);
-                            rt_kprintf("  /m_prectr.c/ stop PressureSensor5\n");   //添加输出打印
-                        }
-                    }
-
-            memset(g_prectrUart_RxBuf, 0, UART_BUFFER_SIZE);  // 清空接收缓冲区
-            rt_thread_mdelay(1000);
+                bsp_PreCtr_GPIO_stop(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ stop PressureSensor1\n");   //添加输出打印
+            }else if (dmf->m_cmdType == emUartCmdHoldPress )
+            {
+                bsp_PreCtr_GPIO_hold(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ hold PressureSensor1\n");   //添加输出打印
+            }
         }
-
+        else if (dmf->m_pressureid == PressureSensor2)
+        {
+            if (dmf->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
+            {
+                bsp_PreCtr_GPIO_start(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ start PressureSensor2\n");   //添加输出打印
+            }
+            else if (dmf->m_cmdType == emUartCmdStopPress )
+            {
+                bsp_PreCtr_GPIO_stop(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ stop PressureSensor2\n");   //添加输出打印
+            }else if (dmf->m_cmdType == emUartCmdHoldPress )
+            {
+                bsp_PreCtr_GPIO_hold(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ hold PressureSensor2\n");   //添加输出打印
+            }
+        }
+        else if (dmf->m_pressureid== PressureSensor3)
+        {
+            if (dmf->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
+            {
+                bsp_PreCtr_GPIO_start(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ start PressureSensor3\n");   //添加输出打印
+            }
+            else if (dmf->m_cmdType == emUartCmdStopPress )
+            {
+                bsp_PreCtr_GPIO_stop(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ stop PressureSensor3\n");   //添加输出打印
+            }else if (dmf->m_cmdType == emUartCmdHoldPress )
+            {
+                bsp_PreCtr_GPIO_hold(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ hold PressureSensor3\n");   //添加输出打印
+            }
+        }
+        else if (dmf->m_pressureid==PressureSensor4)
+        {
+            if (dmf->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
+            {
+                bsp_PreCtr_GPIO_start(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ start PressureSensor4\n");   //添加输出打印
+            }
+            else if (dmf->m_cmdType == emUartCmdStopPress )
+            {
+                bsp_PreCtr_GPIO_stop(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ stop PressureSensor4\n");   //添加输出打印
+            }else if (dmf->m_cmdType == emUartCmdHoldPress )
+            {
+                bsp_PreCtr_GPIO_hold(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ hold PressureSensor4\n");   //添加输出打印
+            }
+        }
+        else if (dmf->m_pressureid==PressureSensor5)
+        {
+            if (dmf->m_cmdType == emUartCmdStartPress)  //命令状态为press_on且急停按钮状态标志位为0，才能开启
+            {
+                bsp_PreCtr_GPIO_start(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ start PressureSensor5\n");   //添加输出打印
+            }
+            else if (dmf->m_cmdType == emUartCmdStopPress )
+            {
+                bsp_PreCtr_GPIO_stop(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ stop PressureSensor5\n");   //添加输出打印
+            }else if (dmf->m_cmdType == emUartCmdHoldPress )
+            {
+                bsp_PreCtr_GPIO_hold(dmf->m_pressureid);
+                rt_kprintf("  /m_prectr.c/ hold PressureSensor5\n");   //添加输出打印
+            }
+        }
     }
-}
-}
 
+}
 
 //压力控制命令线程
+void prectr_recv_thread_entry(void *ptr)
+{
+
+}
+
+
 void m_prectr_thread(void)    
 {
     LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
@@ -155,7 +152,7 @@ void manage_prectr_init(void)
 
 void manage_prectr_start(void)   
 {
-    m_prectr_thread();
+    //m_prectr_thread();
 }
 
 void manage_prectr_stop(void)   

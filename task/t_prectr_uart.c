@@ -13,6 +13,7 @@
 #include <rtthread.h>
 #include "bsp/inc/b_prectrUART.h"
 #include "inc/t_prectr_uart.h"
+#include "manage/inc/m_prectr.h"
 
 void task_thread_uart4_recv(void *ptr)
 {
@@ -20,12 +21,17 @@ void task_thread_uart4_recv(void *ptr)
     if(SD_NULL != ptr)
     {
         LPTaskObjectDef pstTaskObject = (LPTaskObjectDef)ptr;
-        LPPreCtrFrameDef pstPreCtrObject = device_prectrl_object_get();
         while (pstTaskObject->brun_prectrUart_Recv)
         {
 
-            PreCtrFrameDef dmf;
+            rt_kprintf("[TASK Module] uart4_recv thread\n");
+            PreCtrRecvFrameDef dmf;
             bsp_uart_get(&dmf);
+            if ( dmf.m_deviceType == 3)
+            {
+                prectr_recv_entry(&dmf);
+            }
+           // rt_thread_mdelay(100);
         }
 
         rt_kprintf("[TASK Module] uart4_recv thread exit\n");
@@ -33,25 +39,6 @@ void task_thread_uart4_recv(void *ptr)
     }
 }
 
-void task_thread_uart4_send(void *ptr)
-{
-    rt_kprintf("t_thread_uart4_send thread run\n");
-    if(SD_NULL != ptr)
-    {
-        LPTaskObjectDef pstTaskObject = (LPTaskObjectDef)ptr;
-        LPPreCtrFrameDef pstPreCtrObject = device_prectrl_object_get();
-        while (pstTaskObject->brun_prectrUart_Send)
-        {
-
-            PreCtrFrameDef dmf;
-            bsp_uart_send(&dmf);
-
-        }
-
-        rt_kprintf("[TASK Module] uart4_send thread exit\n");
-        ut_thread_exit(pstTaskObject->Taskthread_prectrUart_Send);
-    }
-}
 
 void task_uart4_recv_init(void)
 {
@@ -82,6 +69,25 @@ void task_uart4_recv_stop(void)
     pstTaskObject->brun_prectrUart_Recv = SD_FALSE;
 }
 
+void task_thread_uart4_send(void *ptr)
+{
+    rt_kprintf("t_thread_uart4_send thread run\n");
+    if(SD_NULL != ptr)
+    {
+        LPTaskObjectDef pstTaskObject = (LPTaskObjectDef)ptr;
+        while (pstTaskObject->brun_prectrUart_Send)
+        {
+
+            PreCtrFrameDef dmf;
+            bsp_uart_send(&dmf);
+
+        }
+
+        rt_kprintf("[TASK Module] uart4_send thread exit\n");
+        ut_thread_exit(pstTaskObject->Taskthread_prectrUart_Send);
+    }
+}
+
 void task_uart4_send_init(void)
 {
     LPTaskObjectDef pstTaskObject = task_ctrl_object_get();
@@ -89,20 +95,20 @@ void task_uart4_send_init(void)
 }
 void task_uart4_send_start(void)
 {
-    LPTaskObjectDef pstTaskObject = task_ctrl_object_get();
-    if(SD_NULL != pstTaskObject)
-    {
-        if (SD_FALSE == pstTaskObject->brun_prectrUart_Send)
-        {
-            pstTaskObject->brun_prectrUart_Send = SD_TRUE;
-            ut_thread_create(pstTaskObject->Taskthread_prectrUart_Send,"TASK_UART4_SEND_THREAD",
-                UT_THREAD_STACK_SIZE_LARGE,
-                UT_THREAD_PRIORITY_DEFAULT,
-                UT_THREAD_TICK_DEFAULT,
-                task_thread_uart4_send,pstTaskObject);
-
-        }
-    }
+//    LPTaskObjectDef pstTaskObject = task_ctrl_object_get();
+//    if(SD_NULL != pstTaskObject)
+//    {
+//        if (SD_FALSE == pstTaskObject->brun_prectrUart_Send)
+//        {
+//            pstTaskObject->brun_prectrUart_Send = SD_TRUE;
+//            ut_thread_create(pstTaskObject->Taskthread_prectrUart_Send,"TASK_UART4_SEND_THREAD",
+//                UT_THREAD_STACK_SIZE_LARGE,
+//                UT_THREAD_PRIORITY_DEFAULT,
+//                UT_THREAD_TICK_DEFAULT,
+//                task_thread_uart4_send,pstTaskObject);
+//
+//        }
+//    }
 }
 
 void task_uart4_send_stop(void)
@@ -110,4 +116,3 @@ void task_uart4_send_stop(void)
     LPTaskObjectDef pstTaskObject = task_ctrl_object_get();
     pstTaskObject->brun_prectrUart_Send = SD_FALSE;
 }
-

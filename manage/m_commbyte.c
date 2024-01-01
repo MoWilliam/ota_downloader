@@ -43,36 +43,18 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
     if (SD_NULL != ptr)
     {
         
-        LPPreCtrFrameDef pstPreCtrFrameDef = device_prectrl_object_get();
-        LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();  //消息队列
         LPPressControlObjectDef pstPressControlObject = (LPPressControlObjectDef)ptr;
         
         while (pstPressControlObject->brun_prectrheartBeat)
         {
-            if (pstPreCtrFrameDef)
-            {
-                PreCtrFrameDef dmf;
-                dmf.msgID = LITTLE_TO_BIG_ENDIAN_16(pstPreCtrFrameDef->msgID);
-                //dmf.msgID = pstPreCtrFrameDef->msgID;
-                pstPreCtrFrameDef->msgID = g_msgId_hearBeat++;
-                dmf.m_msgType = 0x00;
-                dmf.m_deviceType = 0x03;
-                //dmf.m_cmdType = 0x00;
-                dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
-                dmf.m_pressureid = pstPreCtrFrameDef->m_pressureid;
-                dmf.m_Ack = pstPreCtrFrameDef->m_Ack;
-                dmf.m_deviceId = get_STM32_uid(dmf.m_deviceId); //获取deviceid
-                dmf.m_deviceId = LITTLE_TO_BIG_ENDIAN_16(dmf.m_deviceId);  //交换高低字节，依据小端模式
-                dmf.m_cmdType = 0x00;
-                //PreCtr_Flag = 0;
-
-                    //dmf.m_cmdType = pstPreCtrFrameDef->m_cmdType;
-                ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
-                PreCtr_Flag = 0;
-                            
-
-            }
-
+            PreCtrFrameDef dmf;
+            dmf.msgID = LITTLE_TO_BIG_ENDIAN_16(g_msgId_hearBeat++);
+            dmf.m_msgType = 0x00;
+            dmf.m_deviceType = 0x03;
+            dmf.m_deviceId = get_STM32_uid(dmf.m_deviceId); //获取deviceid
+            dmf.m_deviceId = LITTLE_TO_BIG_ENDIAN_16(dmf.m_deviceId);  //交换高低字节，依据小端模式
+            dmf.m_cmdType = 0x00; 
+            bsp_uart_send(&dmf);
             rt_thread_mdelay(1000*5);   //每隔10s发送一个心跳包，确保设备在线
         }
         rt_kprintf("[Thread Module] thread exit\n");
@@ -81,6 +63,48 @@ void thread_prectrheartbeat(void *ptr)   //建立一个发送的队列将心跳�
     }
 }
 
+
+void commbyte_prectrheartBeat(void)     //创建心跳线程
+{
+    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
+    if(SD_NULL != pstPressControlObject)
+    {
+        if ( pstPressControlObject->brun_prectrheartBeat == SD_FALSE)   //检测线程是否存在，若不存在
+        {
+            pstPressControlObject->brun_prectrheartBeat = SD_TRUE;
+            ut_thread_create(pstPressControlObject->Thead_prectrheartBeat,"PRECTRHEARTBEAT_THREAD",    //这边优先级的设置情况
+                            UT_THREAD_STACK_SIZE_LARGE,
+                            UT_THREAD_PRIORITY_DEFAULT,
+                            UT_THREAD_TICK_DEFAULT,
+                            thread_prectrheartbeat,pstPressControlObject);
+        }
+    }
+}
+
+
+void manage_commbyte_init(void)
+{
+    g_msgId_hearBeat = 0;
+
+}
+
+void manage_commbyte_start(void) 
+{  
+    commbyte_prectrheartBeat();
+}
+
+
+void manage_commbyte_stop(void)
+{
+    
+    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
+    pstPressControlObject->brun_prectrheartBeat = SD_FALSE;  // 设置标志位，停止心跳包线程
+    rt_thread_delay(1000);  
+    ut_thread_exit(pstPressControlObject->Thead_prectrheartBeat);
+    
+}
+
+/*
 
 void thread_prectr_cmd(void *ptr)   //建立一个控制命令的函数
 {
@@ -118,11 +142,6 @@ void thread_prectr_cmd(void *ptr)   //建立一个控制命令的函数
                     ut_mqueue_send(pstMqueueObject->MMqueue_prectrheartBeat, &dmf, sizeof(dmf));  //发送消息队列
                     dmf.m_Ack = 0x00;
                     PreCtr_WriteFlag = 0;
-                    
-
-
-
-
                 }
 
             }
@@ -134,51 +153,6 @@ void thread_prectr_cmd(void *ptr)   //建立一个控制命令的函数
 
     }
 }
-
-
-void commbyte_prectrheartBeat(void)     //创建心跳线程
-{
-    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
-    if(SD_NULL != pstPressControlObject)
-    {
-        if ( pstPressControlObject->brun_prectrheartBeat == SD_FALSE)   //检测线程是否存在，若不存在
-        {
-            pstPressControlObject->brun_prectrheartBeat = SD_TRUE;
-            ut_thread_create(pstPressControlObject->Thead_prectrheartBeat,"PRECTRHEARTBEAT_THREAD",    //这边优先级的设置情况
-                            UT_THREAD_STACK_SIZE_LARGE,
-                            UT_THREAD_PRIORITY_DEFAULT,
-                            UT_THREAD_TICK_DEFAULT,
-                            thread_prectrheartbeat,pstPressControlObject);
-        }
-    }
-}
-
-
-
-
-
-void manage_commbyte_init(void)
-{
-    g_msgId_hearBeat = 0;
-
-}
-
-void manage_commbyte_start(void) 
-{  
-    commbyte_prectrheartBeat();
-}
-
-
-void manage_commbyte_stop(void)
-{
-    
-    LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
-    pstPressControlObject->brun_prectrheartBeat = SD_FALSE;  // 设置标志位，停止心跳包线程
-    rt_thread_delay(1000);  
-    ut_thread_exit(pstPressControlObject->Thead_prectrheartBeat);
-    
-}
-
 void commbyte_prectr_cmd(void)     //创建命令消息发送线程
 {
     LPPressControlObjectDef pstPressControlObject = pressControl_ctrl_object_get();
@@ -195,10 +169,6 @@ void commbyte_prectr_cmd(void)     //创建命令消息发送线程
         }
     }
 }
-
-
-
-
 
 void manage_commbytecmd_init(void)
 {
@@ -221,3 +191,4 @@ void manage_commbytecmd_stop(void)
     ut_thread_exit(pstPressControlObject->Thead_prectr_cmd);
     
 }
+*/

@@ -133,7 +133,7 @@ void PUMP_off(int device_id)  //气泵的关闭，停止工作，变低电平
         HAL_GPIO_WritePin(pump_GPIO_Port, pump2_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(pump_GPIO_Port, pump3_Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(pump_GPIO_Port, pump4_Pin, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(pump_GPIO_Port, pump5_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(pump5_GPIO_Port, pump5_Pin, GPIO_PIN_RESET);
         break;
         
 		default:

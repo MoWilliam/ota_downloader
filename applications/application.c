@@ -88,9 +88,9 @@ void mq_ctrl_init(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        pstMqueueObject->MMqueue_prectrheartBeat = ut_mqueue_create("MQUEUE_prectrheartBeat",
-                        UT_MQUEUE_MSGMAX_SIZE,
-                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
+//        pstMqueueObject->MMqueue_prectrheartBeat = ut_mqueue_create("MQUEUE_prectrheartBeat",
+//                        UT_MQUEUE_MSGMAX_SIZE,
+//                        UT_MQUEUE_MAXMSG_COUNT,RT_IPC_FLAG_FIFO);
 
     #endif
     }
@@ -209,7 +209,6 @@ void manage_module_init(void)
 
 #if PRESS_CONTROL_FLAG
     manage_commbyte_init();
-    manage_commbytecmd_init();
     manage_prectrdevice_init();
     
     manage_prectr_init();
@@ -228,7 +227,6 @@ void manage_module_start(void)
 
 #if PRESS_CONTROL_FLAG
     manage_commbyte_start();
-    manage_commbytecmd_start();
     manage_prectrdevice_start();
     manage_prectr_start();
 
@@ -245,7 +243,6 @@ void manage_module_uninit(void)
 #endif
 #if PRESS_CONTROL_FLAG
     manage_commbyte_stop();  
-    manage_commbytecmd_stop(); 
     manage_prectrdevice_stop();
     manage_prectr_stop();
 

@@ -27,7 +27,6 @@ static rt_device_t serial_4;
 
 
 void bsp_uart_init(void);
-void bsp_uart_get (PreCtrFrameDef* dmf);
-//void bsp_uart_send(PreCtrFrameDef *dmf);
-void bsp_uart_send();
+void bsp_uart_get (PreCtrRecvFrameDef *dmf);
+void bsp_uart_send(PreCtrFrameDef *dmf);
 #endif /* BSP_INC_B_PRECTRUARTT_H_ */

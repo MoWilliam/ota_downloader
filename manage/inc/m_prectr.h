@@ -29,6 +29,7 @@ uint8_t  g_prectrUart_RxBuf[UART_BUFFER_SIZE];
 void manage_prectr_init(void) ; 
 void manage_prectr_start(void);  
 void manage_prectr_stop(void);
+void prectr_recv_entry(PreCtrRecvFrameDef *dmf);
 
   
 #endif /* M_PRECTR_H_ */
