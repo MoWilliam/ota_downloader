@@ -21,7 +21,7 @@
 #define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
 #define PRESS_CONTROL_FLAG 0  // 压力控制器
 
-
+static struct rt_mutex mutex;
 
 /** 
  * Application object
@@ -35,6 +35,8 @@ typedef struct TagAppObjectDef
     SdBool    brun;
     UtThread*  MqttThead_heartBeat;
     SdBool    brun_mqtt;
+    UtThread*  MqttThead_sensorData;
+    SdBool    brun_sensor;
 
 }AppObjectDef,*LPAppObjectDef;
 

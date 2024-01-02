@@ -35,15 +35,7 @@ void task_thread_bio_recv(void *ptr)
             dmf.m_bio_value = 0;
             bsp_afe4300_get(&dmf);      
             rt_kprintf("afe4300= %d\n",dmf.m_bio_value);
-            if ( pstDeviceObject->m_device_collect == 1){
-                ut_msg_send(pstMqueueObject->MMqueue_msg,2,0,emMqttMsgBioData,&dmf,sizeof(dmf));
-            }else if (pstDeviceObject->m_device_collect == 0){
-                dmf.m_bio_value = 0;
-                ut_msg_send(pstMqueueObject->MMqueue_msg,2,0,emMqttMsgBioData,&dmf,sizeof(dmf));
-            }else {
-                dmf.m_bio_value = 0;
-                ut_msg_send(pstMqueueObject->MMqueue_msg,2,0,emMqttMsgBioData,&dmf,sizeof(dmf));
-            }
+            ut_msg_send(pstMqueueObject->MMqueue_msg,2,0,emMqttMsgBioData,&dmf,sizeof(dmf));
            // rt_kprintf("[Task Module] ->task bio thread run\n");
             rt_thread_mdelay(1000);
             //cnt_recv_bio ++;

@@ -111,8 +111,8 @@ void mq_ctrl_unint(void)
     #endif
 
     #if PRESS_CONTROL_FLAG
-        ut_mqueue_delete(pstMqueueObject->MMqueue_prectrheartBeat);
-        pstMqueueObject->MMqueue_prectrheartBeat = SD_NULL;
+//        ut_mqueue_delete(pstMqueueObject->MMqueue_prectrheartBeat);
+//        pstMqueueObject->MMqueue_prectrheartBeat = SD_NULL;
 
     #endif
     }
@@ -321,20 +321,10 @@ void app_thread_msg_recv(void *ptr)
     {
         LPAppObjectDef pstAppObject = (LPAppObjectDef)ptr;
         LPMqueueObjectDef pstMqueueObject = mq_ctrl_object_get();
-        SensorDataFrameDef mqttDmf;
-        int count = 0;
         while (pstAppObject->brun)
         {
-            count++;
             ut_msg_recv(pstMqueueObject->MMqueue_msg);
-            if (count == 10)
-            {
-
-                count = 0; // 重置计数器
-                comm_mqtt_msg_publish();
-            }
-            //ut_msg_recv(pstMqueueObject->MMqueue_msg);
-           // rt_kprintf("[App Module]-> msg thread run\n");
+          //  rt_kprintf("[App Module]-> msg thread recv\n");
             rt_thread_mdelay(100);
         }
         rt_kprintf("[App Module] thread exit\n");
@@ -396,35 +386,35 @@ void appStop(void)
 SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
 {
 
-    //rt_kprintf("[App Msg Handle] usMsgId %d\n",pMsg->usMsgID);
+    rt_kprintf("[App Msg Handle] usMsgId %d\n",pMsg->usMsgID);
     LPDeviceObjectDef pstDeviceObject = device_ctrl_object_get();
-	switch(pMsg->usMsgID)
-	{
-		case emMqttMsgBaseData:
-		    if ( pstDeviceObject)
-		                {
-		                    if ( pstDeviceObject->m_mqttStatus == 1)
-		                    {
-		                     if (pstDeviceObject->m_deviceStatus == 1)
-		                        {
-		                            comm_mqtt_msg(pMsg,pContent);
-		                        }
-		                    }
-		                }
-		                break;
-		case emMqttMsgSpo2Data:
-		    if ( pstDeviceObject)
-		                {
-		                    if ( pstDeviceObject->m_mqttStatus == 1)
-		                    {
-		                     if (pstDeviceObject->m_deviceStatus == 1)
-		                        {
-		                            comm_mqtt_msg(pMsg,pContent);
-		                        }
-		                    }
-		                }
-		                break;
-		case emMqttMsgBioData:
+    switch(pMsg->usMsgID)
+    {
+        case emMqttMsgBaseData:
+            if ( pstDeviceObject)
+                        {
+                            if ( pstDeviceObject->m_mqttStatus == 1)
+                            {
+                             if (pstDeviceObject->m_deviceStatus == 1)
+                                {
+                                    comm_mqtt_msg(pMsg,pContent);
+                                }
+                            }
+                        }
+                        break;
+        case emMqttMsgSpo2Data:
+            if ( pstDeviceObject)
+                        {
+                            if ( pstDeviceObject->m_mqttStatus == 1)
+                            {
+                             if (pstDeviceObject->m_deviceStatus == 1)
+                                {
+                                    comm_mqtt_msg(pMsg,pContent);
+                                }
+                            }
+                        }
+                        break;
+        case emMqttMsgBioData:
             if ( pstDeviceObject)
             {
                 if ( pstDeviceObject->m_mqttStatus == 1)
@@ -435,9 +425,9 @@ SdInt app_msg_handle(const UTMsgDef * pMsg, const void * pContent)
                     }
                 }
             }
-			break;
+            break;
     }
-	return 0;
+    return 0;
 }
 
 

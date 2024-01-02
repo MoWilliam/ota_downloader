@@ -25,28 +25,15 @@ void task_thread_max30205_recv(void *ptr)
         {
             //DataFrameDef dmf;
             SensorDataFrameDef dmf;  //2023.9.27
-            //dmf.m_atemp = 0;
-            //dmf.m_btemp = 0;
-            last_m_atemp = 0;
-            last_m_btemp = 0;
+            dmf.m_atemp = 0;
+            dmf.m_btemp = 0;
             bsp_max30205_get(&dmf);
             if(dmf.m_atemp>10 && dmf.m_atemp<50)  //去除温度显示过程中的极端异常值
             {
-                last_m_atemp = dmf.m_atemp;
-                last_m_btemp = dmf.m_btemp;
-                rt_kprintf("max3025 %d %d",dmf.m_atemp,dmf.m_btemp);
-                ut_msg_send(pstMqueueObject->MMqueue_msg,1,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
-            }else if(dmf.m_atemp<10 || dmf.m_atemp>50 || (dmf.m_atemp==0 && dmf.m_btemp==0))
-            {
-                dmf.m_atemp = last_m_atemp;
-                dmf.m_btemp = last_m_btemp;
                 rt_kprintf("max3025 %d %d",dmf.m_atemp,dmf.m_btemp);
                 ut_msg_send(pstMqueueObject->MMqueue_msg,1,0,emMqttMsgBaseData,&dmf,sizeof(dmf));
             }
-           // rt_kprintf("[Task Module]->task temp thread run\n");
             rt_thread_mdelay(1000);
-            //cnt_recv_tmp ++;
-            //rt_kprintf("****cnt_recv_tmp:%d\n", cnt_recv_tmp);  //2023.9.27.打印发送tmp计数
         }
         rt_kprintf("[Task Module] temp thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_temp);
@@ -66,29 +53,12 @@ void task_thread_jfh141_recv(void *ptr)
         {
             //Spo2FrameDef dmf;
             SensorDataFrameDef dmf;  //2023.9.27
-            //dmf.m_spo2 = 0;
-            //dmf.m_bk = 0;
+            dmf.m_spo2 = 0;
+            dmf.m_bk = 0;
             bsp_jfh141_get(&dmf); 
-            //rt_kprintf("bk************** %d",dmf.m_bk);
-            //dmf.m_bk = kalman_filter_jfh141(dmf.m_bk);
-            //rt_kprintf("kalman_bk******* %d",dmf.m_bk);
-            if ( dmf.m_spo2 >0){
-                pstDeviceObject->m_device_collect = 1;
-            }else{
-                pstDeviceObject->m_device_collect = 1; //特殊修改0630，0
-            }
             rt_kprintf("jfh141 %d %d",dmf.m_spo2,dmf.m_bk);
-            if ( pstDeviceObject->m_device_collect == 1){
-                ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
-            }else if (pstDeviceObject->m_device_collect == 0){
-                dmf.m_spo2 = 0;
-                dmf.m_bk = 0;
-                ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
-            }
-           // rt_kprintf("[Task Module] ->task JFH141 thread run\n");
+            ut_msg_send(pstMqueueObject->MMqueue_msg,3,0,emMqttMsgSpo2Data,&dmf,sizeof(dmf));
             rt_thread_mdelay(1000);
-            //cnt_recv_spo2 ++;
-            //rt_kprintf("****cnt_recv_spo2:%d\n", cnt_recv_spo2);  //2023.9.27.打印发送spo2计数
         }
         //rt_kprintf("[Task Module] spo2 thread exit\n");
         ut_thread_exit(pstTaskObject->Taskthread_spo2);
