@@ -46,9 +46,12 @@ void emerstop_timer_callback(void *parameter) {
         set_key_pressed_flags(1);  // 按下状态，将状态置为1
         bsp_PreCtr_GPIO_stopall();
         pstPreCtrRecvFrameDef->m_stopFlag = 0;
+        pstPreCtrRecvFrameDef->m_cmdType = 0x02;
+
         rt_kprintf("emerstop is start\n");
     } else {
         set_key_pressed_flags(0);  // 松开状态，将状态置为0
+
     }
 }
 

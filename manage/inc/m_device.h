@@ -69,12 +69,18 @@ typedef struct TagSensorDataFrameDef
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceStatus;
+
+    //电压示数
+    SdUInt32 m_comvol;
+
     //data-temp
     SdUInt16 m_atemp;
     SdUInt16 m_btemp;
+
     //data-spo2
     SdUInt16 m_spo2;
     SdUInt16 m_bk;
+
     //data-bio
     SdFloat m_bio_voltage;
     SdFloat m_bio_ampere;
@@ -92,6 +98,7 @@ typedef struct TagDataFrameDef
     SdUInt16 msgID;
     char m_deviceid[DEVICE_LENGTH];
     SdUInt8 m_deviceStatus;
+
     /* data */
     SdUInt16 m_atemp;
     SdUInt16 m_btemp;

@@ -58,14 +58,12 @@ static double x_last = 0;
 #define mFi_ZJ07 0
 #define mFi_ZJ08 0
 #define mFi_ZJ09 0
-//设备ZJ09a8bc32
-#define a8bc32 1
-
 
 #define mFi_ZJ10 0
 #define mFi_ZJ11 0
 #define mFi_ZJ12 0
-
+//设备ZJ09a8bc32
+#define add_device 1
 
 
 
@@ -530,7 +528,7 @@ void bsp_afe4300_get(SensorDataFrameDef* dmf)  //2023.9.27
     z= z - 2 ;
 #endif
 
-#if a8bc32
+#if add_device
     z= z - 8 ;
 #endif
 

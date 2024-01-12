@@ -15,11 +15,10 @@
 #include "sys.h"
 
 #define ADC_DEV_NAME "adc1"
-#define ADC_CHANNAL 9
+#define ADC_CHANNAL 5   //ADC通道
+#define REFER_VOLTAGE       330
+#define CONVERT_BITS        (1 << 12)   // 转换位数为12位
 
-#define REG_VEL 3.3
-#define CONVERT_BITS 12
-#define SAMPLE_NUM 8
 
-int Adc_Chargeread(void);
+rt_uint32_t bsp_voltage_get(SensorDataFrameDef* dmf); 
 #endif

@@ -7,10 +7,12 @@
  * Date           Author       Notes
  * 2023-01-04     Administrator       the first version
  */
+#include "bsp/inc/b_adc.h"
 #include "inc/m_comm.h"
 #include "inc/m_mqtt.h"
 #include "cJSON.h"
 #include "inc/m_device.h"
+
 
 static SdULong g_msgId_hearBeat;
 static SdULong g_msgId_control;

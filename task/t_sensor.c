@@ -27,6 +27,7 @@ void task_thread_max30205_recv(void *ptr)
             SensorDataFrameDef dmf;  //2023.9.27
             dmf.m_atemp = 0;
             dmf.m_btemp = 0;
+            dmf.m_comvol = 0; //电压示数
             bsp_max30205_get(&dmf);
             if(dmf.m_atemp>10 && dmf.m_atemp<50)  //去除温度显示过程中的极端异常值
             {

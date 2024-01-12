@@ -23,7 +23,7 @@
 #include "inc/m_mqtt.h"
 #include "inc/m_comm.h"
 
-#define MQ_URI                "tcp://192.168.0.101:1883"
+#define MQ_URI                "tcp://192.168.0.199:1883"
 #define MQ_CLIENT             "f407vet6_client"
 #define MQ_USERNAME           "admin"
 #define MQ_PASSWORD           "admin"

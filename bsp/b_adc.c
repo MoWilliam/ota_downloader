@@ -7,14 +7,14 @@
  * Date           Author       Notes
  * 2023-1017      WangWei      the first version
 */
-#include "inc/adc.h"
+#include "inc/b_adc.h"
 #include <board.h>
 #include <rtdevice.h>
 #include <rtthread.h>
 #include <rtdbg.h>
 #include <stdio.h>
 
-
+/*
 //电量读取
 int Adc_Chargeread(void){
     rt_adc_device_t adc_dev;
@@ -38,4 +38,35 @@ int Adc_Chargeread(void){
         rt_thread_mdelay(20);
     }
     return RT_EOK;
-}
+}*/
+/*rt_uint32_t bsp_voltage_get(SensorDataFrameDef* dmf)   //获取电压数据
+{
+    rt_adc_device_t adc_dev;
+    rt_uint32_t value, vol;
+    rt_err_t ret = RT_EOK;
+
+    // 查找设备
+    adc_dev = (rt_adc_device_t)rt_device_find(ADC_DEV_NAME);
+    if (adc_dev == RT_NULL)
+    {
+        rt_kprintf("adc run failed! can't find %s device!\n", ADC_DEV_NAME);
+        return RT_ERROR;
+    }
+
+    // 使能设备
+    ret = rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
+
+    // 读取采样值
+    value = rt_adc_read(adc_dev, ADC_DEV_CHANNEL);
+    //rt_kprintf("the value is :%d \n", value);
+
+    // 转换为对应电压值
+    vol = value * REFER_VOLTAGE / CONVERT_BITS;
+    rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
+
+    // 关闭通道
+    ret = rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
+    rt_kprintf("vol test:%s \n", ret);
+
+    return vol;
+}*/

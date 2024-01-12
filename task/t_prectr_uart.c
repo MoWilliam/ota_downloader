@@ -30,6 +30,7 @@ void task_thread_uart4_recv(void *ptr)
             if ( dmf.m_deviceType == 3)
             {
                 prectr_recv_entry(&dmf);
+
             }
            // rt_thread_mdelay(100);
         }
