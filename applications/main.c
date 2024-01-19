@@ -15,8 +15,15 @@
 #include "application.h"
 #include"fal.h"
 
+#if COMPOSITE_CONTROL_FLAG
 #define APP_VER "V1.5"
-extern ota_flag ;
+#endif
+
+#if PRESS_CONTROL_FLAG
+#define APP_VER "V1.2"
+#endif
+
+extern ota_flag ;   //ota命令标志位
 
 static int ota_app_vtor_reconfig(void){
 #define NVIC_VTOR_MASK 0x3fffff80
