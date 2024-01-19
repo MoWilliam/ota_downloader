@@ -21,9 +21,7 @@ void manage_thread_sensor_recv(void *ptr)
         while (pstManageObject->brun_data)
         {
             SensorDataFrameDef dmf;
-           //SensorDataFrameDef dmf;  //2023.9.27
-        //   ut_mqueue_recv(pstMqueueObject->MMqueue_sensor,&dmf,sizeof(dmf),RT_WAITING_FOREVER);
-        //   rt_kprintf("[Manage Module] thread recv data %d ,%d ,%d \n",dmf.m_atemp,dmf.m_btemp,dmf.m_spo2);
+           
 
             SensorDataFrameDef mqttDmf;
             //SensorDataFrameDef mqttDmf;  //2023.9.21

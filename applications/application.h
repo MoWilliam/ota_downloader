@@ -18,8 +18,8 @@
 
 #define DeBug 0   //调试窗口
 
-#define COMPOSITE_CONTROL_FLAG 0 // 综合传感器，
-#define PRESS_CONTROL_FLAG 1  // 压力控制器
+#define COMPOSITE_CONTROL_FLAG 1 // 综合传感器，
+#define PRESS_CONTROL_FLAG 0  // 压力控制器
 
 static struct rt_mutex mutex;
 

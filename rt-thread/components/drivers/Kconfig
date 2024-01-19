@@ -20,6 +20,12 @@ if RT_USING_DEVICE_IPC
     endif
 endif
 
+
+config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+
 menuconfig RT_USING_SERIAL
     bool "USING Serial device drivers"
     select RT_USING_DEVICE_IPC

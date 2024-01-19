@@ -67,7 +67,7 @@
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
-#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_PRIORITY 30
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
@@ -83,6 +83,10 @@
 #define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_DEVFS
+#define RT_USING_FAL
+#define FAL_DEBUG_CONFIG
+#define FAL_DEBUG 1
+#define FAL_PART_HAS_TABLE_CFG
 
 /* Device Drivers */
 
@@ -90,16 +94,14 @@
 #define RT_USING_SYSTEM_WORKQUEUE
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
+#define BSP_USING_ON_CHIP_FLASH
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_ADC
-#define RT_USING_PM
-#define PM_TICKLESS_THRESHOLD_TIME 2
 #define RT_USING_RTC
 #define RT_USING_SPI
 #define RT_USING_SENSOR
@@ -161,6 +163,8 @@
 
 /* Utilities */
 
+#define RT_USING_RYM
+#define YMODEM_USING_FILE_TRANSFER
 /* end of Utilities */
 /* end of RT-Thread Components */
 
@@ -174,6 +178,10 @@
 #define PKG_PAHOMQTT_SUBSCRIBE_HANDLERS 1
 #define MQTT_DEBUG
 #define PKG_USING_PAHOMQTT_LATEST
+#define PKG_USING_WEBCLIENT
+#define WEBCLIENT_NOT_USE_TLS
+#define PKG_USING_WEBCLIENT_V220
+#define PKG_WEBCLIENT_VER_NUM 0x20200
 
 /* Wi-Fi */
 
@@ -199,10 +207,8 @@
 /* end of Wi-Fi */
 #define PKG_USING_AT_DEVICE
 #define AT_DEVICE_USING_ESP8266
-#define AT_DEVICE_ESP8266_INIT_ASYN
-#define AT_DEVICE_ESP8266_SOCKET
 #define AT_DEVICE_ESP8266_SAMPLE
-#define ESP8266_SAMPLE_WIFI_SSID "mFi-SD02"
+#define ESP8266_SAMPLE_WIFI_SSID "BIT123"
 #define ESP8266_SAMPLE_WIFI_PASSWORD "1234567890bit"
 #define ESP8266_SAMPLE_CLIENT_NAME "uart2"
 #define ESP8266_SAMPLE_RECV_BUFF_LEN 512
@@ -212,6 +218,11 @@
 /* IoT Cloud */
 
 /* end of IoT Cloud */
+#define PKG_USING_OTA_DOWNLOADER
+#define PKG_USING_HTTP_OTA
+#define PKG_HTTP_OTA_URL "http://3457.oss-cn-qingdao.aliyuncs.com/1.rbl"
+#define PKG_USING_YMODEM_OTA
+#define PKG_USING_OTA_DOWNLOADER_LATEST_VERSION
 /* end of IoT - internet of things */
 
 /* security packages */
@@ -222,8 +233,6 @@
 
 /* JSON: JavaScript Object Notation, a lightweight data-interchange format */
 
-#define PKG_USING_CJSON
-#define PKG_USING_CJSON_LATEST_VERSION
 /* end of JSON: JavaScript Object Notation, a lightweight data-interchange format */
 
 /* XML: Extensible Markup Language */
@@ -250,13 +259,6 @@
 
 /* enhanced kernel services */
 
-#define PKG_USING_RT_VSNPRINTF_FULL
-#define PKG_VSNPRINTF_INTEGER_BUFFER_SIZE 32
-#define PKG_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
-#define PKG_VSNPRINTF_DEFAULT_FLOAT_PRECISION 6
-#define PKG_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
-#define PKG_VSNPRINTF_LOG10_TAYLOR_TERMS 4
-#define PKG_USING_RT_VSNPRINTF_FULL_LATEST_VERSION
 /* end of enhanced kernel services */
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
@@ -276,8 +278,6 @@
 
 /* sensors drivers */
 
-#define PKG_USING_TMP1075
-#define PKG_USING_TMP1075_LATEST_VERSION
 /* end of sensors drivers */
 
 /* touch drivers */

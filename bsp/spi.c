@@ -80,14 +80,12 @@ void SPI1_SetSpeed(u8 SPI_BaudRatePrescaler)
     
 }
 
-//SPI1 ��дһ���ֽ�
-//TxData:Ҫд����ֽ�
-//����ֵ:��ȡ�����ֽ�
+
 u8 SPI2_ReadWriteByte(u8 TxData)
 {
     u8 Rxdata;
     HAL_SPI_TransmitReceive(&SPI1_Handler,&TxData,&Rxdata,1, 1000);       
- 	return Rxdata;          		    //�����յ�������
+ 	return Rxdata;          		    
 }
 
 void W25QXX_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)

@@ -107,8 +107,7 @@ static void read_temp_humi(SensorDataFrameDef* dmf)
 //    write_reg(i2c_bus, MAX30205_GET_TEMP, 0);      /* 送命令 */
     read_regs(i2c_bus, MAX30205_GET_TEMP, 2, temp);                /* 获取传感器数据 */
 
-//    rt_kprintf("temp[0] = %d\r\n",temp[0]);
-//    rt_kprintf("temp[1] = %d\r\n",temp[1]);
+
 
     dmf->m_atemp = temp[0];
     dmf->m_btemp = temp[1];
@@ -128,13 +127,7 @@ static void max30205_init(const char *name)
     }
     else
     {
-//        write_reg(i2c_bus, AHT10_NORMAL_CMD, temp);
-//        rt_thread_mdelay(400);
-//
-//        temp[0] = 0x08;
-//        temp[1] = 0x00;
-//        write_reg(i2c_bus, AHT10_CALIBRATION_CMD, temp);
-//        rt_thread_mdelay(400);
+
         read_regs(i2c_bus, MAX30205_GET_TEMP, 2, temp);                /* 获取传感器数据 */
 
         rt_kprintf("*******temp[0] = %d\r\n",temp[0]);

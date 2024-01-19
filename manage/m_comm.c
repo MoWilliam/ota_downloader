@@ -10,7 +10,7 @@
 #include "bsp/inc/b_adc.h"
 #include "inc/m_comm.h"
 #include "inc/m_mqtt.h"
-#include "cJSON.h"
+#include "ut/inc/cJSON.h"
 #include "inc/m_device.h"
 
 

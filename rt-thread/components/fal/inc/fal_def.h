@@ -21,6 +21,8 @@
 #define FAL_REALLOC     rt_realloc
 #define FAL_FREE        rt_free
 
+#define __RTTHREAD__
+
 #ifndef FAL_DEBUG
 #define FAL_DEBUG                      0
 #endif
